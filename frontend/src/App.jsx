@@ -6,7 +6,7 @@ import "./App.css";
 function App() {
   const [count, setCount] = useState(0);
 
-  // Test comment
+  // Test comment 2
 
   return (
     <>
