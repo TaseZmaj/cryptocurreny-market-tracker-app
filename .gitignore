@@ -1,0 +1,36 @@
+# React Frontend
+# ==========================
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.vite/
+frontend/.env.local
+frontend/.env.*.local
+frontend/.DS_Store
+
+
+# Java Backend (Maven / Spring Boot)
+# ==========================
+backend/target/
+backend/logs/
+backend/*.log
+backend/.classpath
+backend/.project
+backend/.settings/
+*.class
+
+
+# OS and Editor Files
+# ==========================
+Thumbs.db
+.idea/
+.vscode/
+*.iml
+
+
+# Environment and Secrets
+# ==========================
+.env
+*.env.local
+.env.test
+.env.production
