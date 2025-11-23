@@ -66,7 +66,7 @@ public class Filter2 {
         // Wait for all futures to complete and collect results
         List<HistoricalUpdateInfoDTO> results = futures.stream()
                 .map(CompletableFuture::join)
-                .filter(dto -> dto.getLastUpdatedDate() != null)
+                .filter(dto -> dto.getLastUpdatedDate() != null) //filters out all DTOs that have last_date=null
                 .toList();
 
         return results;
@@ -90,9 +90,15 @@ public class Filter2 {
                         lastDate = latestData.getTimestamp().plus(1, ChronoUnit.DAYS);
                     } else {
                         // No data → run full 10-year load
-                        System.out.println("  -> Filter 2: No historical data for " + symbol.getSymbol() + " in the Database. Initiating FULL 10-year load.");
+                        System.out.println("  -> Filter 2: No historical data for " + symbol.getSymbol() + " in the Database. ");
+                        System.out.println("  -> Filter 2: Initiating FULL 10-year load of OHLCV and 24h data.");
+
+                        System.out.println("    -> 24H DATA: Getting data for the last 24h for " + symbol.getSymbol());
                         fetchAdditionalSymbolData(symbol.getId(), symbol.getSymbol());
-                        fetchAndSaveFullOhlcvData(symbol.getId(), symbol.getSymbol() + DEFAULT_QUOTE_ASSET);
+
+                        System.out.println("    -> OHLCV DATA: Getting OHCLV data for the last 10 years for " + symbol.getSymbol());
+                        fetchAndSaveFullOhlcvData(symbol.getId(), symbol.getSymbol());
+
                         lastDate = null; // Filter 3 will know not to increment
                     }
 
@@ -103,7 +109,7 @@ public class Filter2 {
                     );
 
                 } catch (Exception ex) {
-                    System.err.println("  -> ERROR in Filter 2 for " + symbol.getSymbol() + ": " + ex.getMessage() + "\n");
+                    System.err.println("    -> ERROR in Filter 2 for " + symbol.getSymbol() + ": " + ex.getMessage() + "\n");
                     return new HistoricalUpdateInfoDTO(symbol.getId(), symbol.getSymbol(), null);
                 } finally {
                     semaphore.release(); // release slot
@@ -118,8 +124,6 @@ public class Filter2 {
      * Fetches data about the coin for the last 24H
      */
     private void fetchAdditionalSymbolData(String coinId, String binanceSymbol){
-        System.out.println("    -> 24H DATA: Getting data for the last 24h for " + binanceSymbol);
-
         String url = BINANCE_TICKER_API + "symbol=" + binanceSymbol + DEFAULT_QUOTE_ASSET;
 
         ResponseEntity<SummaryMetricsDTO> response = restTemplate.exchange(
@@ -140,9 +144,6 @@ public class Filter2 {
      * Full 10-year OHLCV fetch from Binance.
      */
     private void fetchAndSaveFullOhlcvData(String coinId, String binanceSymbol) {
-
-        System.out.println("    -> FULL LOAD: Starting 10-year OHLCV fetch for " + binanceSymbol);
-
         final long now = Instant.now().toEpochMilli();
 
         // 10 years back using ZonedDateTime (Instant does not allow years)
@@ -161,12 +162,13 @@ public class Filter2 {
             String url = String.format(
                     "%s?symbol=%s&interval=%s&startTime=%d&limit=%d",
                     BINANCE_KLINE_API,
-                    binanceSymbol,
+                    binanceSymbol + DEFAULT_QUOTE_ASSET,
                     DEFAULT_INTERVAL,
                     start,
                     MAX_KLINES_PER_CALL
             );
 
+            //result from ""https://api.binance.com/api/v3/klines""
             List<List<Object>> klines = apiFetchingUtils.callBinanceWithRetry(url);
             if (klines == null || klines.isEmpty()) {
                 System.out.println("      -> FULL LOAD: No more klines for " + binanceSymbol + ". Done.");

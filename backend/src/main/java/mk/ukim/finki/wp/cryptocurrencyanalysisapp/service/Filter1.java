@@ -14,7 +14,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import static mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.TransformationUtils.transformToSymbol;
 
 @Service
 @RequiredArgsConstructor
@@ -23,7 +22,6 @@ public class Filter1 {
     private final RestTemplate restTemplate = new RestTemplate();
     private static final String BASE_SYMBOL_FETCH_API = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=";
 
-    // Main method - Filter 1
     public List<Symbol> run() {
         //1. Symbol Extraction from API
         List<RawSymbolDTO> rawSymbols = extractRawSymbolsFromApi(BASE_SYMBOL_FETCH_API);
@@ -31,13 +29,13 @@ public class Filter1 {
         //2. Filtering and transformation
         List<Symbol> cleanSymbols = rawSymbols.stream()
                 .filter(this::isValidForInclusion) // Filtering -> removing invalid symbols
-                .map(TransformationUtils::transformToSymbol)      // Transformation -> mapping into a symbol object
-                .collect(Collectors.toList());      // Maps RawSymbolDTO to Symbol
+                .map(TransformationUtils::transformToSymbol) // Transformation from RawSymbolDTO to Symbol
+                .collect(Collectors.toList());
 
         // 3. Loading data into MongoDB
-        System.out.println("Saving symbols to database...");
+        System.out.println("  -> Filter 1: Saving symbols to database...");
         symbolRepository.saveAll(cleanSymbols);
-        System.out.println("Successfully saved symbols to database.");
+        System.out.println("  -> Filter 1: Successfully saved symbols to database.");
 
         System.out.println("Filter 1 Completed: Successfully synced " + cleanSymbols.size() + " active symbols to MongoDB.");
         return cleanSymbols;
@@ -48,7 +46,7 @@ public class Filter1 {
 
     private List<RawSymbolDTO> extractRawSymbolsFromApi(String API_URL) {
 
-        final int TOTAL_PAGES = 4; //4 stranici * 250 simboli
+        final int TOTAL_PAGES = 4; //4 pages * 250 symbols
         List<RawSymbolDTO> allSymbols = new ArrayList<>();
 
         System.out.println("Starting multi-page API extraction for 1000 symbols...");
@@ -74,19 +72,18 @@ public class Filter1 {
                 allSymbols.addAll(pageSymbols); //Add the results to the main List
                 System.out.println("  -> Successfully retrieved " + pageSymbols.size() + " symbols from Page " + page);
 
-                Thread.sleep(4000);
+                Thread.sleep(3000);
             }
 
             System.out.println("Extraction successful. Retrieved a total of " + allSymbols.size() + " raw symbols.");
             return allSymbols;
 
         } catch (InterruptedException e) {
-            // Ова се случува ако Thread.sleep е прекинат
             Thread.currentThread().interrupt();
-            System.err.println("API extraction interrupted.");
+            System.err.println("  -> ERROR: API extraction interrupted.");
             return allSymbols;
         } catch (Exception e) {
-            System.err.println("CRITICAL ERROR: Failed to fetch data from CoinGecko API: " + e.getMessage());
+            System.err.println("  -> CRITICAL ERROR: Failed to fetch data from CoinGecko API: " + e.getMessage());
             e.printStackTrace();
             return List.of();
         }

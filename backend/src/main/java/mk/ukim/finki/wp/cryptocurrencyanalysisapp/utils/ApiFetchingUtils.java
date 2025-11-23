@@ -16,7 +16,7 @@ public class ApiFetchingUtils {
     private final RestTemplate restTemplate;
 
     /**
-     * Fetches from Binance in 1-5 batches
+     * Fetches from Binance with a max of 5 retries
      */
     public List<List<Object>> callBinanceWithRetry(String url) {
         int maxRetries = 5;
@@ -35,13 +35,13 @@ public class ApiFetchingUtils {
 
             } catch (Exception ex) {
                 if(ex.getMessage().contains("400 Bad Request")){
-                    System.err.println(    "Stopped Requests due to invalid symbol" + "\n");
+                    System.err.println("    -> ERROR: Stopped Requests due to invalid symbol" + "\n");
                     return null; // fail gracefully
                 }
-                System.err.println("    Binance API error (attempt " + attempt + "): " + ex.getMessage() + "\n");
+                System.err.println("    -> ERROR: Binance API error (attempt " + attempt + "): " + ex.getMessage() + "\n");
 
                 if (attempt == maxRetries) {
-                    System.err.println("    --> Giving up after " + maxRetries + " attempts.");
+                    System.err.println("      -> Giving up after " + maxRetries + " attempts.");
                     return null; // fail gracefully
                 }
 

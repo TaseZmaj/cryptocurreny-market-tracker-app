@@ -4,6 +4,10 @@ import lombok.Data;
 import java.math.BigDecimal;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
+/**
+ * DTO for transferring data between Filter 1 and Filter 2
+ */
 @Data
 public class RawSymbolDTO {
 

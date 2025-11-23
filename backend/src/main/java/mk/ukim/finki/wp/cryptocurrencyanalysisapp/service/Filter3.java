@@ -1,6 +1,5 @@
 package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
 
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.HistoricalUpdateInfoDTO;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.HistoricalData;
@@ -8,10 +7,8 @@ import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.HistoricalDataRepos
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.ApiFetchingUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
@@ -24,7 +21,6 @@ import static mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.TransformationUti
 public class Filter3 {
 
     private final HistoricalDataRepository historicalDataRepository;
-    private final RestTemplate restTemplate;
     private final ApiFetchingUtils apiFetchingUtils;
 
     // Semaphore to limit concurrent API calls
@@ -42,7 +38,6 @@ public class Filter3 {
     public void run(List<HistoricalUpdateInfoDTO> symbolsWithLastDate) {
 
         List<CompletableFuture<Void>> futures = symbolsWithLastDate.stream()
-                .filter(dto -> dto.getLastUpdatedDate() != null) // Only incremental updates
                 .map(dto -> CompletableFuture.runAsync(
                         () -> fetchMissingData(dto), executor))
                 .toList();
@@ -60,7 +55,7 @@ public class Filter3 {
                 long now = Instant.now().toEpochMilli();
 
                 if (start >= now) {
-                    System.out.println("Filter 3: No new data to fetch for " + dto.getTickerSymbol());
+                    System.out.println("  -> Filter 3: No new data to fetch for " + dto.getTickerSymbol());
                     return; // nothing to do
                 }
 

@@ -1,5 +1,6 @@
 package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
 
+import com.mongodb.MongoSocketWriteException;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.HistoricalUpdateInfoDTO;
@@ -27,7 +28,6 @@ public class PipelineRunner {
         List<Symbol> filter1Results = filter1.run();
         System.out.println("--------------- FILTER 1 END --------------- \n\n");
 
-
         System.out.println("--------------- STARTING FILTER 2 ---------------");
         List<HistoricalUpdateInfoDTO> filter2Results = filter2.run(filter1Results);
         System.out.println("--------------- FILTER 2 END --------------- \n\n");
@@ -38,11 +38,11 @@ public class PipelineRunner {
         System.out.println("--------------- FILTER 3 END --------------- \n");
 
 
-        Instant end = Instant.now();
+        Instant end = Instant.now(); //stop timer
         Duration duration = Duration.between(start, end);
 
         System.out.println("\n THE PIPELINE COMPLETED IN: "
-                + duration.toMinutes() + " minutes "
-                + (duration.getSeconds() % 60) + " seconds");
+                    + duration.toMinutes() + " minutes "
+                    + (duration.getSeconds() % 60) + " seconds");
     }
 }

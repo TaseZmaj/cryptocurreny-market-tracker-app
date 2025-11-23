@@ -10,7 +10,4 @@ import java.util.List;
  * Repository for managing Symbol documents (the output of Filter 1).
  */
 @Repository
-public interface SymbolRepository extends MongoRepository<Symbol, String> {
-
-    List<Symbol> findAllByActiveTrue(); //Finds all active symbols that should proceed to the next filter.
-}
+public interface SymbolRepository extends MongoRepository<Symbol, String> {}

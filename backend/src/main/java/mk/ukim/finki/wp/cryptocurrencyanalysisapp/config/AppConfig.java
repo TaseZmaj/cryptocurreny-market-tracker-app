@@ -18,6 +18,6 @@ public class AppConfig {
 
     @Bean
     public Executor filterExecutor() {
-        return Executors.newFixedThreadPool(10);
+        return Executors.newFixedThreadPool(20);
     }
 }
