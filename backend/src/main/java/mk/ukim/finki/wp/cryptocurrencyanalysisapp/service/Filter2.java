@@ -8,17 +8,26 @@ import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.AssetSumma
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.Symbol;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.AssetSummaryRepository;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.HistoricalDataRepository;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.ApiFetchingUtils;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Semaphore;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+
+import static mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.TransformationUtils.transformAssetSummary;
+import static mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.TransformationUtils.transformKlinesToHistoricalData;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +36,10 @@ public class Filter2 {
     private final AssetSummaryRepository assetSummaryRepository;
     private final HistoricalDataRepository historicalDataRepository;
     private final RestTemplate restTemplate;
+    private final ApiFetchingUtils apiFetchingUtils;
+
+    @Qualifier("filterExecutor")
+    private final Executor executor;
 
     private static final String BINANCE_TICKER_API = "https://api.binance.com/api/v3/ticker/24hr?";
     private static final String BINANCE_KLINE_API = "https://api.binance.com/api/v3/klines";
@@ -34,49 +47,70 @@ public class Filter2 {
     private static final int MAX_KLINES_PER_CALL = 1000;
     private static final String DEFAULT_QUOTE_ASSET = "USDT";
 
+    //For multiple threads
+    private static final int MAX_CONCURRENT_REQUESTS = 20;
+    private final Semaphore semaphore = new Semaphore(MAX_CONCURRENT_REQUESTS);
+
     public List<HistoricalUpdateInfoDTO> run(List<Symbol> symbols) {
         System.out.println("\n--- Filter 2: Starting historical data check for " + symbols.size() + " symbols. ---");
 
-        List<HistoricalUpdateInfoDTO> results = new ArrayList<>();
+        List<CompletableFuture<HistoricalUpdateInfoDTO>> futures = new ArrayList<>();
 
         for (Symbol symbol : symbols) {
-            results.add(checkLastUpdateDateAndLoadIfMissing(symbol));
+            futures.add(CompletableFuture.supplyAsync(
+                    () -> checkLastUpdateDateAndLoadIfMissing(symbol),
+                    executor
+            ));
         }
+
+        // Wait for all futures to complete and collect results
+        List<HistoricalUpdateInfoDTO> results = futures.stream()
+                .map(CompletableFuture::join)
+                .filter(dto -> dto.getLastUpdatedDate() != null)
+                .toList();
 
         return results;
     }
 
     /**
-     * Check the DB and perform full load if needed.
+     * Check the DB and perform full load if needed.  Runs Multiple threads that all fetch from binance.
      */
     private HistoricalUpdateInfoDTO checkLastUpdateDateAndLoadIfMissing(Symbol symbol) {
         try {
-            HistoricalData latestData = historicalDataRepository
-                    .findTopBySymbolIdOrderByTimestampDesc(symbol.getId())
-                    .orElse(null);
+            semaphore.acquire(); // acquire slot before API call
+                try {
+                    HistoricalData latestData = historicalDataRepository
+                            .findTopBySymbolIdOrderByTimestampDesc(symbol.getId())
+                            .orElse(null);
 
-            Instant lastDate;
+                    Instant lastDate;
 
-            if (latestData != null) {
-                // We already have data → Filter 3 will continue incrementally
-                lastDate = latestData.getTimestamp().plus(1, ChronoUnit.DAYS);
-            } else {
-                // No data → run full 10-year load
-                System.out.println("  -> Filter 2: No historical data for " + symbol.getSymbol() + " in the Database. Initiating FULL 10-year load.");
-                fetchAdditionalSymbolData(symbol.getId(), symbol.getSymbol());
-                fetchAndSaveFullOhlcvData(symbol.getId(), symbol.getSymbol() + DEFAULT_QUOTE_ASSET);
-                lastDate = null; // Filter 3 will know not to increment
-            }
+                    if (latestData != null) {
+                        // We already have data → Filter 3 will continue incrementally
+                        lastDate = latestData.getTimestamp().plus(1, ChronoUnit.DAYS);
+                    } else {
+                        // No data → run full 10-year load
+                        System.out.println("  -> Filter 2: No historical data for " + symbol.getSymbol() + " in the Database. Initiating FULL 10-year load.");
+                        fetchAdditionalSymbolData(symbol.getId(), symbol.getSymbol());
+                        fetchAndSaveFullOhlcvData(symbol.getId(), symbol.getSymbol() + DEFAULT_QUOTE_ASSET);
+                        lastDate = null; // Filter 3 will know not to increment
+                    }
 
-            return new HistoricalUpdateInfoDTO(
-                    symbol.getId(),
-                    symbol.getSymbol(),
-                    lastDate
-            );
+                    return new HistoricalUpdateInfoDTO(
+                            symbol.getId(),
+                            symbol.getSymbol(),
+                            lastDate
+                    );
 
-        } catch (Exception ex) {
-            System.err.println("  -> ERROR in Filter 2 for " + symbol.getSymbol() + ": " + ex.getMessage() + "\n");
-            return new HistoricalUpdateInfoDTO(symbol.getId(), symbol.getSymbol(), null);
+                } catch (Exception ex) {
+                    System.err.println("  -> ERROR in Filter 2 for " + symbol.getSymbol() + ": " + ex.getMessage() + "\n");
+                    return new HistoricalUpdateInfoDTO(symbol.getId(), symbol.getSymbol(), null);
+                } finally {
+                    semaphore.release(); // release slot
+                }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
         }
     }
 
@@ -133,7 +167,7 @@ public class Filter2 {
                     MAX_KLINES_PER_CALL
             );
 
-            List<List<Object>> klines = callBinanceWithRetry(url);
+            List<List<Object>> klines = apiFetchingUtils.callBinanceWithRetry(url);
             if (klines == null || klines.isEmpty()) {
                 System.out.println("      -> FULL LOAD: No more klines for " + binanceSymbol + ". Done.");
                 break;
@@ -166,87 +200,4 @@ public class Filter2 {
                 ". Total OHLCV points saved: " + totalSaved + "\n");
     }
 
-    /**
-     * Converts Binance klines to HistoricalData entities.
-     */
-    private List<HistoricalData> transformKlinesToHistoricalData(String coinId, List<List<Object>> klines) {
-        List<HistoricalData> dataPoints = new ArrayList<>(klines.size());
-
-        for (List<Object> kline : klines) {
-            Instant timestamp = Instant.ofEpochMilli(Long.parseLong(kline.get(0).toString()));
-
-            BigDecimal open = new BigDecimal(kline.get(1).toString());
-            BigDecimal high = new BigDecimal(kline.get(2).toString());
-            BigDecimal low = new BigDecimal(kline.get(3).toString());
-            BigDecimal close = new BigDecimal(kline.get(4).toString());
-            BigDecimal totalVolume = new BigDecimal(kline.get(5).toString());
-
-            dataPoints.add(new HistoricalData(
-                    coinId,
-                    timestamp,
-                    open,
-                    high,
-                    low,
-                    close,
-                    totalVolume
-            ));
-        }
-        return dataPoints;
-    }
-
-    private List<List<Object>> callBinanceWithRetry(String url) {
-        int maxRetries = 5;
-        int attempt = 1;
-        long backoff = 500; // ms
-
-        while (attempt <= maxRetries) {
-            try {
-                ResponseEntity<List<List<Object>>> response = restTemplate.exchange(
-                        url,
-                        HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<>() {}
-                );
-                return response.getBody();
-
-            } catch (Exception ex) {
-                if(ex.getMessage().contains("400 Bad Request")){
-                    System.err.println(    "Stopped Requests due to invalid symbol" + "\n");
-                    return null; // fail gracefully
-                }
-                System.err.println("    Binance API error (attempt " + attempt + "): " + ex.getMessage() + "\n");
-
-                if (attempt == maxRetries) {
-                    System.err.println("    --> Giving up after " + maxRetries + " attempts.");
-                    return null; // fail gracefully
-                }
-
-                try {
-                    Thread.sleep(backoff);
-                } catch (InterruptedException ignored) {}
-
-                backoff *= 2; // exponential backoff
-                attempt++;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Transforms a SummaryMetricsDTO into a AssetSummary for MongoDB
-     */
-    private AssetSummary transformAssetSummary(String coinId, SummaryMetricsDTO symbolData24h) {
-        Instant updatedAt = Instant.now();
-
-        return new AssetSummary(
-                coinId,
-                symbolData24h.getLastPrice(),
-                symbolData24h.getVolume(),
-                symbolData24h.getHighPrice(),
-                symbolData24h.getLowPrice(),
-                symbolData24h.getQuoteVolume(), //liquidity
-                updatedAt
-        );
-    }
 }

@@ -1,4 +1,4 @@
-package mk.ukim.finki.wp.cryptocurrencyanalysisapp.model;
+package mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs;
 
 import lombok.Data;
 import java.math.BigDecimal;
