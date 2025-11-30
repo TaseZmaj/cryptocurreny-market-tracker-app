@@ -2,7 +2,7 @@ package mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils;
 
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.RawSymbolDTO;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.SummaryMetricsDTO;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.HistoricalData;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.HistoricalData;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.AssetSummary;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.Symbol;
 

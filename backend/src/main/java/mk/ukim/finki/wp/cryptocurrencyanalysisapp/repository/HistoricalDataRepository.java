@@ -1,7 +1,9 @@
 package mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository;
 
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.HistoricalData;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.HistoricalData;
 import org.springframework.data.mongodb.repository.MongoRepository;
+
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,4 +18,9 @@ public interface HistoricalDataRepository extends MongoRepository<HistoricalData
      * @return The latest HistoricalData object, or empty if none exists.
      */
     Optional<HistoricalData> findTopBySymbolIdOrderByTimestampDesc(String symbolId);
+
+
+
+    List<HistoricalData> findBySymbolIdOrderByTimestampDesc(String symbolId);
+
 }

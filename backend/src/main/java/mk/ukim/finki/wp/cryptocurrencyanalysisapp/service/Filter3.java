@@ -2,7 +2,7 @@ package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
 
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.HistoricalUpdateInfoDTO;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.HistoricalData;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.HistoricalData;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.HistoricalDataRepository;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.ApiFetchingUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
