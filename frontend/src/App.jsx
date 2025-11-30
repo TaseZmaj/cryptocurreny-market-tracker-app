@@ -1,36 +1,33 @@
-import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import React from "react";
+import {Routes, Route} from 'react-router-dom';
 import "./App.css";
+import CoinTable from "./components/CoinTable";
+import CoinDetail from "./components/CoinDetail";
+import CoinHistory from "./components/CoinHistory";
+
 
 function App() {
-  const [count, setCount] = useState(0);
-
-  // Test comment 2
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="App-Layout">
+      <header style={{ padding: '10px 20px', borderBottom: '1px solid #ccc' }}>
+        <h1>Crypto Tracker Dashboard</h1>
+      </header>
+      
+      <main style={{ padding: '20px' }}>
+        <Routes> 
+          {/* 1. Coin List Route */}
+          <Route path="/" element={<CoinTable />} />
+          
+          {/* 2. Dynamic Detail Route: /coins/anything */}
+          <Route path="/coins/:coinId" element={<CoinDetail />}>
+              {/* 3. Nested History Route: /coins/anything/history */}
+              <Route path="history" element={<CoinHistory />} />
+          </Route>
+          
+          <Route path="*" element={<h2>404 Page Not Found</h2>} />
+        </Routes>
+      </main>
+    </div>
   );
 }
 
