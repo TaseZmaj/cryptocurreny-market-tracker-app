@@ -1,4 +1,4 @@
-package mk.ukim.finki.wp.cryptocurrencyanalysisapp.model;
+package mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
