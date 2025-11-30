@@ -1,6 +1,5 @@
 package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
 
-import com.mongodb.MongoSocketWriteException;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.HistoricalUpdateInfoDTO;
