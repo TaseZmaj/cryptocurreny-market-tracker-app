@@ -1,4 +1,3 @@
-import React from "react";
 import useApiData from "../hooks/useApiData";
 import { Link } from "react-router-dom";
 
@@ -47,7 +46,7 @@ function CoinTable() {
   // Render list of coins
   return (
     <div>
-      <h2>💰 Cryptocurrency Market Overview</h2>
+      <h2>💰 Cryptocurrency Market Overview </h2>
       <table
         className="coin-table"
         style={{ width: "100%", borderCollapse: "collapse" }}

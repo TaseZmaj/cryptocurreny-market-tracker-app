@@ -1,4 +1,3 @@
-import React from "react";
 import { useParams, Link, Outlet } from "react-router-dom";
 import useApiData from "../hooks/useApiData";
 
@@ -23,7 +22,7 @@ function CoinDetail() {
   }
 
   if (!coin) {
-    return <div style={{ padding: "20px" }}>Coin **{coinId}** not found.</div>;
+    return <div style={{ padding: "20px" }}>Coin {coinId} not found.</div>;
   }
 
   // Helper function to format prices as currency
@@ -50,8 +49,8 @@ function CoinDetail() {
       <h1>
         📊 {coin.name} ({coin.symbol})
       </h1>
-      <p>Market Cap Rank: **#{coin.marketCapRank}**</p>
-      <p>Quote Asset: **{coin.quoteAsset}**</p>
+      <p>Market Cap Rank: #{coin.marketCapRank} </p>
+      <p>Quote Asset: {coin.quoteAsset}</p>
       <p>Active Status: {coin.active ? "🟢 Active" : "🔴 Inactive"}</p>
       <p>Summary Last Updated: {formatDateTime(coin.summaryUpdatedAt)}</p>
 
@@ -66,11 +65,11 @@ function CoinDetail() {
           gap: "15px",
         }}
       >
-        <div>**Last Price:** {formatCurrency(coin.lastPrice)}</div>
-        <div>**24h Volume:** {formatCurrency(coin.volume24h)}</div>
-        <div>**24h High:** {formatCurrency(coin.high24h)}</div>
-        <div>**24h Low:** {formatCurrency(coin.low24h)}</div>
-        <div>**24h Liquidity:** {formatCurrency(coin.liquidity24h)}</div>
+        <div>Last Price: {formatCurrency(coin.lastPrice)}</div>
+        <div>24h Volume: {formatCurrency(coin.volume24h)}</div>
+        <div>24h High: {formatCurrency(coin.high24h)}</div>
+        <div>24h Low: {formatCurrency(coin.low24h)}</div>
+        <div>Liquidity: {formatCurrency(coin.liquidity24h)}</div>
       </div>
 
       <hr style={{ margin: "20px 0" }} />
