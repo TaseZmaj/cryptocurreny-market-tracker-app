@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @SpringBootApplication
 @RequiredArgsConstructor
+// jacoo test
 public class CryptocurrencyAnalysisAppApplication {
 
     public static void main(String[] args) {
