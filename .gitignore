@@ -34,3 +34,12 @@ Thumbs.db
 *.env.local
 .env.test
 .env.production
+
+# Microservices
+# ==========================
+microservices/*/venv/
+microservices/*/__pycache__/
+microservices/*/*.pyc
+microservices/*/*.pyo
+microservices/*/logs/
+microservices/*/*.log

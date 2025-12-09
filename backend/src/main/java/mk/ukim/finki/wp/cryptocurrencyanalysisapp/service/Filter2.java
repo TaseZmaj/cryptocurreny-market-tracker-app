@@ -1,8 +1,8 @@
 package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
 
 import lombok.RequiredArgsConstructor;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.HistoricalUpdateInfoDTO;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.SummaryMetricsDTO;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.PipelineDTOs.HistoricalUpdateInfoDTO;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.PipelineDTOs.SummaryMetricsDTO;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.HistoricalData;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.AssetSummary;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.Symbol;

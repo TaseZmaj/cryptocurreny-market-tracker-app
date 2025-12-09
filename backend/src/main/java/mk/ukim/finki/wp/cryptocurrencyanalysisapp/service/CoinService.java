@@ -31,8 +31,8 @@ public class CoinService {
         // --- ЧЕКОР 1: Најди Symbol (Користи го CoinGecko ID) ---
         // Потребно е да го промениш SymbolRepository за да најдеш по ID, или да го мапираш
         // URL параметарот (BTC) на CoinGecko ID
-        Symbol symbol = symbolRepository.findById(coinGeckoId) // Наоѓање по ID (пр. "bitcoin")
-                .orElseThrow(() -> new RuntimeException("Coin not found: " + coinGeckoId));
+            Symbol symbol = symbolRepository.findById(coinGeckoId) // Наоѓање по ID (пр. "bitcoin")
+                    .orElseThrow(() -> new RuntimeException("Coin not found: " + coinGeckoId));
 
         // --- ЧЕКОР 2: Најди AssetSummary ---
         // AssetSummary користи CoinGecko ID како свое ID.

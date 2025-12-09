@@ -22,6 +22,7 @@ class AnalyzeRequest(BaseModel):
     candles: List[Candle]
 
 
+# Тест класа за да се осигураме дека API работи
 @app.get("/")
 def read_root():
     return {"message": "Technical analysis API is running"}

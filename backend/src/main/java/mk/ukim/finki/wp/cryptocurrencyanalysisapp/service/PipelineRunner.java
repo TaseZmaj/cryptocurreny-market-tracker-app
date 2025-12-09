@@ -2,7 +2,7 @@ package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
 
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.HistoricalUpdateInfoDTO;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.PipelineDTOs.HistoricalUpdateInfoDTO;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.Symbol;
 import org.springframework.stereotype.Service;
 
@@ -18,8 +18,8 @@ public class PipelineRunner {
     private final Filter2 filter2;
     private final Filter3 filter3;
 
-
-    @PostConstruct
+// Temporarily disabled while testing
+//    @PostConstruct
     public void runPipeline() {
         Instant start = Instant.now();   // start timer
 

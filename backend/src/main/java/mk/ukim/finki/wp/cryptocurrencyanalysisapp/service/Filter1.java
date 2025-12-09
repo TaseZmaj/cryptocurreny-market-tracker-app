@@ -1,6 +1,6 @@
 package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
 
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.RawSymbolDTO;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.PipelineDTOs.RawSymbolDTO;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.Symbol;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.SymbolRepository;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.TransformationUtils;

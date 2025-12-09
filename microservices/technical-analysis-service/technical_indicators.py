@@ -81,15 +81,13 @@ def calculate_indicators(df: pd.DataFrame) -> pd.DataFrame:
 
     return df
 
-
 def generate_signal(df: pd.DataFrame) -> str:
     """
     Земаме последен ред и правиме едноставен BUY/SELL/HOLD сигнал.
-    Тука можеш после да си играш и да го подобруваш.
     """
     last = df.iloc[-1]
 
-    # Eдноставни правила (пример, не е "свети грал" 🙂)
+    # Eдноставни правила
     if (
         last["close"] > last["sma_20"]     # цена над SMA
         and last["rsi"] < 70              # не е overbought
@@ -104,6 +102,7 @@ def generate_signal(df: pd.DataFrame) -> str:
         return "SELL"
 
     return "HOLD"
+
 def analyze_timeframes(df: pd.DataFrame):
     """
     Очекува df со колони: 'timestamp', 'open', 'high', 'low', 'close', 'volume'

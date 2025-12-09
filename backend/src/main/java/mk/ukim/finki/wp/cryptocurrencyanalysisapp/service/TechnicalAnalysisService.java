@@ -1,8 +1,8 @@
 package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
 
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.dto.AnalyzeRequestDto;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.dto.AnalyzeResponseDto;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.dto.CandleDto;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.MicroservicesDTOs.AnalyzeRequestDto;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.MicroservicesDTOs.AnalyzeResponseDto;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.MicroservicesDTOs.CandleDto;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.HistoricalData;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.HistoricalDataRepository;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class TechnicalAnalysisService {
     private final HistoricalDataRepository historicalDataRepository;
     private final RestTemplate restTemplate;
 
-    // URL на твојот Python FastAPI сервис
+    // URL на Python FastAPI сервис
     private static final String PYTHON_API_URL = "http://localhost:8000/analyze";
 
     public TechnicalAnalysisService(HistoricalDataRepository historicalDataRepository,
@@ -37,7 +37,7 @@ public class TechnicalAnalysisService {
                 historicalDataRepository.findBySymbolIdOrderByTimestampDesc(coinGeckoId);
 
         if (history.isEmpty()) {
-            return null; // или можеш да фрлиш exception, како ти е полесно
+           throw new RuntimeException("No historical data found for symbol " + coinGeckoId);
         }
 
         // 2) Ги мапираме HistoricalData -> CandleDto (формат што го очекува Python)
