@@ -1,0 +1,7 @@
+POST http://localhost:8080/api/analysis/onchain-sentiment
+Content-Type: application/json
+
+{
+  "symbol": "BTC",
+  "text": "Investors are very bullish on Bitcoin today, price is going up and whales are buying."
+}
