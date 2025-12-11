@@ -4,9 +4,8 @@ export const formatDate = (timestamp) => {
   return new Date(timestamp).toLocaleDateString();
 };
 
-// Helper function to format numbers to two decimal places
+// TODO: FIX THE FORMAT IT DOESNT TAKE INTO ACCOUN THAT SOMETHING CAN BE WORTH 0.000001
 export const formatPrice = (price) => {
-  // Use Intl.NumberFormat for better currency formatting
   return new Intl.NumberFormat("en-US", {
     style: "currency",
     currency: "USD",
