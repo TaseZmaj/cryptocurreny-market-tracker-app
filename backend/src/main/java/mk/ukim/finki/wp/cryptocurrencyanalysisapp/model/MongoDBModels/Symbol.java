@@ -53,4 +53,6 @@ public class Symbol {
     // Data relevant to the pipeline / Filter 2
     private Instant lastDataFetchDate; // To store the last date historical data was updated (for Filter 2 check)
     private String quoteAsset; // e.g., "USD"
+
+    private String coinIconUrl;
 }

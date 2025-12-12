@@ -1,4 +1,4 @@
-package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
+package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service.Pipeline;
 
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;

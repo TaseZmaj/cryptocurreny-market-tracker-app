@@ -70,6 +70,7 @@ public class TransformationUtils {
             symbol.setMarketCapRank(new BigDecimal(raw.getRank()));
         }
         symbol.setQuoteAsset("USD");
+        symbol.setCoinIconUrl(raw.getCoinIconUrl());
 
         return symbol;
     }

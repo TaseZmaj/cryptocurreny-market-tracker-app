@@ -1,8 +1,5 @@
-import { createContext, useReducer } from "react";
-import {
-  fetchAllCoinsAsync,
-  fetchCoinByIdAsync,
-} from "../features/CoinTable/CoinsApi";
+import { createContext, useCallback, useReducer } from "react";
+import { fetchAllCoinsAsync, fetchCoinByIdAsync } from "../util/CoinsApi";
 
 const initialState = {
   coinsLoading: false,
@@ -52,7 +49,7 @@ export default function CoinsProvider({ children }) {
     dispatch,
   ] = useReducer(reducer, initialState);
 
-  async function getAllCoins() {
+  const getAllCoins = useCallback(async () => {
     dispatch({ type: "coins/loading" });
 
     try {
@@ -64,21 +61,24 @@ export default function CoinsProvider({ children }) {
         payload: err.message,
       });
     }
-  }
+  }, [dispatch]);
 
-  async function getCoinById(id) {
-    dispatch({ type: "coin/loading" });
+  const getCoinById = useCallback(
+    async (id) => {
+      dispatch({ type: "coin/loading" });
 
-    try {
-      const coin = await fetchCoinByIdAsync(id);
-      dispatch({ type: "coin/success", payload: coin });
-    } catch (err) {
-      dispatch({
-        type: "coin/failedToLoad",
-        payload: err.message,
-      });
-    }
-  }
+      try {
+        const coin = await fetchCoinByIdAsync(id);
+        dispatch({ type: "coin/success", payload: coin });
+      } catch (err) {
+        dispatch({
+          type: "coin/failedToLoad",
+          payload: err.message,
+        });
+      }
+    },
+    [dispatch]
+  );
 
   return (
     <CoinsContext.Provider

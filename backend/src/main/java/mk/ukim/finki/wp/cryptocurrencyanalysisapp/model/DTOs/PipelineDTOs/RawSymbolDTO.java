@@ -30,4 +30,7 @@ public class RawSymbolDTO {
     // Потребно за да се провери дали е активен/делистиран
     @JsonProperty("total_volume")
     private BigDecimal totalVolume;
+
+    @JsonProperty("image")
+    private String coinIconUrl;
 }

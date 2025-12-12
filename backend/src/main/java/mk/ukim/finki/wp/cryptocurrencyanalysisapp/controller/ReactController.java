@@ -2,7 +2,7 @@ package mk.ukim.finki.wp.cryptocurrencyanalysisapp.controller;
 
 import lombok.AllArgsConstructor;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.MicroservicesDTOs.AnalyzeResponseDto;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.CoinDetailsDTO;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.FrontendDTOs.CoinDetailsDTO;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.HistoricalData;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.Symbol;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.service.CoinService;
@@ -21,8 +21,8 @@ public class ReactController {
     private final TechnicalAnalysisService technicalAnalysisService;
 
     @GetMapping
-    public List<Symbol> getSymbols() {
-        return coinService.findAllSymbols();
+    public List<CoinDetailsDTO> getSymbols() {
+        return coinService.getCoinsDetails();
     }
 
     @GetMapping("/{coinId}")

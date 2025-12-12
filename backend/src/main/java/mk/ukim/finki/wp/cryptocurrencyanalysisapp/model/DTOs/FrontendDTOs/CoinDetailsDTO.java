@@ -1,4 +1,4 @@
-package mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs;
+package mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.FrontendDTOs;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,4 +26,7 @@ public class CoinDetailsDTO {
     private BigDecimal low24h;
     private BigDecimal liquidity24h;
     private Instant summaryUpdatedAt; // Преименувано за да се избегне конфликт со Symbol
+
+    // --- Coin icon
+    private String coinIconUrl;
 }

@@ -2,7 +2,7 @@ package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
 
 
 import lombok.RequiredArgsConstructor;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.CoinDetailsDTO;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.FrontendDTOs.CoinDetailsDTO;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.AssetSummary;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.HistoricalData;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.Symbol;
@@ -11,7 +11,12 @@ import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.HistoricalDataRepos
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.SymbolRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -21,12 +26,45 @@ public class CoinService {
     private final HistoricalDataRepository historicalDataRepository;
     private final SymbolRepository symbolRepository;
 
+    public List <CoinDetailsDTO> getCoinsDetails(){
+        List<Symbol> symbols = symbolRepository.findAll();
+        List<String> symbolIds = symbols.stream().map(Symbol::getId).toList();
 
-    public List <Symbol> findAllSymbols(){
-        return symbolRepository.findAll();
+        List<AssetSummary> assetSummaries = assetSummaryRepository.findAllById(symbolIds);
+
+        //Makes a map like this <bitcoin, assetSummary za bitcoin>,
+        Map<String, AssetSummary> summaryMap = assetSummaries.stream()
+                .collect(Collectors.toMap(AssetSummary::getCoinId, Function.identity()));
+
+        List<CoinDetailsDTO> result = new ArrayList<>();
+        for (Symbol symbol : symbols){
+            AssetSummary coinSummary = summaryMap.get(symbol.getId());
+
+            if(coinSummary == null) continue;
+
+            result.add(new CoinDetailsDTO(
+                    symbol.getId(),
+                    symbol.getSymbol(),
+                    symbol.getName(),
+                    symbol.getMarketCapRank().intValue(), // Конвертирање во int/Integer
+                    symbol.getQuoteAsset(),
+                    symbol.getActive(),
+
+                    coinSummary.getLastPrice(),
+                    coinSummary.getVolume24h(),
+                    coinSummary.getHigh24h(),
+                    coinSummary.getLow24h(),
+                    coinSummary.getLiquidity24h(),
+                    coinSummary.getUpdatedAt(),
+
+                    symbol.getCoinIconUrl()
+            ));
+        }
+
+        return result;
     }
 
-    public CoinDetailsDTO  getCoinDetails(String coinGeckoId){
+    public CoinDetailsDTO getCoinDetails(String coinGeckoId){
 
         // --- ЧЕКОР 1: Најди Symbol (Користи го CoinGecko ID) ---
         // Потребно е да го промениш SymbolRepository за да најдеш по ID, или да го мапираш
@@ -54,7 +92,9 @@ public class CoinService {
                 summary.getHigh24h(),
                 summary.getLow24h(),
                 summary.getLiquidity24h(),
-                summary.getUpdatedAt()
+                summary.getUpdatedAt(),
+
+                symbol.getCoinIconUrl()
         );
 
     }

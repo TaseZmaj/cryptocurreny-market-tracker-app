@@ -1,4 +1,4 @@
-package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
+package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service.Pipeline;
 
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.PipelineDTOs.HistoricalUpdateInfoDTO;

@@ -3,7 +3,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 
-export default function SearchInput({ query, queryFunc, sx = {} }) {
+export default function SearchInput({ query, setQuery, sx }) {
   const [focused, setFocused] = useState(false);
   const { palette } = useTheme();
   const { mode } = useColorScheme();
@@ -62,7 +62,7 @@ export default function SearchInput({ query, queryFunc, sx = {} }) {
         },
       }}
       value={query}
-      onChange={(e) => queryFunc(e.target.value)}
+      onChange={(e) => setQuery(e.target.value)}
     ></TextField>
   );
 }
