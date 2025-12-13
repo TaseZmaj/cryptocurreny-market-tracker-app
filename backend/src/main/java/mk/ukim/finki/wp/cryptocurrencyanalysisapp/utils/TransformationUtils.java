@@ -71,7 +71,6 @@ public class TransformationUtils {
         }
         symbol.setQuoteAsset("USD");
         symbol.setCoinIconUrl(raw.getCoinIconUrl());
-
         return symbol;
     }
 }

@@ -19,7 +19,7 @@ public class PipelineRunner {
     private final Filter3 filter3;
 
 // Temporarily disabled while testing
-//    @PostConstruct
+    @PostConstruct
     public void runPipeline() {
         Instant start = Instant.now();   // start timer
 
