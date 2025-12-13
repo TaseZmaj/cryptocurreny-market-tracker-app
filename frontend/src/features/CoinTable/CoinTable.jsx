@@ -23,9 +23,11 @@ import { useColorScheme } from "@mui/material/styles";
 import useCoins from "../../hooks/useCoins.js";
 import { tableQuery } from "./tableQuery.js";
 import { FormControlLabel, Switch, Tooltip } from "@mui/material";
+import MessageBox from "./MessageBox.jsx";
+import LoadingTableCell from "../../components/LoadingTableCell.jsx";
 import { formatCryptoPrice } from "../../util/stringFormatting.js";
 import { blue } from "@mui/material/colors";
-import MessageBox from "./MessageBox.jsx";
+import { useNavigate } from "react-router-dom";
 
 export default function CoinTable() {
   const { coins, coinsLoading, coinsError, getAllCoins } = useCoins();
@@ -38,8 +40,8 @@ export default function CoinTable() {
 
   // MUI table state --------------------------------
   const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("calories");
-  const [selected, setSelected] = useState([]);
+  const [orderBy, setOrderBy] = useState("marketCapRank");
+  // const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -51,33 +53,6 @@ export default function CoinTable() {
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
-  //No need for this - it is for the check functionality
-  // const handleSelectAllClick = (event) => {
-  //   if (event.target.checked) {
-  //     const newSelected = rows.map((n) => n.id);
-  //     setSelected(newSelected);
-  //     return;
-  //   }
-  //   setSelected([]);
-  // };
-  // const handleClick = (event, id) => {
-  //   const selectedIndex = selected.indexOf(id);
-  //   let newSelected = [];
-
-  //   if (selectedIndex === -1) {
-  //     newSelected = newSelected.concat(selected, id);
-  //   } else if (selectedIndex === 0) {
-  //     newSelected = newSelected.concat(selected.slice(1));
-  //   } else if (selectedIndex === selected.length - 1) {
-  //     newSelected = newSelected.concat(selected.slice(0, -1));
-  //   } else if (selectedIndex > 0) {
-  //     newSelected = newSelected.concat(
-  //       selected.slice(0, selectedIndex),
-  //       selected.slice(selectedIndex + 1)
-  //     );
-  //   }
-  //   setSelected(newSelected);
-  // };
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -95,15 +70,14 @@ export default function CoinTable() {
 
   //On mount - fetch all coins
   useEffect(() => {
-    getAllCoins();
-  }, [getAllCoins]);
+    if (coins.length === 0) getAllCoins();
+  }, [getAllCoins, coins.length]);
 
   //On change of the input - set the filteredCoins
   useEffect(() => {
     const timer = setTimeout(() => {
       tableQuery(query, stableCoins, setFilteredCoins);
-    }, 300);
-
+    }, 225);
     return () => clearTimeout(timer);
   }, [query, stableCoins]);
 
@@ -122,18 +96,19 @@ export default function CoinTable() {
   }, [stableCoins]);
   // ------------------------------------------------------------------------------
 
-  const visibleRows = useMemo(() => {
-    const dataToShow =
-      filteredCoins.length || query ? filteredCoins : stableCoins;
+  const sortedCoins = useMemo(() => {
+    const data = filteredCoins.length || query ? filteredCoins : stableCoins;
+    return [...data].sort(getComparator(order, orderBy));
+  }, [filteredCoins, stableCoins, order, orderBy, query]);
 
-    return [...dataToShow]
-      .sort(getComparator(order, orderBy))
-      .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage);
-  }, [filteredCoins, stableCoins, order, orderBy, page, rowsPerPage, query]);
+  const visibleRows = useMemo(() => {
+    return sortedCoins.slice(
+      page * rowsPerPage,
+      page * rowsPerPage + rowsPerPage
+    );
+  }, [sortedCoins, page, rowsPerPage]);
 
   //Mandatory todos:
-  // TODO: Implement skeleton loading
-  // TODO: Complete the MessageBox component and center it in the middle of the table
   // TODO: Implement the different buttons - columns, filters, density and refresh
 
   //Optional:
@@ -165,6 +140,7 @@ export default function CoinTable() {
       >
         <TableContainer
           sx={{
+            // overflow: coinsError ? "hidden" : "auto",
             borderBottom:
               mode === "light" ? "none" : `1px solid ${palette.grey[800]}`,
           }}
@@ -179,7 +155,7 @@ export default function CoinTable() {
             stickyHeader
           >
             <EnhancedTableHead
-              numSelected={selected.length}
+              // numSelected={selected.length}
               order={order}
               orderBy={orderBy}
               onRequestSort={handleRequestSort}
@@ -190,61 +166,101 @@ export default function CoinTable() {
 
             <TableBody>
               {/* All coins loading */}
-              {!coins && coinsLoading && !coinsError ? null : null}
-
-              {/* All coins error */}
-              {
-                /*!coins*/ !coinsLoading && coinsError ? (
-                  <TableRow
-                    tabIndex={-1}
-                    sx={{
-                      border: "none",
-                      height: "100%",
-                    }}
-                  >
-                    <TableCell
-                      colSpan={headCells.length}
+              {coinsLoading && !coinsError
+                ? Array.from({ length: 10 }).map((_el, i) => (
+                    <TableRow
+                      key={i}
+                      tabIndex={-1}
+                      slotprops={{
+                        popper: {
+                          modifiers: [
+                            {
+                              name: "offset",
+                              options: {
+                                offset: [0, -14],
+                              },
+                            },
+                          ],
+                        },
+                      }}
                       sx={{
                         border: "none",
-                        color:
-                          mode === "light"
-                            ? palette.text.primary
-                            : palette.common.white,
+                        cursor: "pointer",
+                        height: "58px",
+                        "& td": {
+                          borderBottom:
+                            mode === "light"
+                              ? `1px solid ${palette.divider}`
+                              : `1px solid ${palette.grey[800]}`,
+                        },
                       }}
                     >
-                      <Box
-                        sx={{
-                          width: "100%",
-                          // height: `calc(100vh - ${topBarHeight} - ${footerHeight} - 600px)`,
-                          height: "100%",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                        }}
-                      ></Box>
+                      {headCells.map((_el, i) => (
+                        <TableCell
+                          key={i}
+                          scope="row"
+                          sx={{
+                            width: "36px",
+                            height: "25px",
+                            color:
+                              mode === "light"
+                                ? palette.text.primary
+                                : palette.common.white,
+                          }}
+                        >
+                          {/* Loading gray box */}
+                          <LoadingTableCell />
+                        </TableCell>
+                      ))}
+                    </TableRow>
+                  ))
+                : null}
+
+              {/* All coins error */}
+              {!coinsLoading && coinsError ? (
+                <TableRow
+                  tabIndex={-1}
+                  sx={{
+                    border: "none",
+                    height: "100%",
+                  }}
+                >
+                  <TableCell
+                    colSpan={headCells.length}
+                    sx={{
+                      border: "none",
+                      color:
+                        mode === "light"
+                          ? palette.text.primary
+                          : palette.common.white,
+                    }}
+                  >
+                    <Box
+                      sx={{
+                        width: "100%",
+                        height: `calc(100vh - ${topBarHeight} - ${footerHeight} - 260px)`,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                    >
                       <MessageBox
                         type="error"
                         title="Error!"
                         buttonType="refresh"
+                        onClickFunc={getAllCoins}
                       >
                         {coinsError}
                       </MessageBox>
-                    </TableCell>
-                  </TableRow>
-                ) : null
-              }
+                    </Box>
+                  </TableCell>
+                </TableRow>
+              ) : null}
 
               {/* Coins table display */}
               {coins && !coinsLoading && !coinsError
                 ? visibleRows.map((coin) => {
-                    return (
-                      <CoinRow
-                        key={coin.coinId}
-                        coin={coin}
-                        mode={mode}
-                        palette={palette}
-                      />
-                    );
+                    return <CoinRow key={coin.coinId} coin={coin} />;
                   })
                 : null}
 
@@ -397,14 +413,19 @@ function EnhancedTableHead({ order, orderBy, onRequestSort }) {
   );
 }
 
-const CoinRow = memo(function CoinRow({ coin, mode, palette }) {
+const CoinRow = memo(function CoinRow({ coin }) {
+  const { palette } = useTheme();
+  const { mode } = useColorScheme();
+  const navigate = useNavigate();
+
   return (
     <Tooltip
-      key={coin.coinId}
+      enterDelay={300}
       title={`Click for more info about ${coin.name} - ${coin.symbol}`}
       placement="top"
     >
       <TableRow
+        onClick={() => navigate(`/coins/${coin.coinId}`)}
         tabIndex={-1}
         slotprops={{
           popper: {
@@ -443,6 +464,7 @@ const CoinRow = memo(function CoinRow({ coin, mode, palette }) {
         >
           {coin.marketCapRank}
         </TableCell>
+
         <TableCell
           align="left"
           sx={{
@@ -453,7 +475,7 @@ const CoinRow = memo(function CoinRow({ coin, mode, palette }) {
           <Box
             sx={{
               display: "flex",
-              flexDireciton: "row",
+              flexDirection: "row",
               alignItems: "center",
             }}
           >
@@ -464,9 +486,11 @@ const CoinRow = memo(function CoinRow({ coin, mode, palette }) {
               height={27}
               style={{ borderRadius: "50%", marginRight: "10px" }}
             />
+
             <Typography fontWeight={500}>{coin.name}</Typography>
           </Box>
         </TableCell>
+
         <TableCell
           align="left"
           sx={{
@@ -476,6 +500,7 @@ const CoinRow = memo(function CoinRow({ coin, mode, palette }) {
         >
           {coin.symbol}
         </TableCell>
+
         <TableCell
           align="right"
           sx={{

@@ -55,10 +55,11 @@ export default function CoinsProvider({ children }) {
     try {
       const coins = await fetchAllCoinsAsync();
       dispatch({ type: "coins/success", payload: coins });
-    } catch (err) {
+    } catch {
       dispatch({
         type: "coins/failedToLoad",
-        payload: err.message,
+        payload:
+          "There was an error while trying to fetch coins from the database.",
       });
     }
   }, [dispatch]);

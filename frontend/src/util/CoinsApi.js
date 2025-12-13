@@ -11,7 +11,7 @@ export async function fetchAllCoinsAsync() {
 export async function fetchCoinByIdAsync(coinId) {
   const apiEndpoint24hData = import.meta.env.VITE_APP_API_URL + `/${coinId}`;
   const apiEndpointOHLCVData =
-    import.meta.env.VITE_APP_API_URL_OHLCV + `/${coinId}/history`;
+    import.meta.env.VITE_APP_API_URL + `/${coinId}/history`;
 
   const [res24h, resOHLCV] = await Promise.all([
     fetch(apiEndpoint24hData),
@@ -30,10 +30,30 @@ export async function fetchCoinByIdAsync(coinId) {
     );
   }
 
-  const [data24h, dataOHLCV] = await Promise.all([
-    res24h.json(),
-    resOHLCV.json(),
-  ]);
+  let data24h;
+  try {
+    data24h = await res24h.json();
+  } catch {
+    throw new Error(
+      `Failed to parse JSON from 24h API response for coin ${coinId}`
+    );
+  }
 
-  return { data24h, dataOHLCV };
+  let dataOHLCV = null;
+  if (resOHLCV.ok) {
+    try {
+      dataOHLCV = await resOHLCV.json();
+    } catch {
+      throw new Error(
+        `Failed to parse OHLCV JSON for coin ${coinId}, setting null`
+      );
+    }
+  }
+
+  // const [data24h, dataOHLCV] = await Promise.all([
+  //   res24h.json(),
+  //   resOHLCV.json(),
+  // ]);
+
+  return { ...data24h, dataOHLCV: dataOHLCV };
 }

@@ -40,7 +40,7 @@ function Navbar({ title = "true", sx }) {
               justifyContent: "center",
             }}
           >
-            <Link to="/coins">
+            <Link to="/coins" style={{ marginTop: "2px" }}>
               <img
                 src={logo}
                 width={36}
