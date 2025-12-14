@@ -12,7 +12,7 @@ import sys
 # 1. КОНСТАНТИ
 # --------------------------------------------------------
 
-# ❗ ЗАДОЛЖИТЕЛНО ПРОМЕНИ: Вашиот MongoDB URI
+
 MONGO_URI = "mongodb+srv://kristijanjovik_db_user:Z7ElsP3JsscmHMrj@cluster0.pkcuhbd.mongodb.net/"
 DATABASE_NAME = "crypto_db"
 COLLECTION_NAME = "historical_data"
