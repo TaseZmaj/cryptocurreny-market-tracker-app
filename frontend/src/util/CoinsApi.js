@@ -57,3 +57,16 @@ export async function fetchCoinByIdAsync(coinId) {
 
   return { ...data24h, dataOHLCV: dataOHLCV };
 }
+
+// export async function fetchOnlyAssetSummaryById(coinId) {
+//   const apiEndpoint24hData = import.meta.env.VITE_APP_API_URL + `/${coinId}`;
+
+//   const res = await fetch(apiEndpoint24hData);
+//   if (!res.ok) {
+//     throw new Error(
+//       `Failed to fetch coins from API - url: ${apiEndpoint24hData}`
+//     );
+//   }
+
+//   return res.json();
+// }

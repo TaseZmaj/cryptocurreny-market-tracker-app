@@ -25,7 +25,7 @@ import { tableQuery } from "./tableQuery.js";
 import { FormControlLabel, Switch, Tooltip } from "@mui/material";
 import MessageBox from "./MessageBox.jsx";
 import LoadingTableCell from "../../components/LoadingTableCell.jsx";
-import { formatCryptoPrice } from "../../util/stringFormatting.js";
+import { formatCryptoPrice } from "../../util/stringUtils.js";
 import { blue } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 
