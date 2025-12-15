@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import useCoins from "../hooks/useCoins";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import LoadingTableCell from "../components/LoadingTableCell";
 import RankTag from "../features/SingleCoinDisplay/RankTag.jsx";
 import { getSymbolFontSize, getTitleFontSize } from "../util/stringUtils.js";
@@ -21,14 +21,20 @@ import InfoIconTooltip from "../features/SingleCoinDisplay/InfoIconTooltip.jsx";
 import ChartDateControlButton from "../features/SingleCoinDisplay/ChartDateControlButton.jsx";
 import useWindowWidth from "../hooks/useWindowWidth.js";
 import VolumeChart from "../features/SingleCoinDisplay/Charts/VolumeChart.jsx";
+import SquareButton from "../components/SquareButton.jsx";
+import { getCsvById } from "../util/CoinsApi.js";
+import SingleCoinErrorPage from "./SingleCoinErrorPage.jsx";
 
 function CoinDetails() {
   const { palette } = useTheme();
   const { pathname } = useLocation();
   const { mode } = useColorScheme();
   const width = useWindowWidth();
+  // const [invalidCoinUrl, setInvalidCoinUrl] = useState(null);
 
-  const { coin, coinError, coinLoading, getCoinById } = useCoins();
+  //TODO: IMPLEMENT THE COIN NOT FOUND ERROR PAGE - I COULDNT GET IT TO WORK :[
+
+  const { /* coins ,*/ coin, coinError, coinLoading, getCoinById } = useCoins();
 
   const titleRef = useRef(null);
   const [wrapped, setWrapped] = useState(false);
@@ -80,25 +86,6 @@ function CoinDetails() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [datePicker, coin]);
 
-  //For "react-financial-charts" chart-----------------------------
-  // const containerRef = useRef(null);
-  // const [size, setSize] = useState({ width: 0, height: 0 });
-  // useEffect(() => {
-  //   if (!containerRef.current) return;
-  //   const observer = new ResizeObserver((entries) => {
-  //     for (let entry of entries) {
-  //       const { width, height } = entry.contentRect;
-  //       setSize({ width, height });
-  //     }
-  //   });
-
-  //   observer.observe(containerRef.current);
-
-  //   return () => observer.disconnect();
-  // }, []);
-  // console.log("chartContainer", containerRef.current);
-  //---------------------------------------------------------------
-
   useEffect(() => {
     if (!coin || String(coin.coinId) !== String(coinIdFromPathname)) {
       getCoinById(coinIdFromPathname);
@@ -118,19 +105,21 @@ function CoinDetails() {
   }, [coin?.name]);
 
   //Mandatory TODOS:
-  //TODO: Add the full content of the page
-  //TODO: EXPORT .CSV OPTION
-  //TODO: Read the SRS documentation to see if you missed anything
   //TODO: Add the Home screen error page
-  //CHART------------------------------------------------------------
-  //TODO: Fix Y-axis on chart (format the days to be like Coingecko)
-  //TODO: Make the candles bigger on YEAR TO DATE
-  //TODO: Implement filtering logic (1w, 1m, 1year, year to date)
+  //Other TODOS:
   //TODO: Fix the reset zoom button - KOCKASTO KOPCHE napravi i stavi go najlevo maybe?
-
-  //Optional TODOS:
   //TODO: Add mobile responsivity
   //TODO: Add animations
+
+  // if (
+  //   !coinLoading &&
+  //   (coinError || !coin || coin?.coinId !== coinIdFromPathname)
+  // ) {
+  //   return <SingleCoinErrorPage coinId={coinIdFromPathname} />;
+  // }
+
+  // if (!coin || coinError)
+  //   return <SingleCoinErrorPage coinId={coinIdFromPathname} />;
 
   return (
     <Box
@@ -152,7 +141,9 @@ function CoinDetails() {
           p: "0 30px 20px 30px",
           boxSizing: "border-box",
           // backgroundColor: palette.grey[300],
-          borderRight: `1px solid ${palette.divider}`,
+          borderRight: `1px solid ${
+            mode === "light" ? palette.divider : palette.grey[900]
+          }`,
         }}
       >
         {/* Title and rank */}
@@ -179,7 +170,9 @@ function CoinDetails() {
               justifyContent: "center",
               alignItems: "center",
               pb: "10px",
-              borderBottom: `1px solid ${palette.divider}`,
+              borderBottom: `1px solid ${
+                mode === "light" ? palette.divider : palette.grey[800]
+              }`,
             }}
           >
             {coin && !coinLoading && !coinError ? (
@@ -206,7 +199,10 @@ function CoinDetails() {
                     ref={titleRef}
                     variant="h3"
                     sx={{
-                      color: palette.text.primary,
+                      color:
+                        mode === "light"
+                          ? palette.text.primary
+                          : palette.common.white,
                       // whiteSpace: "nowrap",
                       // overflow: "hidden",
                       // textOverflow: "ellipsis",
@@ -224,7 +220,10 @@ function CoinDetails() {
                     fontSize={getSymbolFontSize(coin.symbol)}
                     sx={{
                       whiteSpace: "nowrap",
-                      color: palette.text.secondary,
+                      color:
+                        mode === "light"
+                          ? palette.text.secondary
+                          : palette.grey[200],
                       ml: "4px",
                       lineHeight: 1,
                     }}
@@ -307,7 +306,13 @@ function CoinDetails() {
             >
               <Typography
                 variant="h4"
-                sx={{ mb: "6px", color: palette.text.primary }}
+                sx={{
+                  mb: "6px",
+                  color:
+                    mode === "light"
+                      ? palette.text.primary
+                      : palette.common.white,
+                }}
               >
                 24h Data:
               </Typography>
@@ -415,26 +420,31 @@ function CoinDetails() {
             </ChartDateControlButton>
             <Box
               sx={{
-                marginLeft: "auto",
+                ml: "auto",
                 height: "100%",
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                mr: "26px",
               }}
             >
               <Typography
                 variant="body1"
                 sx={{
+                  pt: "5px",
+                  pr: "15px",
                   color:
-                    mode === "light"
-                      ? palette.text.primary
-                      : palette.common.white,
+                    mode === "light" ? palette.text.primary : palette.grey[500],
                 }}
               >
                 OHLCV - Data last updated: &nbsp;
                 {coin ? formatDate(coin?.summaryUpdatedAt) : ""}
               </Typography>
+              <SquareButton
+                onClick={() => {
+                  getCsvById(coin?.coinId);
+                }}
+                type="exportToCsvOhlcv"
+              ></SquareButton>
             </Box>
           </Box>
 
@@ -472,7 +482,7 @@ function CoinDetails() {
                   height: "64px",
                   display: "flex",
                   flexDirection: "row",
-                  justifyContent: "center",
+                  justifyContent: "flex-start",
                   // backgroundColor: palette.grey[400],
                 }}
               >
@@ -513,13 +523,13 @@ function CoinDetails() {
                     ) : null}
                   </Typography>
                 </Box>
-                <Box
+                {/* <Box
                   sx={{
                     ml: "auto",
                   }}
                 >
                   <Typography>Refresh Zoom</Typography>
-                </Box>
+                </Box> */}
               </Box>
               {formattedCoinOhlcvData &&
               !coinLoading &&
@@ -582,7 +592,7 @@ function CoinDetails() {
                       color:
                         mode === "light"
                           ? palette.text.primary
-                          : palette.grey[200],
+                          : palette.grey[500],
                     }}
                   >
                     {formattedCoinOhlcvData.length > 0 &&

@@ -75,7 +75,7 @@ export default function VolumeChart({ formattedCoinOhlcvData, sx = {} }) {
   const chartSetting = {
     yAxis: [
       {
-        width: 65,
+        width: 70,
         position: "right",
         valueFormatter: formatCryptoPriceChart,
       },
@@ -95,10 +95,10 @@ export default function VolumeChart({ formattedCoinOhlcvData, sx = {} }) {
       <BarChart
         sx={{
           "& .MuiChartsAxis-root line": {
-            stroke: mode === "light" ? "rgba(0,0,0,0.6)" : palette.common.white,
+            stroke: mode === "light" ? "rgba(0,0,0,0.6)" : palette.grey[300],
           },
           "& .MuiChartsAxis-root text": {
-            fill: mode === "light" ? "rgba(0,0,0,0.6)" : palette.common.white,
+            fill: mode === "light" ? "rgba(0,0,0,0.6)" : palette.grey[300],
           },
         }}
         dataset={dataToDisplay}

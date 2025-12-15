@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
-import { Typography, useTheme } from "@mui/material";
+import { Typography, useColorScheme, useTheme } from "@mui/material";
 import {
   formatCryptoPriceChart,
   formatIsoToYMD,
@@ -17,6 +17,7 @@ function CandlestickChart({
   const seriesRef = useRef(null);
 
   const { palette } = useTheme();
+  const { mode } = useColorScheme();
 
   // Visual marquee selection box
   const [selection, setSelection] = useState({
@@ -68,7 +69,9 @@ function CandlestickChart({
       },
       grid: {
         vertLines: { visible: false },
-        horzLines: { color: palette.divider || "#ccc" },
+        horzLines: {
+          color: mode === "light" ? palette.grey[200] : palette.grey[900],
+        },
       },
       crosshair: { mode: 1 },
       rightPriceScale: {
@@ -257,6 +260,32 @@ function CandlestickChart({
     // });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataToDisplay]);
+
+  // ======================================================
+  //3️⃣ THEME CHANGE
+  //Since this is a .js library, theme doesn't qite work
+  //without this useEffect
+  // ======================================================
+  useEffect(() => {
+    if (!chartInstanceRef.current) return;
+    chartInstanceRef.current.applyOptions({
+      grid: {
+        vertLines: { visible: false },
+        horzLines: {
+          color: mode === "light" ? palette.grey[200] : palette.grey[900],
+        },
+      },
+      layout: {
+        textColor: mode === "light" ? "rgba(0,0,0,0.6)" : palette.grey[300],
+      },
+      rightPriceScale: {
+        borderColor: mode === "light" ? "rgba(0,0,0,0.6)" : palette.grey[300],
+      },
+      timeScale: {
+        borderColor: mode === "light" ? "rgba(0,0,0,0.6)" : palette.grey[300],
+      },
+    });
+  }, [mode, palette]);
 
   return (
     // The container MUST have position: relative for absolute child positioning

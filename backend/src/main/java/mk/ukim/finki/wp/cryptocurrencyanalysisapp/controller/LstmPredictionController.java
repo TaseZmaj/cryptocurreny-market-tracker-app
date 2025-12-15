@@ -7,10 +7,7 @@ import mk.ukim.finki.wp.cryptocurrencyanalysisapp.service.LstmPredictionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/crypto")
@@ -18,13 +15,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class LstmPredictionController {
     private final LstmPredictionService lstmPredictionService;
 
-    @GetMapping ("/prediction/{symoblId}")
-    public ResponseEntity<?> getPricePrediction(@PathVariable String symoblId) {
-        LstmPredictionResponseDto result = lstmPredictionService.getPrediction(symoblId);
+    @GetMapping("/prediction/{symbolId}")
+    public ResponseEntity<?> getPricePrediction(@PathVariable String symbolId) {
+        LstmPredictionResponseDto result = lstmPredictionService.getPrediction(symbolId);
 
         if (result == null) {
-            ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body("Не може да се " +
-                    "добие предвидување за LSTM моделот.");
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                    .body("Не може да се добие предвидување за LSTM моделот.");
         }
 
         return ResponseEntity.ok(result);

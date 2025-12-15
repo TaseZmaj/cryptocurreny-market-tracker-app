@@ -26,14 +26,24 @@ function PriceDataCard({ type }) {
         justifyContent: "flex-end",
         textAlign: "center",
         borderBottom: `1px solid ${
-          mode === "light" ? palette.divider : palette.common.white
+          mode === "light" ? palette.divider : palette.grey[800]
         }`,
-        color: mode === "light" ? palette.text.primary : palette.common.white,
+
         // m: "18px 0",
       }}
     >
-      <Box sx={{ display: "flex", flexDirection: "row" }}>
-        <Typography variant="body1">
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "row",
+        }}
+      >
+        <Typography
+          variant="body1"
+          sx={{
+            color: mode === "light" ? palette.text.primary : palette.grey[100],
+          }}
+        >
           {type === "lastPrice24h" ? "Last Price" : null}
           {type === "highPrice24h" ? "24h High Price" : null}
           {type === "lowPrice24h" ? "24h Low Price" : null}
@@ -46,6 +56,8 @@ function PriceDataCard({ type }) {
         <Typography
           variant="h5"
           sx={{
+            color:
+              mode === "light" ? palette.text.primary : palette.common.white,
             fontWeight: "600",
             fontSize: type === "lastPrice24h" && "2.1rem",
           }}

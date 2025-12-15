@@ -25,11 +25,13 @@ function RankTag({ sx }) {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          // boxSizing: "border-box",
           backgroundColor:
-            mode === "light" ? darkBackgroundColor : palette.common.white,
+            mode === "light" ? darkBackgroundColor : palette.grey[900],
+          color: palette.common.white,
+          boxSizing: "border-box",
+          border: `1px solid ${mode === palette.grey[500]}`,
           borderRadius: "4px",
-          p: "0 10px",
+          p: "0 13px",
           ...sx,
         }}
       >

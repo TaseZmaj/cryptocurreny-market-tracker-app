@@ -5,6 +5,7 @@ import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.PipelineDTOs.Histor
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.HistoricalData;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.HistoricalDataRepository;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.ApiFetchingUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
@@ -17,11 +18,18 @@ import java.util.concurrent.Semaphore;
 import static mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.TransformationUtils.transformKlinesToHistoricalData;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class Filter3 {
 
     private final HistoricalDataRepository historicalDataRepository;
     private final ApiFetchingUtils apiFetchingUtils;
+
+    @Autowired
+    public Filter3(HistoricalDataRepository historicalDataRepository, ApiFetchingUtils apiFetchingUtils, @Qualifier("filterExecutor") Executor executor) {
+        this.historicalDataRepository = historicalDataRepository;
+        this.apiFetchingUtils = apiFetchingUtils;
+        this.executor = executor;
+    }
 
     // Semaphore to limit concurrent API calls
     private static final int MAX_CONCURRENT_REQUESTS = 20;

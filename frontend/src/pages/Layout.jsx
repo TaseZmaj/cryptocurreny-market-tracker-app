@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import { Box } from "@mui/material";
 import { useTheme, useColorScheme } from "@mui/material/styles";
 import { useLocation } from "react-router";
+import ErrorPage from "./ErrorPage";
 
 function Layout() {
   const { mode } = useColorScheme();
@@ -22,6 +23,7 @@ function Layout() {
       }}
     >
       <Navbar title={pathname === "/" ? "false" : "true"} />
+
       <Box
         sx={{
           bgcolor:

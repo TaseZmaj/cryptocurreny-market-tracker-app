@@ -58,15 +58,49 @@ export async function fetchCoinByIdAsync(coinId) {
   return { ...data24h, dataOHLCV: dataOHLCV };
 }
 
-// export async function fetchOnlyAssetSummaryById(coinId) {
-//   const apiEndpoint24hData = import.meta.env.VITE_APP_API_URL + `/${coinId}`;
+export async function getCsvById(coinId) {
+  //OHLCV data for coin - .csv
+  const apiEndpoint =
+    import.meta.env.VITE_EXPORT_API_URL + `/coins/${coinId}/history`;
 
-//   const res = await fetch(apiEndpoint24hData);
-//   if (!res.ok) {
-//     throw new Error(
-//       `Failed to fetch coins from API - url: ${apiEndpoint24hData}`
-//     );
-//   }
+  const res = await fetch(apiEndpoint);
+  if (!res.ok) {
+    throw new Error(`Failed to get .csv from API - url: ${apiEndpoint}`);
+  }
 
-//   return res.json();
-// }
+  const blob = await res.blob();
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+
+  const filename = `${coinId}OhlcvData.csv`;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+export async function getCsvAll24hData() {
+  //All 24h data's - .csv
+  const apiEndpoint = import.meta.env.VITE_EXPORT_API_URL + "/coins";
+
+  const res = await fetch(apiEndpoint);
+  if (!res.ok) {
+    throw new Error(`Failed to get .csv from API - url: ${apiEndpoint}`);
+  }
+
+  const blob = await res.blob();
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+
+  const filename = "coins24hData.csv";
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+}

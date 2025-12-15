@@ -9,12 +9,12 @@ import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useNavigate } from "react-router";
 
-function ErrorPage() {
+//TODO: Refactor this code so that it uses the <MessageBox> component
+
+function SingleCoinErrorPage({ coin }) {
   const { mode } = useColorScheme();
   const { palette } = useTheme();
   const navigate = useNavigate();
-
-  //TODO: Refactor this code so that it uses the <MessageBox> component
 
   return (
     <Box
@@ -35,7 +35,7 @@ function ErrorPage() {
             color: mode === "light" ? palette.text.primary : palette.grey[100],
           }}
         >
-          Oops!
+          Unknown coin!
         </Typography>
         <Typography
           variant="h4"
@@ -51,9 +51,9 @@ function ErrorPage() {
               mode === "light" ? palette.text.secondary : palette.grey[400],
           }}
         >
-          The page you’re trying to access was either <b>moved</b> or{" "}
-          <b>doesn’t exist</b>. Please make sure you have the correct url
-          address and try again or feel free to go back to the Coins page.
+          {`Financial data for ${coin.coinId} doesn’t exist! 
+            However, there is data for many other interesting coins
+            on our homepage.`}
         </Typography>
         <Button
           disableElevation
@@ -68,4 +68,4 @@ function ErrorPage() {
   );
 }
 
-export default ErrorPage;
+export default SingleCoinErrorPage;

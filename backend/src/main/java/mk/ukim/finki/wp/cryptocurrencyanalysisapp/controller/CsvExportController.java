@@ -62,13 +62,13 @@ public class CsvExportController {
         StringBuilder sb = new StringBuilder();
 
         // Header (match CoinDetailsDTO fields you return to frontend)
-        sb.append("id,symbol,name,marketCapRank,quoteAsset,active,lastPrice,volume24h,high24h,low24h,liquidity24h,updatedAt,coinIconUrl\n");
+        sb.append("marketCapRank,coinId,name,symbol,quoteAsset,active,lastPrice,volume24h,high24h,low24h,liquidity24h,updatedAt\n");
 
         for (CoinDetailsDTO c : coins) {
-            sb.append(csv(c.getCoinId())).append(',')
-                    .append(csv(c.getSymbol())).append(',')
+            sb.append(csv(c.getMarketCapRank())).append(',')
+                    .append(csv(c.getCoinId())).append(',')
                     .append(csv(c.getName())).append(',')
-                    .append(csv(c.getMarketCapRank())).append(',')
+                    .append(csv(c.getSymbol())).append(',')
                     .append(csv(c.getQuoteAsset())).append(',')
                     .append(csv(c.getActive())).append(',')
                     .append(csv(c.getLastPrice())).append(',')
@@ -77,7 +77,6 @@ public class CsvExportController {
                     .append(csv(c.getLow24h())).append(',')
                     .append(csv(c.getLiquidity24h())).append(',')
                     .append(csv(c.getSummaryUpdatedAt())).append(',')
-                    .append(csv(c.getCoinIconUrl()))
                     .append('\n');
         }
 

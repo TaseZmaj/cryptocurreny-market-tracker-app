@@ -9,6 +9,7 @@ import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.Symbol;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.AssetSummaryRepository;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.repository.HistoricalDataRepository;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.ApiFetchingUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -30,7 +31,7 @@ import static mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.TransformationUti
 import static mk.ukim.finki.wp.cryptocurrencyanalysisapp.utils.TransformationUtils.transformKlinesToHistoricalData;
 
 @Service
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 public class Filter2 {
 
     private final AssetSummaryRepository assetSummaryRepository;
@@ -38,8 +39,20 @@ public class Filter2 {
     private final RestTemplate restTemplate;
     private final ApiFetchingUtils apiFetchingUtils;
 
-    @Qualifier("filterExecutor")
     private final Executor executor;
+
+    @Autowired
+    public Filter2(AssetSummaryRepository assetSummaryRepository,
+                   HistoricalDataRepository historicalDataRepository,
+                   RestTemplate restTemplate,
+                   ApiFetchingUtils apiFetchingUtils,
+                   @Qualifier("filterExecutor") Executor executor) {
+        this.assetSummaryRepository = assetSummaryRepository;
+        this.historicalDataRepository = historicalDataRepository;
+        this.restTemplate = restTemplate;
+        this.apiFetchingUtils = apiFetchingUtils;
+        this.executor = executor;
+    }
 
     private static final String BINANCE_TICKER_API = "https://api.binance.com/api/v3/ticker/24hr?";
     private static final String BINANCE_KLINE_API = "https://api.binance.com/api/v3/klines";

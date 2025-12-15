@@ -28,6 +28,8 @@ import LoadingTableCell from "../../components/LoadingTableCell.jsx";
 import { formatCryptoPrice } from "../../util/stringUtils.js";
 import { blue } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
+import { getCsvAll24hData } from "../../util/CoinsApi.js";
+import SquareButton from "../../components/SquareButton.jsx";
 
 export default function CoinTable() {
   const { coins, coinsLoading, coinsError, getAllCoins } = useCoins();
@@ -60,6 +62,7 @@ export default function CoinTable() {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
+  // eslint-disable-next-line no-unused-vars
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
   };
@@ -122,10 +125,18 @@ export default function CoinTable() {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
+          justifyContent: "flex-end",
           mb: 1,
         }}
       >
-        <SearchInput query={query} setQuery={setQuery} sx={{ ml: "auto" }} />
+        <SquareButton
+          onClick={() => {
+            getCsvAll24hData();
+          }}
+          type="exportToCsv24h"
+          sx={{ width: "40px", height: "40px", mr: "11px" }}
+        ></SquareButton>
+        <SearchInput query={query} setQuery={setQuery} />
       </Box>
       <Box
         sx={{

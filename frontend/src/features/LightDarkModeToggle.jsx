@@ -13,9 +13,9 @@ function LightDarkModeToggle({ sx }) {
       sx={{
         ...sx,
         border: `1px solid ${
-          mode === "light" ? palette.common.black : palette.common.white
+          mode === "light" ? palette.common.black : palette.grey[400]
         }`,
-        color: mode === "light" ? palette.common.black : palette.common.white,
+        color: mode === "light" ? palette.common.black : palette.grey[300],
       }}
       onClick={() => setMode(mode === "light" ? "dark" : "light")}
     >
