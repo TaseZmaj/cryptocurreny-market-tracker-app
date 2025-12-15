@@ -23,4 +23,7 @@ public interface HistoricalDataRepository extends MongoRepository<HistoricalData
 
     List<HistoricalData> findBySymbolIdOrderByTimestampDesc(String symbolId);
 
+    List<HistoricalData> findTop30BySymbolIdOrderByTimestampDesc(String symbolId);
+
+
 }
