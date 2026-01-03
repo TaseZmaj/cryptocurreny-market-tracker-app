@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import useCoins from "../hooks/useCoins";
-import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import LoadingTableCell from "../components/LoadingTableCell";
 import RankTag from "../features/SingleCoinDisplay/RankTag.jsx";
 import { getSymbolFontSize, getTitleFontSize } from "../util/stringUtils.js";
@@ -22,7 +22,7 @@ import ChartDateControlButton from "../features/SingleCoinDisplay/ChartDateContr
 import useWindowWidth from "../hooks/useWindowWidth.js";
 import VolumeChart from "../features/SingleCoinDisplay/Charts/VolumeChart.jsx";
 import SquareButton from "../components/SquareButton.jsx";
-import { getCsvById } from "../util/CoinsApi.js";
+import { getCsvByIdAsync } from "../util/CoinsApi.js";
 import SingleCoinErrorPage from "./SingleCoinErrorPage.jsx";
 
 function CoinDetails() {
@@ -34,7 +34,14 @@ function CoinDetails() {
 
   //TODO: IMPLEMENT THE COIN NOT FOUND ERROR PAGE - I COULDNT GET IT TO WORK :[
 
-  const { /* coins ,*/ coin, coinError, coinLoading, getCoinById } = useCoins();
+  const {
+    coin,
+    coinError,
+    coinLoading,
+    getCoinById,
+    getCoinTechnicalAnalysisById,
+    getCoinLstmPredictionById,
+  } = useCoins();
 
   const titleRef = useRef(null);
   const [wrapped, setWrapped] = useState(false);
@@ -42,7 +49,7 @@ function CoinDetails() {
   const coinIdFromPathname = pathname.split("/").at(-1);
 
   //TOP RADIO BUTTONS LOGIC --------------------------------------
-  const [datePicker, setDatePicker] = useState("1Y"); //1W, 1M, 6M, 1Y, YTD
+  const [datePicker, setDatePicker] = useState("1M"); //1W, 1M, 6M, 1Y, YTD
   const [formattedCoinOhlcvData, setFormattedCoinOhlcvData] = useState([]);
 
   function handleFormatCoinOhlcvData() {
@@ -89,6 +96,8 @@ function CoinDetails() {
   useEffect(() => {
     if (!coin || String(coin.coinId) !== String(coinIdFromPathname)) {
       getCoinById(coinIdFromPathname);
+      getCoinTechnicalAnalysisById(coinIdFromPathname);
+      getCoinLstmPredictionById(coinIdFromPathname);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coinIdFromPathname]);
@@ -110,16 +119,6 @@ function CoinDetails() {
   //TODO: Fix the reset zoom button - KOCKASTO KOPCHE napravi i stavi go najlevo maybe?
   //TODO: Add mobile responsivity
   //TODO: Add animations
-
-  // if (
-  //   !coinLoading &&
-  //   (coinError || !coin || coin?.coinId !== coinIdFromPathname)
-  // ) {
-  //   return <SingleCoinErrorPage coinId={coinIdFromPathname} />;
-  // }
-
-  // if (!coin || coinError)
-  //   return <SingleCoinErrorPage coinId={coinIdFromPathname} />;
 
   return (
     <Box
@@ -360,7 +359,7 @@ function CoinDetails() {
         </Box>
       </Box>
 
-      {/* OHLCV DATA - CHARTS - right side */}
+      {/* OHLCV DATA - CHARTS, Technical Analysis and LSTM predictor microservices - right side */}
       <Box
         sx={{
           display: "flex",
@@ -441,7 +440,7 @@ function CoinDetails() {
               </Typography>
               <SquareButton
                 onClick={() => {
-                  getCsvById(coin?.coinId);
+                  getCsvByIdAsync(coin?.coinId);
                 }}
                 type="exportToCsvOhlcv"
               ></SquareButton>
@@ -458,7 +457,7 @@ function CoinDetails() {
               // backgroundColor: palette.grey[300],
             }}
           >
-            {/* Chart 1 */}
+            {/* OHLC Chart */}
             <Box
               // ref={containerRef}
               sx={{
@@ -543,7 +542,7 @@ function CoinDetails() {
               ) : null}
             </Box>
 
-            {/* Chart 2 */}
+            {/* Volume Chart */}
             <Box
               sx={{
                 mt: "8px",
@@ -615,6 +614,15 @@ function CoinDetails() {
                 />
               ) : null}
             </Box>
+
+            {/* Microservices data container*/}
+            <Box
+              sx={{
+                width: "100%",
+                height: "400px",
+                backgroundColor: "lightgray",
+              }}
+            ></Box>
           </Box>
         </Box>
       </Box>

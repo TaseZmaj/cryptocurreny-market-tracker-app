@@ -28,7 +28,7 @@ import LoadingTableCell from "../../components/LoadingTableCell.jsx";
 import { formatCryptoPrice } from "../../util/stringUtils.js";
 import { blue } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
-import { getCsvAll24hData } from "../../util/CoinsApi.js";
+import { getCsvAll24hDataAsync } from "../../util/CoinsApi.js";
 import SquareButton from "../../components/SquareButton.jsx";
 
 export default function CoinTable() {
@@ -131,7 +131,7 @@ export default function CoinTable() {
       >
         <SquareButton
           onClick={() => {
-            getCsvAll24hData();
+            getCsvAll24hDataAsync();
           }}
           type="exportToCsv24h"
           sx={{ width: "40px", height: "40px", mr: "11px" }}

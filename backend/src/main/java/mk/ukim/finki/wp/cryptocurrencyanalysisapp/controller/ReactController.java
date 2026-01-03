@@ -16,9 +16,7 @@ import java.util.List;
 @RestController
 @AllArgsConstructor
 public class ReactController {
-
     private final CoinService coinService;
-    private final TechnicalAnalysisService technicalAnalysisService;
 
     @GetMapping
     public List<CoinDetailsDTO> getSymbols() {
@@ -33,11 +31,5 @@ public class ReactController {
     @GetMapping("/{coinId}/history")
     public List<HistoricalData> getHistoricalData(@PathVariable String coinId) {
         return coinService.getHistoricalDataForSymbol(coinId);
-    }
-
-    // Technical Analysis via Python microservice "technical-analysis-service"
-    @GetMapping("/{coinId}/technical-analysis")
-    public AnalyzeResponseDto getTechnicalAnalysis(@PathVariable String coinId) {
-        return technicalAnalysisService.analyzeSymbol(coinId);
     }
 }

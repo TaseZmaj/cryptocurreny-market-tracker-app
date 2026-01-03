@@ -58,7 +58,30 @@ export async function fetchCoinByIdAsync(coinId) {
   return { ...data24h, dataOHLCV: dataOHLCV };
 }
 
-export async function getCsvById(coinId) {
+export async function getCsvAll24hDataAsync() {
+  //All 24h data's - .csv
+  const apiEndpoint = import.meta.env.VITE_EXPORT_API_URL + "/coins";
+
+  const res = await fetch(apiEndpoint);
+  if (!res.ok) {
+    throw new Error(`Failed to get .csv from API - url: ${apiEndpoint}`);
+  }
+
+  const blob = await res.blob();
+
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+
+  const filename = "coins24hData.csv";
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  window.URL.revokeObjectURL(url);
+}
+
+export async function getCsvByIdAsync(coinId) {
   //OHLCV data for coin - .csv
   const apiEndpoint =
     import.meta.env.VITE_EXPORT_API_URL + `/coins/${coinId}/history`;
@@ -82,25 +105,31 @@ export async function getCsvById(coinId) {
   window.URL.revokeObjectURL(url);
 }
 
-export async function getCsvAll24hData() {
-  //All 24h data's - .csv
-  const apiEndpoint = import.meta.env.VITE_EXPORT_API_URL + "/coins";
+export async function fetchCoinTechnicalAnalysisByIdAsync(coinId) {
+  const apiEndpoint =
+    import.meta.env.VITE_MICROSERVICES_API_URL +
+    `/${coinId}/technical-analysis`;
 
   const res = await fetch(apiEndpoint);
   if (!res.ok) {
-    throw new Error(`Failed to get .csv from API - url: ${apiEndpoint}`);
+    throw new Error(
+      `Failed to get the Technical Analasys for ${coinId} from API - url: ${apiEndpoint}`
+    );
   }
 
-  const blob = await res.blob();
+  return res.json();
+}
 
-  const url = window.URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
+export async function fetchCoinLSTMPredictionByIdAsync(coinId) {
+  const apiEndpoint =
+    import.meta.env.VITE_MICROSERVICES_API_URL + `/${coinId}/lstm-prediction`;
 
-  const filename = "coins24hData.csv";
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  window.URL.revokeObjectURL(url);
+  const res = await fetch(apiEndpoint);
+  if (!res.ok) {
+    throw new Error(
+      `Failed to get the LSTM Prediction for ${coinId} from API - url: ${apiEndpoint}`
+    );
+  }
+
+  return res.json();
 }
