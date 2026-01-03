@@ -9,15 +9,18 @@
     </envs>
     <option name="SDK_HOME" value="" />
     <option name="SDK_NAME" value="Python 3.14 (technical-analysis-service)" />
-    <option name="WORKING_DIRECTORY" value="C:\Users\stefa\VSCODE\PORTFOLIO\cryptocurrency-market-tracker\microservices\technical-analysis-service\venv" />
+    <option name="WORKING_DIRECTORY" value="C:\Proekti\DAS Domasna\cryptocurreny-market-tracker-app\microservices\technical-analysis-service\venv" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
+    <option name="RUN_TOOL" value="" />
     <option name="SCRIPT_NAME" value="uvicorn" />
     <option name="PARAMETERS" value="app:app" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="true" />
+
+
     <option name="REDIRECT_INPUT" value="false" />
     <option name="INPUT_FILE" value="" />
     <method v="2" />
