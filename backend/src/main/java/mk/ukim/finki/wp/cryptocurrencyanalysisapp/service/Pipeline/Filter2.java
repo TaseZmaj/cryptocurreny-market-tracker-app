@@ -91,16 +91,16 @@ public class Filter2 {
                     } else {
                         // No data → run full 10-year load
                         System.out.println("  -> Filter 2: No historical data for " + symbol.getSymbol() + " in the Database. ");
-                        System.out.println("  -> Filter 2: Initiating FULL 10-year load of OHLCV and 24h data.");
-
-                        System.out.println("    -> 24H DATA: Getting data for the last 24h for " + symbol.getSymbol());
-                        fetchAdditionalSymbolData(symbol.getId(), symbol.getSymbol());
+                        System.out.println("  -> Filter 2: Initiating FULL 10-year load of OHLCV data.");
 
                         System.out.println("    -> OHLCV DATA: Getting OHCLV data for the last 10 years for " + symbol.getSymbol());
                         fetchAndSaveFullOhlcvData(symbol.getId(), symbol.getSymbol());
 
                         lastDate = null; // Filter 3 will know not to increment
                     }
+
+                    System.out.println("    -> 24H DATA: Getting data for the last 24h for " + symbol.getSymbol());
+                    fetchAdditionalSymbolData(symbol.getId(), symbol.getSymbol());
 
                     return new HistoricalUpdateInfoDTO(
                             symbol.getId(),
