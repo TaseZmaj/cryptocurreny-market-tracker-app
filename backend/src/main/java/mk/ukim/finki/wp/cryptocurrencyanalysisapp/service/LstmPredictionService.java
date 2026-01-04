@@ -12,7 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 public class LstmPredictionService {
 
     // URL на вашиот FastAPI микросервис
-    private static final String FASTAPI_BASE_URL = "http://localhost:8001/api/v1/predict/";
+    private static final String FASTAPI_BASE_URL = "http://lstm-predictor:8000/api/v1/predict/";
 
     private final WebClient webClient;
 
