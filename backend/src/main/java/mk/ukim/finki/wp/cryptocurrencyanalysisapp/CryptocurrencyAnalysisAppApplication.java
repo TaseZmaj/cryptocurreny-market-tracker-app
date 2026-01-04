@@ -8,7 +8,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @RequiredArgsConstructor
 @EnableScheduling
 public class CryptocurrencyAnalysisAppApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(CryptocurrencyAnalysisAppApplication.class, args);
     }

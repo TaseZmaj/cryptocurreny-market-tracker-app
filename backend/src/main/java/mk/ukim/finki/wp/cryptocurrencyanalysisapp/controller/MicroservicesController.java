@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:5173/")
-@RequestMapping("/api/microservice")
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/microservices")
 @AllArgsConstructor
 public class MicroservicesController {
     private final TechnicalAnalysisService technicalAnalysisService;
