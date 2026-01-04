@@ -9,6 +9,10 @@ app = FastAPI(
     version="1.0.0"
 )
 
+@app.get("/")
+def home():
+    return {"status": "LSTM Service is online"}
+
 
 # Дефинирање на рутата што Spring Boot ќе ја повикува
 # Патека: /api/v1/predict/{symbol_id}
