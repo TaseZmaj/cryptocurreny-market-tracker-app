@@ -1,17 +1,14 @@
 package mk.ukim.finki.wp.cryptocurrencyanalysisapp.controller;
 
 import lombok.AllArgsConstructor;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.MicroservicesDTOs.AnalyzeResponseDto;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.FrontendDTOs.CoinDetailsDTO;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.HistoricalData;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.Symbol;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.service.CoinService;
-import mk.ukim.finki.wp.cryptocurrencyanalysisapp.service.TechnicalAnalysisService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:5173/")
+@CrossOrigin(origins = "http://localhost:3000/")
 @RequestMapping("/api/coins")
 @RestController
 @AllArgsConstructor

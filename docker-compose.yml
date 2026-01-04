@@ -1,0 +1,45 @@
+version: '3.8'
+services:
+# --- Java Spring Boot Backend ---
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    networks:
+      - crypto-network
+
+# --- Python LSTM Predictor ---
+  lstm-predictor:
+    build: ./microservices/ltsm-predictor-service
+    ports:
+      - "8081:8000"  # Maps your PC's 8081 to the container's 8000
+    networks:
+      - crypto-network
+
+# --- Python Technical Analysis ---
+  technical-analysis:
+    build: ./microservices/technical-analysis-service
+    container_name: technical-analysis-service
+    ports:
+      - "8082:8000"
+    networks:
+      - crypto-network
+  
+# --- React Frontend ---
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        - VITE_APP_API_URL=http://localhost:8080/api/coins
+        - VITE_EXPORT_API_URL=http://localhost:8080/api/export
+        - VITE_MICROSERVICES_API_URL=http://localhost:8080/api/microservices
+    ports:
+      - "3000:80"
+    networks:
+      - crypto-network
+    depends_on:
+      - backend
+
+networks:
+  crypto-network:
+    driver: bridge

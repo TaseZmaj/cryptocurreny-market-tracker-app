@@ -5,7 +5,6 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
-import java.util.List;
 
 /**
  * Repository for managing Symbol documents (the output of Filter 1).
