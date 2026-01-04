@@ -23,6 +23,8 @@ function InfoIconTooltip({ placement = "bottom", type, sx }) {
       "Displays the key price movements for a time period, marking the opening, closing, highest, and lowest prices reached.",
     ChartVolume:
       "Shows the total quantity of assets traded during each time period, indicating the intensity of market activity.",
+    TrendIndicators:
+      "Trend indicators use moving averages to show the general direction of price movement over time, helping traders distinguish between upward, downward, and sideways trends.",
   };
 
   return (

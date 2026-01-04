@@ -20,7 +20,7 @@ const initialState = {
   coinTechnicalAnalysisError: null,
 
   coinLstmPredictionLoading: false,
-  coinLstmPredictor: {},
+  coinLstmPrediction: {},
   coinLstmPredictionError: null,
 };
 
@@ -70,6 +70,7 @@ function reducer(state, action) {
     case "coin/technicalAnalysis/failedToLoad":
       return {
         ...state,
+        coinTechnicalAnalysis: {},
         coinTechnicalAnalysisLoading: false,
         coinTechnicalAnalysisError: action.payload,
       };
@@ -92,6 +93,7 @@ function reducer(state, action) {
     case "coin/lstmPrediction/failedToLoad":
       return {
         ...state,
+        coinLstmPrediction: {},
         coinLstmPredictionLoading: false,
         coinLstmPredictionError: action.payload,
       };
@@ -107,7 +109,23 @@ const CoinsContext = createContext();
 
 export default function CoinsProvider({ children }) {
   const [
-    { coinsLoading, coinLoading, coins, coin, coinError, coinsError },
+    {
+      coinsLoading,
+      coins,
+      coinsError,
+
+      coinLoading,
+      coin,
+      coinError,
+
+      coinTechnicalAnalysisLoading,
+      coinTechnicalAnalysis,
+      coinTechnicalAnalysisError,
+
+      coinLstmPredictionLoading,
+      coinLstmPrediction,
+      coinLstmPredictionError,
+    },
     dispatch,
   ] = useReducer(reducer, initialState);
 
@@ -198,11 +216,21 @@ export default function CoinsProvider({ children }) {
     <CoinsContext.Provider
       value={{
         coinsLoading,
-        coinLoading,
         coins,
+        coinsError,
+
+        coinLoading,
         coin,
         coinError,
-        coinsError,
+
+        coinTechnicalAnalysisLoading,
+        coinTechnicalAnalysis,
+        coinTechnicalAnalysisError,
+
+        coinLstmPredictionLoading,
+        coinLstmPrediction,
+        coinLstmPredictionError,
+
         getAllCoins,
         getCoinById,
         getCoinTechnicalAnalysisById,

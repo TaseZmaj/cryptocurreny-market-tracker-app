@@ -136,10 +136,26 @@ export function formatDate(inputDate) {
     }
   };
 
-  return `${day}${getDaySuffix(day)} ${month} ${year}`;
+  // return `${day}${getDaySuffix(day)} ${month} ${year}`;
+  return `${day} ${month} ${year}`;
 }
 
 //2025-12-13T00:00:00Z to "2018-10-19"
 export function formatIsoToYMD(iso) {
   return iso.slice(0, 10); // "2018-05-04"
+}
+
+export function formatDatePickerSelection(datePickerSelection) {
+  const mapping = {
+    "1D": "the last day ",
+    "1W": "the last week ",
+    "1M": "the last month ",
+    "6M": "the last 6 months ",
+    "1Y": "the last year ",
+    YTD: "year to date ",
+  };
+
+  return datePickerSelection in mapping
+    ? mapping[datePickerSelection]
+    : datePickerSelection;
 }

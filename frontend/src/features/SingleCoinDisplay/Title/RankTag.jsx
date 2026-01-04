@@ -5,8 +5,8 @@ import {
   useColorScheme,
   useTheme,
 } from "@mui/material";
-import { darkBackgroundColor } from "../../util/uiVars";
-import useCoins from "../../hooks/useCoins";
+import { darkBackgroundColor } from "../../../util/uiVars";
+import useCoins from "../../../hooks/useCoins";
 
 function RankTag({ sx }) {
   const { mode } = useColorScheme();

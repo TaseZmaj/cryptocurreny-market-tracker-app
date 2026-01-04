@@ -1,12 +1,16 @@
-import { useMemo, useCallback, useState } from "react";
+import { useMemo, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { Box, useColorScheme, useTheme } from "@mui/material";
+import { Box, Typography, useColorScheme, useTheme } from "@mui/material";
 import {
   formatCryptoPriceChart,
   formatIsoToYMD,
 } from "../../../util/stringUtils";
 
-export default function VolumeChart({ formattedCoinOhlcvData, sx = {} }) {
+export default function VolumeChart({
+  datePicker,
+  formattedCoinOhlcvData,
+  sx = {},
+}) {
   const [tickPlacement] = useState("extremities");
   const [tickLabelPlacement] = useState("middle");
   const { palette } = useTheme();
@@ -90,10 +94,21 @@ export default function VolumeChart({ formattedCoinOhlcvData, sx = {} }) {
     margin: { left: 0 },
   };
 
+  // if (datePicker === "1D") {
+  //   return (
+  //     <Typography sx={{ color: "black" }}>There isn't enough data </Typography>
+  //   );
+  // }
+
   return (
     <Box style={{ width: "100%", ...sx }}>
       <BarChart
         sx={{
+          "& .MuiBarElement-root": {
+            transform:
+              datePicker === "1D" && "scaleX(0.2305) translateX(-140px)",
+            transformOrigin: "center",
+          },
           "& .MuiChartsAxis-root line": {
             stroke: mode === "light" ? "rgba(0,0,0,0.6)" : palette.grey[300],
           },

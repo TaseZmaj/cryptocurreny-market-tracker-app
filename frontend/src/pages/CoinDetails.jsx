@@ -10,20 +10,21 @@ import { useLocation } from "react-router-dom";
 import useCoins from "../hooks/useCoins";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import LoadingTableCell from "../components/LoadingTableCell";
-import RankTag from "../features/SingleCoinDisplay/RankTag.jsx";
+import RankTag from "../features/SingleCoinDisplay/Title/RankTag.jsx";
 import { getSymbolFontSize, getTitleFontSize } from "../util/stringUtils.js";
-import CoinPropertyCard from "../features/SingleCoinDisplay/CoinPropertyCard.jsx";
+import CoinPropertyCard from "../features/SingleCoinDisplay/Title/CoinPropertyCard.jsx";
 import { formatDate } from "../util/stringUtils.js";
 import PriceDataCard from "../features/SingleCoinDisplay/PriceDataCard.jsx";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import CandlestickChart from "../features/SingleCoinDisplay/Charts/CandlestickChart.jsx";
 import InfoIconTooltip from "../features/SingleCoinDisplay/InfoIconTooltip.jsx";
-import ChartDateControlButton from "../features/SingleCoinDisplay/ChartDateControlButton.jsx";
+import ChartDateControlButton from "../features/SingleCoinDisplay/Charts/ChartDateControlButton.jsx";
 import useWindowWidth from "../hooks/useWindowWidth.js";
 import VolumeChart from "../features/SingleCoinDisplay/Charts/VolumeChart.jsx";
 import SquareButton from "../components/SquareButton.jsx";
 import { getCsvByIdAsync } from "../util/CoinsApi.js";
-import SingleCoinErrorPage from "./SingleCoinErrorPage.jsx";
+import TechnicalAnalysisTab from "../features/SingleCoinDisplay/TechnicalAnalysis/TechnicalAnalysisTab.jsx";
+import Title from "../features/SingleCoinDisplay/Title.jsx";
 
 function CoinDetails() {
   const { palette } = useTheme();
@@ -59,6 +60,7 @@ function CoinDetails() {
     }
 
     const DAYS_MAP = {
+      "1D": 1,
       "1W": 7,
       "1M": 31,
       "6M": 31 * 6,
@@ -316,7 +318,9 @@ function CoinDetails() {
                 24h Data:
               </Typography>
               {coin && !coinLoading && !coinError ? (
-                <Typography sx={{ color: palette.primary.main }}>
+                <Typography
+                  sx={{ color: palette.primary.main, textAlign: "center" }}
+                >
                   {formatDate(coin.summaryUpdatedAt)}
                 </Typography>
               ) : null}
@@ -386,6 +390,13 @@ function CoinDetails() {
               // backgroundColor: palette.grey[400],
             }}
           >
+            <ChartDateControlButton
+              datePicker={datePicker}
+              setDatePicker={setDatePicker}
+              sx={{ ml: "0" }}
+            >
+              1D
+            </ChartDateControlButton>
             <ChartDateControlButton
               datePicker={datePicker}
               setDatePicker={setDatePicker}
@@ -463,6 +474,7 @@ function CoinDetails() {
               sx={{
                 display: "flex",
                 justifyContent: "center",
+                alignItems: "center",
                 flexDirection: "column",
                 width: "100%",
                 // width: "1362px",
@@ -473,6 +485,7 @@ function CoinDetails() {
                 // mt: "20px",
                 // boxSizing: "border-box",
                 // border: `1px solid ${palette.grey[300]}`,
+                // backgroundColor: palette.grey[300],
               }}
             >
               <Box
@@ -485,50 +498,12 @@ function CoinDetails() {
                   // backgroundColor: palette.grey[400],
                 }}
               >
-                <Box sx={{ height: "100%" }}>
-                  <Box sx={{ display: "flex", flexDirection: "row" }}>
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        color:
-                          mode === "light"
-                            ? palette.text.primary
-                            : palette.common.white,
-                      }}
-                    >
-                      OHLC
-                    </Typography>
-                    <InfoIconTooltip
-                      placement="right"
-                      type="ChartOHLC"
-                      sx={{ top: "8px", left: "2px" }}
-                    />
-                  </Box>
-                  <Typography
-                    sx={{
-                      color:
-                        mode === "light"
-                          ? palette.text.primary
-                          : palette.grey[200],
-                    }}
-                  >
-                    {formattedCoinOhlcvData.length > 0 &&
-                    !coinLoading &&
-                    !coinError ? (
-                      <>
-                        {formatDate(formattedCoinOhlcvData.at(0)?.date)} –
-                        {formatDate(formattedCoinOhlcvData.at(-1)?.date)}
-                      </>
-                    ) : null}
-                  </Typography>
-                </Box>
-                {/* <Box
-                  sx={{
-                    ml: "auto",
-                  }}
+                <Title
+                  tooltipType={"ChartOHLC"}
+                  formattedCoinData={formattedCoinOhlcvData}
                 >
-                  <Typography>Refresh Zoom</Typography>
-                </Box> */}
+                  OHLC
+                </Title>
               </Box>
               {formattedCoinOhlcvData &&
               !coinLoading &&
@@ -549,6 +524,7 @@ function CoinDetails() {
                 display: "flex",
                 justifyContent: "center",
                 flexDirection: "column",
+                alignItems: "center",
                 width: "100%",
                 maxHeight: "370px",
                 height: "370px",
@@ -568,47 +544,19 @@ function CoinDetails() {
                 }}
               >
                 <Box sx={{ height: "100%" }}>
-                  <Box sx={{ display: "flex", flexDirection: "row" }}>
-                    <Typography
-                      variant="h5"
-                      sx={{
-                        color:
-                          mode === "light"
-                            ? palette.text.primary
-                            : palette.common.white,
-                      }}
-                    >
-                      Volume
-                    </Typography>
-                    <InfoIconTooltip
-                      placement="right"
-                      type="ChartVolume"
-                      sx={{ top: "8px", left: "2px" }}
-                    />
-                  </Box>
-                  <Typography
-                    sx={{
-                      color:
-                        mode === "light"
-                          ? palette.text.primary
-                          : palette.grey[500],
-                    }}
+                  <Title
+                    tooltipType={"ChartVolume"}
+                    formattedCoinData={formattedCoinOhlcvData}
                   >
-                    {formattedCoinOhlcvData.length > 0 &&
-                    !coinLoading &&
-                    !coinError ? (
-                      <>
-                        {formatDate(formattedCoinOhlcvData.at(0)?.date)} –{" "}
-                        {formatDate(formattedCoinOhlcvData.at(-1)?.date)}
-                      </>
-                    ) : null}
-                  </Typography>
+                    Volume
+                  </Title>
                 </Box>
               </Box>
               {formattedCoinOhlcvData.length > 0 &&
               !coinLoading &&
               !coinError ? (
                 <VolumeChart
+                  datePicker={datePicker}
                   formattedCoinOhlcvData={formattedCoinOhlcvData}
                   sx={{ height: "100%", width: "1362px" }}
                 />
@@ -620,9 +568,17 @@ function CoinDetails() {
               sx={{
                 width: "100%",
                 height: "400px",
-                backgroundColor: "lightgray",
+                display: "flex",
+                flexDirection: "row",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+                overflowX: "hidden",
+                pr: "10px",
+                boxSizing: "border-box",
               }}
-            ></Box>
+            >
+              <TechnicalAnalysisTab datePicker={datePicker} />
+            </Box>
           </Box>
         </Box>
       </Box>

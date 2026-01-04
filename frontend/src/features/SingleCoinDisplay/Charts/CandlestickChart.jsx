@@ -234,6 +234,7 @@ function CandlestickChart({
     seriesRef.current.setData(dataToDisplay);
 
     const RESIZER = {
+      "1D": 300,
       "1W": 180,
       "1M": 38.95,
       "6M": 6.93,
@@ -242,6 +243,7 @@ function CandlestickChart({
     };
 
     const OFFSET = {
+      "1D": 1.73,
       "1W": 0.01,
       "1M": 1,
       "6M": 0,

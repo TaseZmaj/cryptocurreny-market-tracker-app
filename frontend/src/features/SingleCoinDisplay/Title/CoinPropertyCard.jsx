@@ -6,7 +6,7 @@ import {
   useColorScheme,
   useTheme,
 } from "@mui/material";
-import InfoIconTooltip from "./InfoIconTooltip";
+import InfoIconTooltip from "../InfoIconTooltip";
 
 export default function CoinPropertyCard({
   type,
