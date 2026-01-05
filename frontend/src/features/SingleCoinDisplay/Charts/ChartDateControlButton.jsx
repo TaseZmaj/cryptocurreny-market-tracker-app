@@ -1,12 +1,7 @@
 import { Button, Typography, useColorScheme, useTheme } from "@mui/material";
 import { darkBackgroundColor } from "../../../util/uiVars";
 
-function ChartDateControlButton({
-  datePicker,
-  setDatePicker,
-  children,
-  sx = {},
-}) {
+function ChartDateControlButton({ datePicker, onClick, children, sx = {} }) {
   const { palette } = useTheme();
   const { mode } = useColorScheme();
 
@@ -15,7 +10,7 @@ function ChartDateControlButton({
   return (
     <Button
       disableRipple
-      onClick={() => setDatePicker(children)}
+      onClick={() => onClick(children)}
       sx={{
         // transition: "none",
         width: "74px",

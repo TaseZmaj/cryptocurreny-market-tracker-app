@@ -1,0 +1,56 @@
+# # --- Docker compose for DEVELOPMENT ---
+# version: "3.8"
+# services:
+#   # --- Java Spring Boot Backend ---
+#   backend:
+#     build: ./backend
+#     ports:
+#       - "8080:8080"
+#     environment:
+#       - SPRING_PROFILES_ACTIVE=docker
+#       - MONGO_URI=mongodb+srv://kristijanjovik_db_user:Z7ElsP3JsscmHMrj@cluster0.pkcuhbd.mongodb.net/crypto_db?appName=Cluster0
+#     networks:
+#       - crypto-network
+
+#   # --- Python Technical Analysis ---
+#   technical-analysis:
+#     build: ./microservices/technical-analysis-service
+#     container_name: technical-analysis-service
+#     ports:
+#       - "8000:8000"
+#     networks:
+#       - crypto-network
+
+#   # --- Python LSTM Predictor ---
+#   lstm-predictor:
+#     build: ./microservices/ltsm-predictor-service
+#     ports:
+#       - "8001:8000"
+#     networks:
+#       - crypto-network
+
+#   # --- React Frontend ---
+#   frontend:
+#     build:
+#       context: ./frontend
+#       dockerfile: Dockerfile.dev
+#       args:
+#         - VITE_APP_API_URL=http://localhost:8080/api/coins
+#         - VITE_EXPORT_API_URL=http://localhost:8080/api/export
+#         - VITE_MICROSERVICES_API_URL=http://localhost:8080/api/microservice
+#     command: npm run dev -- --host
+#     ports:
+#       - "5173:5173"
+#     volumes:
+#       - ./frontend:/app
+#       - /app/node_modules
+#     environment:
+#       - CHOKIDAR_USEPOLLING=true
+#     networks:
+#       - crypto-network
+#     depends_on:
+#       - backend
+
+# networks:
+#   crypto-network:
+#     driver: bridge

@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000/")
-@RequestMapping("/api/coins")
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
+@RequestMapping("/api/coins")
 @AllArgsConstructor
 public class ReactController {
     private final CoinService coinService;

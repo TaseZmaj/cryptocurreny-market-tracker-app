@@ -29,12 +29,24 @@ services:
   frontend:
     build:
       context: ./frontend
+      dockerfile: Dockerfile.dev
       args:
         - VITE_APP_API_URL=http://localhost:8080/api/coins
         - VITE_EXPORT_API_URL=http://localhost:8080/api/export
         - VITE_MICROSERVICES_API_URL=http://localhost:8080/api/microservices
     ports:
-      - "3000:80"
+      - "3000:5173"
+    develop:
+      watch:
+        # Sync changes in your local frontend folder to the container's /app folder
+        - action: sync
+          path: ./frontend
+          target: /app
+          ignore:
+            - node_modules
+        # If you change package.json, trigger a full rebuild of the image
+        - action: rebuild
+          path: ./frontend/package.json
     networks:
       - crypto-network
     depends_on:

@@ -23,17 +23,30 @@ import useWindowWidth from "../hooks/useWindowWidth.js";
 import VolumeChart from "../features/SingleCoinDisplay/Charts/VolumeChart.jsx";
 import SquareButton from "../components/SquareButton.jsx";
 import { getCsvByIdAsync } from "../util/CoinsApi.js";
-import TechnicalAnalysisTab from "../features/SingleCoinDisplay/TechnicalAnalysis/TechnicalAnalysisTab.jsx";
+import TechnicalAnalysisCard from "../features/SingleCoinDisplay/TechnicalAnalysis/TechnicalAnalysisCard.jsx";
 import Title from "../features/SingleCoinDisplay/Title.jsx";
+import { useSearchParams } from "react-router-dom";
+
+const VALID_RANGES = ["1D", "1W", "1M", "6M", "1Y", "YTD"];
+const DEFAULT_RANGE = "1M";
+const PARAM = "date-range";
+const DAYS_MAP = {
+  "1D": 1,
+  "1W": 7,
+  "1M": 31,
+  "6M": 31 * 6,
+  "1Y": 365,
+  YTD: Infinity,
+};
 
 function CoinDetails() {
   const { palette } = useTheme();
   const { pathname } = useLocation();
   const { mode } = useColorScheme();
   const width = useWindowWidth();
-  // const [invalidCoinUrl, setInvalidCoinUrl] = useState(null);
 
   //TODO: IMPLEMENT THE COIN NOT FOUND ERROR PAGE - I COULDNT GET IT TO WORK :[
+  // const [invalidCoinUrl, setInvalidCoinUrl] = useState(null);
 
   const {
     coin,
@@ -49,8 +62,23 @@ function CoinDetails() {
 
   const coinIdFromPathname = pathname.split("/").at(-1);
 
-  //TOP RADIO BUTTONS LOGIC --------------------------------------
-  const [datePicker, setDatePicker] = useState("1M"); //1W, 1M, 6M, 1Y, YTD
+  //SYNC URL pathname with date range state =============================
+  const [searchParams, setSearchParams] = useSearchParams();
+  const rangeFromUrl = searchParams.get(PARAM);
+  const dateRange = VALID_RANGES.includes(rangeFromUrl)
+    ? rangeFromUrl
+    : DEFAULT_RANGE;
+
+  const setRange = (newRange) => {
+    setSearchParams((prev) => {
+      const params = new URLSearchParams(prev);
+      params.set(PARAM, newRange);
+      return params;
+    });
+  };
+
+  //TOP RADIO BUTTONS Date LOGIC ===========================================
+  // const [datePicker, setDatePicker] = useState("1M"); //1W, 1M, 6M, 1Y, YTD
   const [formattedCoinOhlcvData, setFormattedCoinOhlcvData] = useState([]);
 
   function handleFormatCoinOhlcvData() {
@@ -59,16 +87,7 @@ function CoinDetails() {
       return;
     }
 
-    const DAYS_MAP = {
-      "1D": 1,
-      "1W": 7,
-      "1M": 31,
-      "6M": 31 * 6,
-      "1Y": 365,
-      YTD: Infinity,
-    };
-
-    const limit = DAYS_MAP[datePicker];
+    const limit = DAYS_MAP[searchParams.get(PARAM)];
 
     // Keep data ascending (old → new)
     const source = [...coin.dataOHLCV].reverse();
@@ -91,9 +110,9 @@ function CoinDetails() {
   }
 
   useEffect(() => {
-    handleFormatCoinOhlcvData(datePicker);
+    handleFormatCoinOhlcvData(dateRange);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [datePicker, coin]);
+  }, [dateRange, coin]);
 
   useEffect(() => {
     if (!coin || String(coin.coinId) !== String(coinIdFromPathname)) {
@@ -114,6 +133,12 @@ function CoinDetails() {
     const lineHeight = parseFloat(getComputedStyle(el).lineHeight);
     setWrapped(el.scrollHeight > lineHeight * 1.2);
   }, [coin?.name]);
+
+  useEffect(() => {
+    if (!rangeFromUrl || !VALID_RANGES.includes(rangeFromUrl)) {
+      setSearchParams({ [PARAM]: DEFAULT_RANGE }, { replace: true });
+    }
+  }, [rangeFromUrl, setSearchParams]);
 
   //Mandatory TODOS:
   //TODO: Add the Home screen error page
@@ -391,41 +416,25 @@ function CoinDetails() {
             }}
           >
             <ChartDateControlButton
-              datePicker={datePicker}
-              setDatePicker={setDatePicker}
+              datePicker={dateRange}
+              onClick={setRange}
               sx={{ ml: "0" }}
             >
               1D
             </ChartDateControlButton>
-            <ChartDateControlButton
-              datePicker={datePicker}
-              setDatePicker={setDatePicker}
-              sx={{ ml: "0" }}
-            >
+            <ChartDateControlButton datePicker={dateRange} onClick={setRange}>
               1W
             </ChartDateControlButton>
-            <ChartDateControlButton
-              datePicker={datePicker}
-              setDatePicker={setDatePicker}
-            >
+            <ChartDateControlButton datePicker={dateRange} onClick={setRange}>
               1M
             </ChartDateControlButton>
-            <ChartDateControlButton
-              datePicker={datePicker}
-              setDatePicker={setDatePicker}
-            >
+            <ChartDateControlButton datePicker={dateRange} onClick={setRange}>
               6M
             </ChartDateControlButton>
-            <ChartDateControlButton
-              datePicker={datePicker}
-              setDatePicker={setDatePicker}
-            >
+            <ChartDateControlButton datePicker={dateRange} onClick={setRange}>
               1Y
             </ChartDateControlButton>
-            <ChartDateControlButton
-              datePicker={datePicker}
-              setDatePicker={setDatePicker}
-            >
+            <ChartDateControlButton datePicker={dateRange} onClick={setRange}>
               YTD
             </ChartDateControlButton>
             <Box
@@ -509,7 +518,7 @@ function CoinDetails() {
               !coinLoading &&
               !coinError /*&&  size.width && size.height */ ? (
                 <CandlestickChart
-                  datePicker={datePicker}
+                  datePicker={dateRange}
                   width="1362"
                   height="300"
                   formattedCoinOhlcvData={formattedCoinOhlcvData}
@@ -556,7 +565,7 @@ function CoinDetails() {
               !coinLoading &&
               !coinError ? (
                 <VolumeChart
-                  datePicker={datePicker}
+                  datePicker={dateRange}
                   formattedCoinOhlcvData={formattedCoinOhlcvData}
                   sx={{ height: "100%", width: "1362px" }}
                 />
@@ -567,17 +576,82 @@ function CoinDetails() {
             <Box
               sx={{
                 width: "100%",
-                height: "400px",
+                // height: "400px",
                 display: "flex",
-                flexDirection: "row",
-                justifyContent: "space-between",
-                flexWrap: "wrap",
+                flexDirection: "column",
+                gap: "15px",
                 overflowX: "hidden",
                 pr: "10px",
                 boxSizing: "border-box",
               }}
             >
-              <TechnicalAnalysisTab datePicker={datePicker} />
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  flexDirection: "row",
+                  justifyContent: "space-evenly",
+                }}
+              >
+                <TechnicalAnalysisCard
+                  type="trendIndicators"
+                  datePicker={dateRange}
+                />
+                <TechnicalAnalysisCard
+                  type="bollingerBands"
+                  datePicker={dateRange}
+                />
+              </Box>
+
+              {/* Oscilators Section */}
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  flexWrap: "wrap",
+                  // flexDirection: "row",
+                }}
+              >
+                <TechnicalAnalysisCard
+                  sx={{ minWidth: "20%" }}
+                  type="rsiPanel"
+                  datePicker={dateRange}
+                />
+                <TechnicalAnalysisCard
+                  sx={{ minWidth: "20%" }}
+                  type="macdPanel"
+                  datePicker={dateRange}
+                />
+                <TechnicalAnalysisCard
+                  sx={{ minWidth: "20%" }}
+                  type="stochasticPanel"
+                  datePicker={dateRange}
+                />
+                <TechnicalAnalysisCard
+                  sx={{ minWidth: "20%" }}
+                  type="adxPanel"
+                  datePicker={dateRange}
+                />
+                <TechnicalAnalysisCard
+                  sx={{ minWidth: "20%" }}
+                  type="cciPanel"
+                  datePicker={dateRange}
+                />
+              </Box>
+
+              <Box
+                sx={{
+                  width: "100%",
+                  display: "flex",
+                  justifyContent: "space-evenly",
+                }}
+              >
+                <TechnicalAnalysisCard type="vma" datePicker={dateRange} />
+                <TechnicalAnalysisCard
+                  type="overallSignal"
+                  datePicker={dateRange}
+                />
+              </Box>
             </Box>
           </Box>
         </Box>

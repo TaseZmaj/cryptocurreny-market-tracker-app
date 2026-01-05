@@ -152,14 +152,6 @@ export default function CoinsProvider({ children }) {
         const coin = await fetchCoinByIdAsync(id);
 
         dispatch({ type: "coin/success", payload: coin });
-        // dispatch({
-        //   type: "coin/technicalAnalysis/success",
-        //   payload: coinTechnicalAnalysis,
-        // });
-        // dispatch({
-        //   type: "coin/lstmPrediction/success",
-        //   payload: coinLstmPrediction,
-        // });
       } catch (err) {
         dispatch({
           type: "coin/failedToLoad",
