@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Grid,
   IconButton,
   Typography,
   useColorScheme,
@@ -394,6 +395,9 @@ function CoinDetails() {
           display: "flex",
           flexDirection: "column",
           flexGrow: 1,
+          width: "", //for some reason this fixes the bug where the layout slightly changes sizes when changing the date from the Date Picker
+          overflowX: "hidden",
+          boxSizing: "border-box",
         }}
       >
         <Box
@@ -402,6 +406,8 @@ function CoinDetails() {
             flexDirection: "column",
             p: "0px 30px 20px 30px",
             flexGrow: 1,
+            boxSizing: "border-box",
+            overflow: "hidden",
             // backgroundColor: palette.grey[300],
           }}
         >
@@ -474,6 +480,7 @@ function CoinDetails() {
               height: "calc(100vh - 220px)",
               overflow: "auto",
               mt: "10px",
+              boxSizing: "border-box",
               // backgroundColor: palette.grey[300],
             }}
           >
@@ -519,7 +526,7 @@ function CoinDetails() {
               !coinError /*&&  size.width && size.height */ ? (
                 <CandlestickChart
                   datePicker={dateRange}
-                  width="1362"
+                  width="1297"
                   height="300"
                   formattedCoinOhlcvData={formattedCoinOhlcvData}
                 />
@@ -567,7 +574,7 @@ function CoinDetails() {
                 <VolumeChart
                   datePicker={dateRange}
                   formattedCoinOhlcvData={formattedCoinOhlcvData}
-                  sx={{ height: "100%", width: "1362px" }}
+                  sx={{ height: "100%", maxWidth: "100%", width: "1362px" }}
                 />
               ) : null}
             </Box>
@@ -576,82 +583,101 @@ function CoinDetails() {
             <Box
               sx={{
                 width: "100%",
-                // height: "400px",
-                display: "flex",
-                flexDirection: "column",
-                gap: "15px",
-                overflowX: "hidden",
+                overflow: "hidden",
                 pr: "10px",
                 boxSizing: "border-box",
               }}
             >
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "space-evenly",
-                }}
-              >
-                <TechnicalAnalysisCard
-                  type="trendIndicators"
-                  datePicker={dateRange}
-                />
-                <TechnicalAnalysisCard
-                  type="bollingerBands"
-                  datePicker={dateRange}
-                />
-              </Box>
+              {/* Trend Indicators, Bollinger Bands and Volume Analysis */}
+              <Grid container spacing={0} sx={{ height: "190px" }}>
+                <Grid size={4} item>
+                  <TechnicalAnalysisCard
+                    type="trendIndicators"
+                    datePicker={dateRange}
+                    sx={{ minHeight: "100%" }}
+                  />
+                </Grid>
+                <Grid size={4} item>
+                  <TechnicalAnalysisCard
+                    type="bollingerBands"
+                    datePicker={dateRange}
+                    sx={{ minHeight: "100%" }}
+                  />
+                </Grid>
+                <Grid size={4} item>
+                  <TechnicalAnalysisCard
+                    type="vma"
+                    datePicker={dateRange}
+                    sx={{ height: "100%" }}
+                  />
+                </Grid>
+              </Grid>
 
-              {/* Oscilators Section */}
-              <Box
+              {/*Oscilattors section - RSI, MACD, Stochastic Oscillator, ADX, CCI */}
+              <Grid
+                container
+                size={12}
+                spacing={5}
                 sx={{
-                  width: "100%",
-                  display: "flex",
-                  flexWrap: "wrap",
-                  // flexDirection: "row",
+                  mt: "45px",
+                  height: "140px",
+                  // backgroundColor: palette.grey[400],
                 }}
               >
-                <TechnicalAnalysisCard
-                  sx={{ minWidth: "20%" }}
-                  type="rsiPanel"
-                  datePicker={dateRange}
-                />
-                <TechnicalAnalysisCard
-                  sx={{ minWidth: "20%" }}
-                  type="macdPanel"
-                  datePicker={dateRange}
-                />
-                <TechnicalAnalysisCard
-                  sx={{ minWidth: "20%" }}
-                  type="stochasticPanel"
-                  datePicker={dateRange}
-                />
-                <TechnicalAnalysisCard
-                  sx={{ minWidth: "20%" }}
-                  type="adxPanel"
-                  datePicker={dateRange}
-                />
-                <TechnicalAnalysisCard
-                  sx={{ minWidth: "20%" }}
-                  type="cciPanel"
-                  datePicker={dateRange}
-                />
-              </Box>
+                <Grid size={2.4} item>
+                  <TechnicalAnalysisCard
+                    type="rsiPanel"
+                    datePicker={dateRange}
+                  />
+                </Grid>
+                <Grid size={2.4} item>
+                  <TechnicalAnalysisCard
+                    type="macdPanel"
+                    datePicker={dateRange}
+                    sx={{
+                      minHeight: "100%",
+                      pl: "10px",
+                    }}
+                  />
+                </Grid>
+                <Grid size={2.4} item>
+                  <TechnicalAnalysisCard
+                    type="stochasticPanel"
+                    datePicker={dateRange}
+                    sx={{ minHeight: "100%" }}
+                  />
+                </Grid>
+                <Grid size={2.8} item>
+                  <TechnicalAnalysisCard
+                    type="adxPanel"
+                    datePicker={dateRange}
+                    sx={{ minHeight: "100%", pl: "8px" }}
+                  />
+                </Grid>
+                <Grid size={2} item>
+                  <TechnicalAnalysisCard
+                    type="cciPanel"
+                    datePicker={dateRange}
+                    sx={{ minHeight: "100%" }}
+                  />
+                </Grid>
+              </Grid>
 
-              <Box
-                sx={{
-                  width: "100%",
-                  display: "flex",
-                  justifyContent: "space-evenly",
-                }}
+              {/* Volume Analysis and Overall Technical Signal */}
+              <Grid
+                container
+                size={12}
+                spacing={0}
+                sx={{ mt: "60px", height: "190px" }}
               >
-                <TechnicalAnalysisCard type="vma" datePicker={dateRange} />
-                <TechnicalAnalysisCard
-                  type="overallSignal"
-                  datePicker={dateRange}
-                />
-              </Box>
+                <Grid size={6} item>
+                  <TechnicalAnalysisCard
+                    type="overallSignal"
+                    datePicker={dateRange}
+                    sx={{ height: "100%" }}
+                  />
+                </Grid>
+              </Grid>
             </Box>
           </Box>
         </Box>
