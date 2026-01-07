@@ -53,7 +53,8 @@ function RsiProgressBar({ value }) {
             height: "30px",
             width: "100%",
             borderRadius: "4px",
-            backgroundColor: palette.grey[200],
+            backgroundColor:
+              mode === "light" ? palette.grey[200] : palette.grey[800],
             "& .MuiLinearProgress-bar": {
               backgroundColor: rsiProgressDisplay.color,
             },

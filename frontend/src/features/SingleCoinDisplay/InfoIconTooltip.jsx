@@ -40,6 +40,8 @@ function InfoIconTooltip({ placement = "bottom", type, sx }) {
     vma: "The volume moving average shows the average trading volume over a period of time. It is used to confirm price movements by comparing current volume to typical market activity.",
     overallSignal:
       "The overall signal summarizes multiple technical indicators to provide a combined buy, sell, or hold recommendation for the selected timeframe.",
+    lstmPricePrediction:
+      "This analysis uses a Long Short-Term Memory (LSTM) neural network trained on historical OHLCV data to forecast future prices. LSTM models are designed for time-series prediction and aim to capture long-term market patterns beyond traditional technical indicators.",
   };
 
   return (

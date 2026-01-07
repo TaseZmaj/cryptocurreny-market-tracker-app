@@ -16,15 +16,13 @@ import { getSymbolFontSize, getTitleFontSize } from "../util/stringUtils.js";
 import CoinPropertyCard from "../features/SingleCoinDisplay/Title/CoinPropertyCard.jsx";
 import { formatDate } from "../util/stringUtils.js";
 import PriceDataCard from "../features/SingleCoinDisplay/PriceDataCard.jsx";
-import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 import CandlestickChart from "../features/SingleCoinDisplay/Charts/CandlestickChart.jsx";
-import InfoIconTooltip from "../features/SingleCoinDisplay/InfoIconTooltip.jsx";
 import ChartDateControlButton from "../features/SingleCoinDisplay/Charts/ChartDateControlButton.jsx";
 import useWindowWidth from "../hooks/useWindowWidth.js";
 import VolumeChart from "../features/SingleCoinDisplay/Charts/VolumeChart.jsx";
 import SquareButton from "../components/SquareButton.jsx";
 import { getCsvByIdAsync } from "../util/CoinsApi.js";
-import TechnicalAnalysisCard from "../features/SingleCoinDisplay/TechnicalAnalysis/TechnicalAnalysisCard.jsx";
+import MicroserviceDataCard from "../features/SingleCoinDisplay/MicroservicesUi/MicroserviceDataCard.jsx";
 import Title from "../features/SingleCoinDisplay/Title.jsx";
 import { useSearchParams } from "react-router-dom";
 
@@ -591,24 +589,24 @@ function CoinDetails() {
               {/* Trend Indicators, Bollinger Bands and Volume Analysis */}
               <Grid container spacing={0} sx={{ height: "190px" }}>
                 <Grid size={4} item>
-                  <TechnicalAnalysisCard
+                  <MicroserviceDataCard
                     type="trendIndicators"
                     datePicker={dateRange}
-                    sx={{ minHeight: "100%" }}
+                    sx={{ minHeight: "100%", pr: "10px" }}
                   />
                 </Grid>
                 <Grid size={4} item>
-                  <TechnicalAnalysisCard
+                  <MicroserviceDataCard
                     type="bollingerBands"
                     datePicker={dateRange}
-                    sx={{ minHeight: "100%" }}
+                    sx={{ minHeight: "100%", pr: "10px" }}
                   />
                 </Grid>
                 <Grid size={4} item>
-                  <TechnicalAnalysisCard
+                  <MicroserviceDataCard
                     type="vma"
                     datePicker={dateRange}
-                    sx={{ height: "100%" }}
+                    sx={{ height: "100%", pr: "10px" }}
                   />
                 </Grid>
               </Grid>
@@ -617,7 +615,7 @@ function CoinDetails() {
               <Grid
                 container
                 size={12}
-                spacing={5}
+                spacing={5.1}
                 sx={{
                   mt: "45px",
                   height: "140px",
@@ -625,13 +623,13 @@ function CoinDetails() {
                 }}
               >
                 <Grid size={2.4} item>
-                  <TechnicalAnalysisCard
+                  <MicroserviceDataCard
                     type="rsiPanel"
                     datePicker={dateRange}
                   />
                 </Grid>
                 <Grid size={2.4} item>
-                  <TechnicalAnalysisCard
+                  <MicroserviceDataCard
                     type="macdPanel"
                     datePicker={dateRange}
                     sx={{
@@ -641,21 +639,21 @@ function CoinDetails() {
                   />
                 </Grid>
                 <Grid size={2.4} item>
-                  <TechnicalAnalysisCard
+                  <MicroserviceDataCard
                     type="stochasticPanel"
                     datePicker={dateRange}
                     sx={{ minHeight: "100%" }}
                   />
                 </Grid>
                 <Grid size={2.8} item>
-                  <TechnicalAnalysisCard
+                  <MicroserviceDataCard
                     type="adxPanel"
                     datePicker={dateRange}
                     sx={{ minHeight: "100%", pl: "8px" }}
                   />
                 </Grid>
                 <Grid size={2} item>
-                  <TechnicalAnalysisCard
+                  <MicroserviceDataCard
                     type="cciPanel"
                     datePicker={dateRange}
                     sx={{ minHeight: "100%" }}
@@ -671,8 +669,15 @@ function CoinDetails() {
                 sx={{ mt: "60px", height: "190px" }}
               >
                 <Grid size={6} item>
-                  <TechnicalAnalysisCard
+                  <MicroserviceDataCard
                     type="overallSignal"
+                    datePicker={dateRange}
+                    sx={{ height: "100%" }}
+                  />
+                </Grid>
+                <Grid size={6} item>
+                  <MicroserviceDataCard
+                    type="lstmPricePrediction"
                     datePicker={dateRange}
                     sx={{ height: "100%" }}
                   />
