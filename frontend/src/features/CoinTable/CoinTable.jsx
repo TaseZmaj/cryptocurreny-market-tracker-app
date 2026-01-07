@@ -38,18 +38,19 @@ export default function CoinTable() {
   const { mode } = useColorScheme();
   const { palette } = useTheme();
 
+  //Variable made for performance optimizations
   const stableCoins = useMemo(() => coins, [coins]);
 
-  // MUI table state --------------------------------
+  //======================= MUI Table state ================================
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("marketCapRank");
   // const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(false);
   const [rowsPerPage, setRowsPerPage] = useState(25);
-  // MUI tabble state -------------------------------
+  //========================================================================
 
-  //   MUI Table handler funcions and vars  -----------------------------------
+  //============= MUI Table handler funcions and vars ======================
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -69,13 +70,22 @@ export default function CoinTable() {
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - filteredCoins.length) : 0;
-  //  MUI Table handler funcions and vars -----------------------------------
+  //=======================================================================
 
-  //On mount - fetch all coins
+  //====================== DATA FETCHING LOGIC ==========================
+  //Fetches on mount AND every 5 minutes
+
   useEffect(() => {
-    if (coins.length === 0) getAllCoins();
-  }, [getAllCoins, coins.length]);
+    // if (coins.length === 0) getAllCoins();
+    getAllCoins();
 
+    const intervalId = setInterval(getAllCoins, 300_000);
+
+    return () => clearInterval(intervalId);
+  }, [getAllCoins /*, coins.length */]);
+  //=====================================================================
+
+  //========================= TABLE FILTERING ===========================
   //On change of the input - set the filteredCoins
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -83,8 +93,9 @@ export default function CoinTable() {
     }, 225);
     return () => clearTimeout(timer);
   }, [query, stableCoins]);
+  //=====================================================================
 
-  //BEHIND THE SCENES BROWSER OPTIMIZATION -----------------------------------------
+  //================BEHIND THE SCENES BROWSER OPTIMIZATION ==========================
   //This makes all icons warm in cache before rendering. Sorting becomes smooth.
   //This works behind the scenes in the browser.  We create an <img> element in
   //memory. It does NOT appear in the DOM, and it NEVER gets added to the UI. It's
@@ -97,8 +108,9 @@ export default function CoinTable() {
       img.src = c.coinIconUrl;
     });
   }, [stableCoins]);
-  // ------------------------------------------------------------------------------
+  // ================================================================================
 
+  // ====================== MUI <Table/> boilerplate==========================
   const sortedCoins = useMemo(() => {
     const data = filteredCoins.length || query ? filteredCoins : stableCoins;
     return [...data].sort(getComparator(order, orderBy));
@@ -110,10 +122,10 @@ export default function CoinTable() {
       page * rowsPerPage + rowsPerPage
     );
   }, [sortedCoins, page, rowsPerPage]);
+  //=========================================================================
 
-  //Mandatory todos:
+  //TODOs:
   // TODO: Implement the different buttons - columns, filters, density and refresh
-
   //Optional:
   // TODO: Change the icon component in the table headers to a different arrow
   // TODO: Add animations
@@ -268,13 +280,14 @@ export default function CoinTable() {
                 </TableRow>
               ) : null}
 
-              {/* Coins table display */}
+              {/* Coins data table display */}
               {coins && !coinsLoading && !coinsError
                 ? visibleRows.map((coin) => {
                     return <CoinRow key={coin.coinId} coin={coin} />;
                   })
                 : null}
 
+              {/* MUI boilerplate - for pagination adjustment on the last page */}
               {emptyRows > 0 && (
                 <TableRow
                   style={{
@@ -411,6 +424,7 @@ function EnhancedTableHead({ order, orderBy, onRequestSort }) {
                 {headCell.label}
               </Typography>
 
+              {/* MUI boilerplate - for ordering the table by coulmn (asc, desc) */}
               {orderBy === headCell.id ? (
                 <Box component="span" sx={visuallyHidden}>
                   {order === "desc" ? "sorted descending" : "sorted ascending"}

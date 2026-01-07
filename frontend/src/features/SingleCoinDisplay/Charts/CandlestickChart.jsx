@@ -1,32 +1,62 @@
 import React, { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
-import { Typography, useColorScheme, useTheme } from "@mui/material";
+import { useColorScheme, useTheme } from "@mui/material";
 import {
   formatCryptoPriceChart,
   formatIsoToYMD,
 } from "../../../util/stringUtils";
 
+//Individual candlestick sizes and offset
+//NOTE: Some standard ways of css resizing and centering just
+//does not work with this library, so this is the only way to
+//center it - manually
+const RESIZER = {
+  "1D": 300,
+  "1W": 180,
+  "1M": 38.95,
+  "6M": 6.93,
+  "1Y": 3.53,
+  YTD: 0.4,
+};
+
+const OFFSET = {
+  "1D": 1.73,
+  "1W": 0.01,
+  "1M": 1,
+  "6M": 0,
+  "1Y": 0,
+  YTD: 0,
+};
+
+//====================== OHLCV Candlestick Chart ===========================
 function CandlestickChart({
   datePicker,
   formattedCoinOhlcvData,
   width,
   height,
 }) {
+  //======================== CHART REFS =================================
+  //Since the charting library is not a React one, these
+  //Refs are used for selecting an element in the DOM and
+  //making it be the chart
   const chartContainerRef = useRef(null);
   const chartInstanceRef = useRef(null);
   const seriesRef = useRef(null);
+  //====================================================================
 
   const { palette } = useTheme();
   const { mode } = useColorScheme();
 
+  //======================== MARQUEE ZOOM LOGIC =========================
   // Visual marquee selection box
   const [selection, setSelection] = useState({
     isVisible: false,
     x: 0,
     width: 0,
   });
+  //=====================================================================
 
-  // ---- FORMAT DATA (PURE, SAFE) ----
+  // ================== FORMAT DATA (PURE, SAFE) ========================
   const dataToDisplay = React.useMemo(() => {
     if (!formattedCoinOhlcvData || formattedCoinOhlcvData.length === 0)
       return [];
@@ -36,27 +66,12 @@ function CandlestickChart({
       high: ohlcv.high,
       low: ohlcv.low,
       close: ohlcv.close,
-      time: formatIsoToYMD(ohlcv.date), // MUST be YYYY-MM-DD
+      time: formatIsoToYMD(ohlcv.date), // formats to YYYY-MM-DD (data must be in this format)
     }));
   }, [formattedCoinOhlcvData]);
+  //=====================================================================
 
-  // useLayoutEffect(() => {
-  //   if (!chartContainerRef.current || !chartInstanceRef.current) return;
-
-  //   const chart = chartInstanceRef.current;
-
-  //   const observer = new ResizeObserver(() => {
-  //     chart.timeScale().fitContent();
-  //   });
-
-  //   observer.observe(chartContainerRef.current);
-
-  //   return () => observer.disconnect();
-  // }, []);
-
-  // ======================================================
-  // 1️⃣ CREATE CHART ONCE (MOUNT ONLY)
-  // ======================================================
+  // ============== 1️⃣ CREATE CHART ONCE (MOUNT ONLY) ===================
   useEffect(() => {
     if (!chartContainerRef.current) return;
 
@@ -115,9 +130,7 @@ function CandlestickChart({
 
     seriesRef.current = series;
 
-    // ==========================
-    // MARQUEE ZOOM LOGIC
-    // ==========================
+    //Marquee zoom logic
     let isDragging = false;
     let startX = null;
     const Y_AXIS_WIDTH = 65;
@@ -223,33 +236,13 @@ function CandlestickChart({
       window.removeEventListener("mouseup", handleMouseUp);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // 🔒 DO NOT ADD DEPENDENCIES
+  }, []); // 🔒 DO NOT ADD DEPENDENCIES!
 
-  // ======================================================
-  // 2️⃣ UPDATE DATA ONLY
-  // ======================================================
+  // ======================= 2️⃣ UPDATE DATA ===================================
   useEffect(() => {
     if (!seriesRef.current || dataToDisplay.length === 0) return;
 
     seriesRef.current.setData(dataToDisplay);
-
-    const RESIZER = {
-      "1D": 300,
-      "1W": 180,
-      "1M": 38.95,
-      "6M": 6.93,
-      "1Y": 3.53,
-      YTD: 0.4,
-    };
-
-    const OFFSET = {
-      "1D": 1.73,
-      "1W": 0.01,
-      "1M": 1,
-      "6M": 0,
-      "1Y": 0,
-      YTD: 0,
-    };
 
     chartInstanceRef.current.timeScale().fitContent();
     chartInstanceRef.current.timeScale().applyOptions({
@@ -262,12 +255,12 @@ function CandlestickChart({
     // });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dataToDisplay]);
+  //===========================================================================
 
   // ======================================================
-  //3️⃣ THEME CHANGE
-  //Since this is a .js library, theme doesn't qite work
-  //without this useEffect
-  // ======================================================
+
+  // ========================= 3️⃣ THEME CHANGE ================================
+  //Since this is a .js library, theme doesn't qite work without this useEffect
   useEffect(() => {
     if (!chartInstanceRef.current) return;
     chartInstanceRef.current.applyOptions({
@@ -288,6 +281,7 @@ function CandlestickChart({
       },
     });
   }, [mode, palette]);
+  // =======================================================================
 
   return (
     // The container MUST have position: relative for absolute child positioning
@@ -322,7 +316,7 @@ function CandlestickChart({
       >
         <Typography>Reset Zoom</Typography>
       </Button> */}
-      {/* 5. THE VISUAL SELECTION BOX */}
+      {/* MARQUEE ZOOM BOX */}
       {selection.isVisible && (
         <div
           style={{

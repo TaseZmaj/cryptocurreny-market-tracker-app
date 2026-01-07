@@ -3,7 +3,9 @@ import InfoIconTooltip from "./InfoIconTooltip.jsx";
 import { formatDate } from "../../util/stringUtils.js";
 import useCoins from "../../hooks/useCoins.js";
 
-function Title({
+//The titles for the cards of the right side of the Single Coins Page
+//use this - "OHLCℹ️", "Volumeℹ️", "Trend Indicatorsℹ️", "Bollinger Bandsℹ️",...
+function CardTitle({
   formattedCoinData,
   includeDate = true,
   tooltipType = "",
@@ -50,4 +52,4 @@ function Title({
   );
 }
 
-export default Title;
+export default CardTitle;

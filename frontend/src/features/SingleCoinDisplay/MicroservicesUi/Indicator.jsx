@@ -2,6 +2,9 @@ import { Typography, useColorScheme, useTheme } from "@mui/material";
 import { formatCryptoPrice } from "../../../util/stringUtils";
 import useCoins from "../../../hooks/useCoins";
 
+//This component is used for the properties in each of the cards on
+//the right side of the screen on the Single Coins Page that are BELOW
+//the charts - for these cards: "Trend Indicatorsℹ️", "Bollinger Bandsℹ️", etc.
 function Indicator({ isCurrency = true, type, data, children, sx }) {
   const { mode } = useColorScheme();
   const { palette } = useTheme();

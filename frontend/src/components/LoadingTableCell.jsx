@@ -1,5 +1,6 @@
 import { Skeleton, useColorScheme, useTheme } from "@mui/material";
 
+//Is used for skeleton loading states throughot the entire app
 function LoadingTableCell({ sx = {} }) {
   const { palette } = useTheme();
   const { mode } = useColorScheme();

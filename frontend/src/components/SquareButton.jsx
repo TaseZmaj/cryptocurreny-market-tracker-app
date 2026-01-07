@@ -1,14 +1,16 @@
 import { IconButton, Tooltip, useColorScheme, useTheme } from "@mui/material";
 import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 
+const TOOLTIP_TITLES = {
+  exportToCsvOhlcv: "Export all OHCLV data to .csv",
+  exportToCsv24h: "Export the 24h data for all coins to .csv",
+};
+
+//Currently used for the "Export to .csv buttons, but these is room for exansion if needed"
+
 function SquareButton({ type, onClick, sx = {} }) {
   const { palette } = useTheme();
   const { mode } = useColorScheme();
-
-  const TOOLTIP_TITLES = {
-    exportToCsvOhlcv: "Export all OHCLV data to .csv",
-    exportToCsv24h: "Export the 24h data for all coins to .csv",
-  };
 
   return (
     <Tooltip placement="bottom" title={TOOLTIP_TITLES[type]}>
@@ -25,12 +27,14 @@ function SquareButton({ type, onClick, sx = {} }) {
           ...sx,
         }}
       >
-        <DownloadRoundedIcon
-          sx={{
-            color:
-              mode === "light" ? palette.text.primary : palette.common.white,
-          }}
-        />
+        {type.includes("exportToCsv") ? (
+          <DownloadRoundedIcon
+            sx={{
+              color:
+                mode === "light" ? palette.text.primary : palette.common.white,
+            }}
+          />
+        ) : null}
       </IconButton>
     </Tooltip>
   );

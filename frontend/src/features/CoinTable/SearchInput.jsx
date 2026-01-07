@@ -3,6 +3,7 @@ import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
 
+//This is used for the table searching/querying
 export default function SearchInput({ query, setQuery, sx }) {
   const [focused, setFocused] = useState(false);
   const { palette } = useTheme();

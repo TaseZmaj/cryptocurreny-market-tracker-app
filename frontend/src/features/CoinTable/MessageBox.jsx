@@ -1,6 +1,7 @@
 import { Box, Button, Typography, useTheme } from "@mui/material";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
 
+//This component is used for the the messages in the error pages
 function MessageBox({
   type = null,
   title,

@@ -3,6 +3,7 @@ import { useColorScheme, useTheme } from "@mui/material/styles";
 import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
 
+//Light/Dark mode toggle button
 function LightDarkModeToggle({ sx }) {
   const { mode, setMode } = useColorScheme();
   const { palette } = useTheme();

@@ -24,6 +24,8 @@ export function tableQuery(query, coins, setFilteredCoins) {
 
 //Because filtering of the data is expensive and lags the app,
 //this function inserts a delay when accessing the tableQuery()
+//so that the searching doesn't happen right after each letter is
+//typed
 export function debounce(func, delay = 300) {
   let timer;
   return (...args) => {

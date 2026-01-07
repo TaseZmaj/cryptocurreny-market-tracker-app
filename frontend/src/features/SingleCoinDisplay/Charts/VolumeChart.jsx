@@ -11,8 +11,10 @@ export default function VolumeChart({
   formattedCoinOhlcvData,
   sx = {},
 }) {
+  //==================== MUI chart state ===========================
   const [tickPlacement] = useState("extremities");
   const [tickLabelPlacement] = useState("middle");
+  // ===============================================================
   const { palette } = useTheme();
   const { mode } = useColorScheme();
 
@@ -49,6 +51,7 @@ export default function VolumeChart({
     });
   }, [formattedCoinOhlcvData, upColor, downColor]);
 
+  //======================= BAR COLOR LOGIC ===========================
   const colorValues = useMemo(() => {
     if (!Array.isArray(formattedCoinOhlcvData)) return [];
     if (!formattedCoinOhlcvData || formattedCoinOhlcvData.length === 0)
@@ -74,8 +77,9 @@ export default function VolumeChart({
 
     return [...greens, ...reds];
   }, [formattedCoinOhlcvData, downColor, upColor]);
+  // =================================================================
 
-  // --- Chart Settings ---
+  // ===================== CHART PROPERTIES ==========================
   const chartSetting = {
     yAxis: [
       {
@@ -93,6 +97,7 @@ export default function VolumeChart({
     height: 300,
     margin: { left: 0 },
   };
+  // ===================================================================
 
   // if (datePicker === "1D") {
   //   return (

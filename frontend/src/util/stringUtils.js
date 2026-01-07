@@ -1,9 +1,4 @@
-// Helper function to format the timestamp
-// export const formatDate = (timestamp) => {
-//   // Converts the ISO string "2025-11-29T00:00:00Z" to a local date string
-//   return new Date(timestamp).toLocaleDateString();
-// };
-
+// ======================= String formatting utility functions ========================
 export function formatCryptoPrice(price) {
   if (price === null || price === undefined || typeof price !== "number")
     return "$0";
@@ -38,6 +33,7 @@ export function formatCryptoPrice(price) {
   return `$${price}`; // Fallback
 }
 
+//Formats the crypto price for the Charts
 export function formatCryptoPriceChart(price) {
   if (
     price === null ||
@@ -81,39 +77,6 @@ export function formatCryptoPriceChart(price) {
   return `$${price}`;
 }
 
-export function estimateTextWidth(text) {
-  let width = 0;
-
-  for (const char of text) {
-    if (char >= "A" && char <= "Z") width += 1.2; // capitals
-    else if ("MW".includes(char)) width += 1.4; // very wide
-    else if ("il".includes(char)) width += 0.5; // very narrow
-    else width += 1; // normal
-  }
-
-  return width;
-}
-
-export function getTitleFontSize(name) {
-  const estimatedWidth = estimateTextWidth(name);
-
-  const base = 3; // rem
-  const min = 1.2; // rem
-  const scale = 0.1;
-
-  return `${Math.max(min, base - estimatedWidth * scale)}rem`;
-}
-
-export function getSymbolFontSize(symbol) {
-  const estimatedWidth = estimateTextWidth(symbol);
-
-  const base = 1.5; // rem
-  const min = 1; // rem
-  const scale = 0.5;
-
-  return `${Math.max(min, base - estimatedWidth * scale)}rem`;
-}
-
 export function formatDate(inputDate) {
   const date = new Date(inputDate);
 
@@ -144,7 +107,9 @@ export function formatDate(inputDate) {
 export function formatIsoToYMD(iso) {
   return iso.slice(0, 10); // "2018-05-04"
 }
+// ========================================================================================
 
+// ========================== UI variable functions =======================================
 export function formatDatePickerSelection(datePickerSelection) {
   const mapping = {
     "1D": "the last day ",
@@ -159,3 +124,39 @@ export function formatDatePickerSelection(datePickerSelection) {
     ? mapping[datePickerSelection]
     : datePickerSelection;
 }
+
+// Ui calculation utility functions
+export function getTitleFontSize(name) {
+  const estimatedWidth = estimateTextWidth(name);
+
+  const base = 3; // rem
+  const min = 1.2; // rem
+  const scale = 0.1;
+
+  return `${Math.max(min, base - estimatedWidth * scale)}rem`;
+}
+
+export function getSymbolFontSize(symbol) {
+  const estimatedWidth = estimateTextWidth(symbol);
+
+  const base = 1.5; // rem
+  const min = 1; // rem
+  const scale = 0.5;
+
+  return `${Math.max(min, base - estimatedWidth * scale)}rem`;
+}
+
+//local utility method
+function estimateTextWidth(text) {
+  let width = 0;
+
+  for (const char of text) {
+    if (char >= "A" && char <= "Z") width += 1.2; // capitals
+    else if ("MW".includes(char)) width += 1.4; // very wide
+    else if ("il".includes(char)) width += 0.5; // very narrow
+    else width += 1; // normal
+  }
+
+  return width;
+}
+// =======================================================================================

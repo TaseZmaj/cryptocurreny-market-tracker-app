@@ -1,3 +1,4 @@
+//Table heading cells for the main Coins table
 export const headCells = [
   {
     id: "marketCapRank",
@@ -51,6 +52,7 @@ export const headCells = [
 
 export const colWidths = [];
 
+//UI Variables
 export const topBarHeight = "99px";
 export const footerHeight = "52px";
 export const darkBackgroundColor = "#121212";

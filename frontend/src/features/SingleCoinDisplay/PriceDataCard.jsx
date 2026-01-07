@@ -1,15 +1,11 @@
-import {
-  Box,
-  Tooltip,
-  Typography,
-  useColorScheme,
-  useTheme,
-} from "@mui/material";
+import { Box, Typography, useColorScheme, useTheme } from "@mui/material";
 import useCoins from "../../hooks/useCoins";
 import { formatCryptoPrice } from "../../util/stringUtils";
-import InfoOutlineRoundedIcon from "@mui/icons-material/InfoOutlineRounded";
 import InfoIconTooltip from "./InfoIconTooltip";
 
+//This is used for the 24h data on the left side of the screen
+//on the Single Coin Page - for these: "Last Priceℹ️", "24h High Priceℹ️",
+//"24h Low Priceℹ️", "24h Volumeℹ️", "Liquidityℹ️"
 function PriceDataCard({ type }) {
   const { palette } = useTheme();
   const { mode } = useColorScheme();

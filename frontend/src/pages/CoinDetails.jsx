@@ -1,19 +1,11 @@
-import {
-  Box,
-  Button,
-  Grid,
-  IconButton,
-  Typography,
-  useColorScheme,
-  useTheme,
-} from "@mui/material";
+import { Box, Grid, Typography, useColorScheme, useTheme } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import useCoins from "../hooks/useCoins";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import LoadingTableCell from "../components/LoadingTableCell";
-import RankTag from "../features/SingleCoinDisplay/Title/RankTag.jsx";
+import RankTag from "../features/SingleCoinDisplay/MainTitle/RankTag.jsx";
 import { getSymbolFontSize, getTitleFontSize } from "../util/stringUtils.js";
-import CoinPropertyCard from "../features/SingleCoinDisplay/Title/CoinPropertyCard.jsx";
+import CoinPropertyCard from "../features/SingleCoinDisplay/MainTitle/CoinPropertyCard.jsx";
 import { formatDate } from "../util/stringUtils.js";
 import PriceDataCard from "../features/SingleCoinDisplay/PriceDataCard.jsx";
 import CandlestickChart from "../features/SingleCoinDisplay/Charts/CandlestickChart.jsx";
@@ -23,12 +15,18 @@ import VolumeChart from "../features/SingleCoinDisplay/Charts/VolumeChart.jsx";
 import SquareButton from "../components/SquareButton.jsx";
 import { getCsvByIdAsync } from "../util/CoinsApi.js";
 import MicroserviceDataCard from "../features/SingleCoinDisplay/MicroservicesUi/MicroserviceDataCard.jsx";
-import Title from "../features/SingleCoinDisplay/Title.jsx";
+import CardTitle from "../features/SingleCoinDisplay/CardTitle.jsx";
 import { useSearchParams } from "react-router-dom";
 
+// Valid ranges from the date picker
 const VALID_RANGES = ["1D", "1W", "1M", "6M", "1Y", "YTD"];
+
+// Default date picker state
 const DEFAULT_RANGE = "1M";
+
 const PARAM = "date-range";
+
+//<datepicker-value> : <number-of-days>
 const DAYS_MAP = {
   "1D": 1,
   "1W": 7,
@@ -44,9 +42,6 @@ function CoinDetails() {
   const { mode } = useColorScheme();
   const width = useWindowWidth();
 
-  //TODO: IMPLEMENT THE COIN NOT FOUND ERROR PAGE - I COULDNT GET IT TO WORK :[
-  // const [invalidCoinUrl, setInvalidCoinUrl] = useState(null);
-
   const {
     coin,
     coinError,
@@ -56,12 +51,15 @@ function CoinDetails() {
     getCoinLstmPredictionById,
   } = useCoins();
 
+  // ================ RESIZING logic ================
+  //selects the Big Coin title
   const titleRef = useRef(null);
   const [wrapped, setWrapped] = useState(false);
+  // ================================================
 
   const coinIdFromPathname = pathname.split("/").at(-1);
 
-  //SYNC URL pathname with date range state =============================
+  // =================== SYNC URL pathname with date range state ==========
   const [searchParams, setSearchParams] = useSearchParams();
   const rangeFromUrl = searchParams.get(PARAM);
   const dateRange = VALID_RANGES.includes(rangeFromUrl)
@@ -75,8 +73,9 @@ function CoinDetails() {
       return params;
     });
   };
+  // ======================================================================
 
-  //TOP RADIO BUTTONS Date LOGIC ===========================================
+  //=================== DATE PICKER RADIO BUTTONS logic ======================
   // const [datePicker, setDatePicker] = useState("1M"); //1W, 1M, 6M, 1Y, YTD
   const [formattedCoinOhlcvData, setFormattedCoinOhlcvData] = useState([]);
 
@@ -108,20 +107,39 @@ function CoinDetails() {
     setFormattedCoinOhlcvData(formatted);
   }
 
+  //====================== DATA FORMATTING ================================
+  //Refilters the data on change of the Date picker, on change of the coin,
+  //and on mount of the component
   useEffect(() => {
     handleFormatCoinOhlcvData(dateRange);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateRange, coin]);
+  // =====================================================================
 
+  //====================== DATA FETCHING LOGIC ==========================
+  //Fetches on mount AND every 10 minutes (backend also updates data on
+  //every 10 minutes)
   useEffect(() => {
-    if (!coin || String(coin.coinId) !== String(coinIdFromPathname)) {
+    const fetchData = () => {
+      // if (!coin || String(coin.coinId) !== String(coinIdFromPathname)) {
       getCoinById(coinIdFromPathname);
       getCoinTechnicalAnalysisById(coinIdFromPathname);
       getCoinLstmPredictionById(coinIdFromPathname);
-    }
+      // }
+    };
+
+    fetchData();
+
+    const intervalId = setInterval(fetchData, 600_000);
+
+    return () => clearInterval(intervalId);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [coinIdFromPathname]);
+  //=====================================================================
 
+  // ====================== TITLE WRAP logic ============================
+  // TODO: NOTE: Something may be broken here, check logic
   //Checks
   //single-line? -> scrollHeight = lineHeight
   //multi-line -> scrollHeight = lineHeight
@@ -133,18 +151,15 @@ function CoinDetails() {
     setWrapped(el.scrollHeight > lineHeight * 1.2);
   }, [coin?.name]);
 
+  // ============ SYNC Search params to datepicker state ==============
   useEffect(() => {
     if (!rangeFromUrl || !VALID_RANGES.includes(rangeFromUrl)) {
       setSearchParams({ [PARAM]: DEFAULT_RANGE }, { replace: true });
     }
   }, [rangeFromUrl, setSearchParams]);
+  // ===================================================================
 
-  //Mandatory TODOS:
-  //TODO: Add the Home screen error page
-  //Other TODOS:
   //TODO: Fix the reset zoom button - KOCKASTO KOPCHE napravi i stavi go najlevo maybe?
-  //TODO: Add mobile responsivity
-  //TODO: Add animations
 
   return (
     <Box
@@ -512,12 +527,12 @@ function CoinDetails() {
                   // backgroundColor: palette.grey[400],
                 }}
               >
-                <Title
+                <CardTitle
                   tooltipType={"ChartOHLC"}
                   formattedCoinData={formattedCoinOhlcvData}
                 >
                   OHLC
-                </Title>
+                </CardTitle>
               </Box>
               {formattedCoinOhlcvData &&
               !coinLoading &&
@@ -558,12 +573,12 @@ function CoinDetails() {
                 }}
               >
                 <Box sx={{ height: "100%" }}>
-                  <Title
+                  <CardTitle
                     tooltipType={"ChartVolume"}
                     formattedCoinData={formattedCoinOhlcvData}
                   >
                     Volume
-                  </Title>
+                  </CardTitle>
                 </Box>
               </Box>
               {formattedCoinOhlcvData.length > 0 &&

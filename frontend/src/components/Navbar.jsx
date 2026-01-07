@@ -22,7 +22,6 @@ function Navbar({ title = "true", sx }) {
             : mode === "light"
             ? palette.common.white
             : palette.background.dark,
-        color: mode === "light" ? palette.text.primary : palette.common.white,
         p: 2,
         display: "flex",
         alignItems: "center",
@@ -56,9 +55,21 @@ function Navbar({ title = "true", sx }) {
               alignItems: "flex-end",
             }}
           >
-            <Typography variant="h4" sx={{ p: "0 0 0 9px" }}>
-              Cryptocurrency Market Tracker
-            </Typography>
+            <Link to="/coins" style={{ textDecoration: "none" }}>
+              <Typography
+                variant="h4"
+                sx={{
+                  p: "0 0 0 9px",
+                  color:
+                    mode === "light"
+                      ? palette.text.primary
+                      : palette.common.white,
+                }}
+              >
+                Cryptocurrency Market Tracker
+              </Typography>
+            </Link>
+
             <Box
               sx={{ height: "100%", display: "flex", alignItems: "flex-end" }}
             >

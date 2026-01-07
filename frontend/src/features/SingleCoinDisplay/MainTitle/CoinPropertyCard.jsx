@@ -8,6 +8,8 @@ import {
 } from "@mui/material";
 import InfoIconTooltip from "../InfoIconTooltip";
 
+// These are used for the "Quote Asset: USD" and "Status: Active"
+// on the Single Coin Page
 export default function CoinPropertyCard({
   type,
   wrapped = false,

@@ -1,13 +1,7 @@
-import {
-  Typography,
-  Box,
-  useColorScheme,
-  useTheme,
-  Button,
-} from "@mui/material";
+import { Typography, Box, useColorScheme, useTheme } from "@mui/material";
 import useCoins from "../../../hooks/useCoins.js";
 import { useEffect, useState } from "react";
-import Title from "../Title.jsx";
+import CardTitle from "../CardTitle.jsx";
 import { formatDatePickerSelection } from "../../../util/stringUtils.js";
 import Indicator from "./Indicator.jsx";
 import RsiProgressBar from "./RsiProgressBar.jsx";
@@ -24,6 +18,8 @@ const technicalAnalysisTypes = [
   "overallSignal",
 ];
 
+//These are cards in the Single Coins Page BELOW the charts
+//these cards: "Trend Indicatorsℹ️", "Bollinger Bandsℹ️", etc.
 function MicroserviceDataCard({ type, datePicker, sx }) {
   const {
     coin,
@@ -40,6 +36,9 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
 
   const [filteredTechnicalAnalysisData, setFilteredTechnicalAnalysisData] =
     useState({});
+
+  //TODO: REFACTOR this code.  Not all cards use every variable inside of the component...
+  //Maybe use a custom hook to just get the necessary data into it
 
   //If the Component uses Technical Analysis data
   const analysisData = technicalAnalysisTypes.includes(type)
@@ -219,7 +218,7 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
       ? {
           BUY: palette.success.light,
           SELL: palette.error.light,
-          HOLD: mode === "light" ? palette.grey[500] : palette.grey[400],
+          HOLD: mode === "light" ? palette.grey[500] : palette.grey[600],
         }
       : null;
 
@@ -249,7 +248,7 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
         ...sx,
       }}
     >
-      <Title includeDate={false} tooltipType={type}>
+      <CardTitle includeDate={false} tooltipType={type}>
         {technicalAnalysisTypes.includes(type) ? (
           <>
             {type === "trendIndicators" ? (
@@ -324,7 +323,7 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
           </>
         ) : null}
         {type === "lstmPricePrediction" ? "Lstm Price Prediction" : null}
-      </Title>
+      </CardTitle>
 
       <Typography
         sx={{
@@ -357,9 +356,10 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
                 doesn't exist.
               </>
             ) : (
-              `Overall signal data for ${formatDatePickerSelection(
-                datePicker
-              )} is not available.`
+              <>
+                Overall signal data for{" "}
+                <b>{formatDatePickerSelection(datePicker)}</b> is not available.
+              </>
             )}
           </>
         ) : null}
@@ -762,6 +762,8 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
             ) : null}
           </>
         ) : null}
+
+        {/* LSTM Prediction microservice data */}
         {type === "lstmPricePrediction" ? (
           <>
             <Indicator

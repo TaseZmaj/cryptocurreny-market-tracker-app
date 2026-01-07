@@ -8,6 +8,7 @@ import {
 import { darkBackgroundColor } from "../../../util/uiVars";
 import useCoins from "../../../hooks/useCoins";
 
+//This is the used for the display of the Market Cap Rank of the coin
 function RankTag({ sx }) {
   const { mode } = useColorScheme();
   const { palette } = useTheme();
