@@ -22,7 +22,7 @@ public class TechnicalAnalysisService {
     private final RestTemplate restTemplate;
 
     // URL на Python FastAPI сервис
-    private static final String PYTHON_API_URL = "http://technical-analysis:8000/analyze";
+    private static final String PYTHON_API_URL = "http://localhost:8001:8001/analyze";
 
     public TechnicalAnalysisService(HistoricalDataRepository historicalDataRepository,
                                     RestTemplate restTemplate) {
