@@ -61,7 +61,7 @@ public class Filter2 {
     private static final String DEFAULT_QUOTE_ASSET = "USDT";
 
     //For multiple threads
-    private static final int MAX_CONCURRENT_REQUESTS = 5;
+    private static final int MAX_CONCURRENT_REQUESTS = 20;
     private final Semaphore semaphore = new Semaphore(MAX_CONCURRENT_REQUESTS);
 
     public List<HistoricalUpdateInfoDTO> run(List<Symbol> symbols) {
@@ -136,21 +136,21 @@ public class Filter2 {
     /**
      * Fetches data about the coin for the last 24H
      */
-    private void fetchAdditionalSymbolData(String coinId, String binanceSymbol) {
-        // 1. Избегни USDTUSDT
-        if (binanceSymbol.equalsIgnoreCase("USDT")) return;
+    private void fetchAdditionalSymbolData(String coinId, String binanceSymbol){
+        String url = BINANCE_TICKER_API + "symbol=" + binanceSymbol + DEFAULT_QUOTE_ASSET;
 
-        String url = BINANCE_TICKER_API + "symbol=" + binanceSymbol.toUpperCase() + DEFAULT_QUOTE_ASSET;
+        ResponseEntity<SummaryMetricsDTO> response = restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<>() {}
+        );
 
-        try {
-            ResponseEntity<SummaryMetricsDTO> response = restTemplate.exchange(
-                    url, HttpMethod.GET, null, new ParameterizedTypeReference<>() {}
-            );
-            // ... остатокот од кодот
-        } catch (Exception e) {
-            // Ова ќе спречи "Stopped Requests" логот да го прекине целиот систем
-            System.err.println("Skipping " + binanceSymbol + " - Not found on Binance or API error.");
-        }
+        SummaryMetricsDTO symbolData24h = response.getBody();
+        AssetSummary assetSummary = transformAssetSummary(coinId, symbolData24h);
+
+        assetSummaryRepository.save(assetSummary);
+        System.out.println("    -> 24H DATA: LOADED SUCCESSFULLY");
     }
 
     /**

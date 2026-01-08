@@ -21,40 +21,39 @@ public class ApiFetchingUtils {
     public List<List<Object>> callBinanceWithRetry(String url) {
         int maxRetries = 5;
         int attempt = 1;
-        long backoff = 2000; // Почни со 2 секунди наместо 500ms
+        long backoff = 500; // ms
 
         while (attempt <= maxRetries) {
             try {
                 ResponseEntity<List<List<Object>>> response = restTemplate.exchange(
-                        url, HttpMethod.GET, null, new ParameterizedTypeReference<>() {}
+                        url,
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<>() {}
                 );
                 return response.getBody();
 
             } catch (Exception ex) {
-                // КЛУЧНА ИЗМЕНА: Ако симболот не постои, не ни пробувај пак!
-                if (ex.getMessage() != null && ex.getMessage().contains("400")) {
-                    System.err.println("    -> Invalid Symbol (400) for URL: " + url + ". Skipping immediately.");
-                    return null;
+                if(ex.getMessage().contains("400 Bad Request")){
+                    System.err.println("    -> ERROR: Stopped Requests due to invalid symbol" + "\n");
+                    return null; // fail gracefully
                 }
+                System.err.println("    -> ERROR: Binance API error (attempt " + attempt + "): " + ex.getMessage() + "\n");
 
-                // Ако е грешка за премногу барања (429), зголеми го чекањето драстично
-                if (ex.getMessage() != null && ex.getMessage().contains("429")) {
-                    System.err.println("    -> Rate Limited (429). Waiting longer...");
-                    backoff = 30000; // Чекај 30 секунди ако те блокираат
+                if (attempt == maxRetries) {
+                    System.err.println("      -> Giving up after " + maxRetries + " attempts.");
+                    return null; // fail gracefully
                 }
-
-                System.err.println("    -> Binance API error (attempt " + attempt + "): " + ex.getMessage());
-
-                if (attempt == maxRetries) return null;
 
                 try {
                     Thread.sleep(backoff);
                 } catch (InterruptedException ignored) {}
 
-                backoff *= 2;
+                backoff *= 2; // exponential backoff
                 attempt++;
             }
         }
+
         return null;
     }
 }

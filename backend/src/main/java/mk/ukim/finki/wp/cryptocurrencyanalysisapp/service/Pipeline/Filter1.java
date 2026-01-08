@@ -73,7 +73,7 @@ public class Filter1 {
                 allSymbols.addAll(pageSymbols); //Add the results to the main List
                 System.out.println("  -> Successfully retrieved " + pageSymbols.size() + " symbols from Page " + page);
 
-                Thread.sleep(15000);
+                Thread.sleep(3000);
             }
 
             System.out.println("Extraction successful. Retrieved a total of " + allSymbols.size() + " raw symbols.");
@@ -84,12 +84,9 @@ public class Filter1 {
             System.err.println("  -> ERROR: API extraction interrupted.");
             return allSymbols;
         } catch (Exception e) {
-            // ОВА Е МЕСТОТО ШТО ГИ МЕНУВАМЕ:
             System.err.println("  -> CRITICAL ERROR: Failed to fetch data from CoinGecko API: " + e.getMessage());
-            // e.printStackTrace(); // Ова можеш да го тргнеш за да не ти ги полни логовите
-
-            // НАМЕСТО return List.of(); ВРАТИ ГО ОВА:
-            return allSymbols;
+            e.printStackTrace();
+            return List.of();
         }
     }
 
