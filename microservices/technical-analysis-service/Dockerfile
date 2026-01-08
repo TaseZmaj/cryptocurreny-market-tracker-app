@@ -22,8 +22,8 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY . .
 
 # Expose the port your service will run on
-EXPOSE 8000
+EXPOSE 8001
 
 # Run Uvicorn.
 # Note: Since your file is named app.py, we use "app:app"
-CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "8001"]

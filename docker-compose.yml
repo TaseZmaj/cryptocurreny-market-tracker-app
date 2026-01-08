@@ -21,7 +21,7 @@ services:
     build: ./microservices/technical-analysis-service
     container_name: technical-analysis-service
     ports:
-      - "8082:8000"
+      - "8082:8001"
     networks:
       - crypto-network
 
@@ -30,9 +30,9 @@ services:
     build:
       context: ./frontend
       args:
-        - VITE_APP_API_URL=http://localhost:8080/api/coins
-        - VITE_EXPORT_API_URL=http://localhost:8080/api/export
-        - VITE_MICROSERVICES_API_URL=http://localhost:8080/api/microservices
+        - VITE_APP_API_URL=https://cryptocurrency-tracker-dse9czbmdxe9buge.polandcentral-01.azurewebsites.net/api/coins
+        - VITE_EXPORT_API_URL=https://cryptocurrency-tracker-dse9czbmdxe9buge.polandcentral-01.azurewebsites.net/api/export
+        - VITE_MICROSERVICES_API_URL=https://cryptocurrency-tracker-dse9czbmdxe9buge.polandcentral-01.azurewebsites.net/api/microservices
     ports:
       - "3000:80"
     networks:
