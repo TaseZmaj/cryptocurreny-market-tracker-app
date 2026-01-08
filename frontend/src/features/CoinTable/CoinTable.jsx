@@ -73,13 +73,13 @@ export default function CoinTable() {
   //=======================================================================
 
   //====================== DATA FETCHING LOGIC ==========================
-  //Fetches on mount AND every 5 minutes
+  //Fetches on mount AND every 10 minutes
 
   useEffect(() => {
     // if (coins.length === 0) getAllCoins();
     getAllCoins();
 
-    const intervalId = setInterval(getAllCoins, 300_000);
+    const intervalId = setInterval(getAllCoins, 600_000);
 
     return () => clearInterval(intervalId);
   }, [getAllCoins /*, coins.length */]);

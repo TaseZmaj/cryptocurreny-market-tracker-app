@@ -19,7 +19,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class Filter1 {
     private final SymbolRepository symbolRepository;
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+
     private static final String BASE_SYMBOL_FETCH_API = "https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=";
 
     public List<Symbol> run() {

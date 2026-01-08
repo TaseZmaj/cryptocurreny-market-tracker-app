@@ -6,6 +6,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 
+//This is a provider class for the Onchain Sentiment Analysis
 @Component
 public class DefiLlamaClient {
 

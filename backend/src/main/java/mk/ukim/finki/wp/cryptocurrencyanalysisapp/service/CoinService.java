@@ -31,7 +31,7 @@ public class CoinService {
 
         List<AssetSummary> assetSummaries = assetSummaryRepository.findAllById(symbolIds);
 
-        //Makes a map like this <bitcoin, assetSummary za bitcoin>,
+        //Makes a map like this <bitcoin, assetSummary for bitcoin>,
         Map<String, AssetSummary> summaryMap = assetSummaries.stream()
                 .collect(Collectors.toMap(AssetSummary::getCoinId, Function.identity()));
 
