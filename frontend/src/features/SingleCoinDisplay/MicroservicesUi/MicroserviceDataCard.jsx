@@ -18,6 +18,9 @@ const technicalAnalysisTypes = [
   "overallSignal",
 ];
 
+// TODO: Make sure that the LSTM error code doesn't show up together with the data. And FIX
+//the LSTM error message
+
 //These are cards in the Single Coins Page BELOW the charts
 //these cards: "Trend Indicatorsℹ️", "Bollinger Bandsℹ️", etc.
 function MicroserviceDataCard({ type, datePicker, sx }) {
@@ -341,34 +344,40 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
           !coinTechnicalAnalysisError) ||
         coinTechnicalAnalysisError ? (
           <>
-            {type !== "overallSignal" ? (
+            {technicalAnalysisTypes.includes(type) ? (
               <>
-                {type === "trendIndicators" ? "Trend Indicators " : null}
-                {type === "bollingerBands" ? "Bollinger Bands " : null}
-                {type === "rsiPanel" ? "RSI " : null}
-                {type === "macdPanel" ? "MACD " : null}
-                {type === "stochasticPanel" ? "Stochastic Oscillator " : null}
-                {type === "cciPanel" ? "CCI " : null}
-                {type === "adxPanel" ? "ADX " : null}
-                {type === "vma" ? "Volume Analysis " : null}
-                data for {coin?.name} for <span></span>
-                <b>{formatDatePickerSelection(datePicker)}</b>
-                doesn't exist.
+                {type !== "overallSignal" ? (
+                  <>
+                    {type === "trendIndicators" ? "Trend Indicators " : null}
+                    {type === "bollingerBands" ? "Bollinger Bands " : null}
+                    {type === "rsiPanel" ? "RSI " : null}
+                    {type === "macdPanel" ? "MACD " : null}
+                    {type === "stochasticPanel"
+                      ? "Stochastic Oscillator "
+                      : null}
+                    {type === "cciPanel" ? "CCI " : null}
+                    {type === "adxPanel" ? "ADX " : null}
+                    {type === "vma" ? "Volume Analysis " : null}
+                    data for {coin?.name} for <span></span>
+                    <b>{formatDatePickerSelection(datePicker)}</b>
+                    doesn't exist.
+                  </>
+                ) : (
+                  <>
+                    Overall signal data for{" "}
+                    <b>{formatDatePickerSelection(datePicker)}</b> is not
+                    available.
+                  </>
+                )}
               </>
-            ) : (
-              <>
-                Overall signal data for{" "}
-                <b>{formatDatePickerSelection(datePicker)}</b> is not available.
-              </>
-            )}
+            ) : null}
           </>
         ) : null}
-        {(type === "lstmPricePrediction" &&
-          !lstmData &&
-          !coinLstmPredictionLoading &&
-          !coinLstmPredictionError) ||
+        {type === "lstmPricePrediction" &&
+        !coinLstmPrediction &&
+        !coinLstmPredictionLoading &&
         coinLstmPredictionError
-          ? `Lstm Prediction Data for ${coin?.name} doesn't exist`
+          ? `Lstm Prediction Data for ${coin?.name} doesn't exist.`
           : null}
       </Typography>
 
@@ -764,7 +773,9 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
         ) : null}
 
         {/* LSTM Prediction microservice data */}
-        {type === "lstmPricePrediction" ? (
+        {type === "lstmPricePrediction" &&
+        !coinLstmPredictionError &&
+        !coinLstmPredictionLoading ? (
           <>
             <Indicator
               sx={{ fontWeight: "bold", fontSize: "1.1rem" }}

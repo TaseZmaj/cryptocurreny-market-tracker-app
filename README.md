@@ -34,7 +34,7 @@ The frontend uses **Build-Time Arguments** to hardcode the API endpoints into th
 Open your terminal in the project root and run:
 
 ```powershell
-docker-compose up -d --build
+ docker-compose -f docker-compose.yml up -d --build
 ```
 
 ### Bonus
