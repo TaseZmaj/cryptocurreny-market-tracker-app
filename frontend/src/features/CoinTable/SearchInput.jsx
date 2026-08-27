@@ -1,4 +1,4 @@
-import { useColorScheme, useTheme } from "@mui/material";
+import { useColorScheme, useMediaQuery, useTheme } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { InputAdornment, TextField } from "@mui/material";
 import { useState } from "react";
@@ -6,12 +6,15 @@ import { useState } from "react";
 //This is used for the table searching/querying
 export default function SearchInput({ query, setQuery, sx }) {
   const [focused, setFocused] = useState(false);
-  const { palette } = useTheme();
+  const theme = useTheme();
+  const { palette } = theme;
   const { mode } = useColorScheme();
+  const showLabel = useMediaQuery(theme.breakpoints.up("md"));
 
   return (
     <TextField
       sx={{
+        placeholder: showLabel ? "Search coins..." : undefined,
         width: "300px",
         transitionDuration: "150ms",
         "& .MuiOutlinedInput-root": {
@@ -40,7 +43,7 @@ export default function SearchInput({ query, setQuery, sx }) {
         ...sx,
       }}
       variant="outlined"
-      label="Search coins..."
+      label={showLabel ? "Search coins..." : undefined}
       size="small"
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
@@ -53,8 +56,8 @@ export default function SearchInput({ query, setQuery, sx }) {
                   color: focused
                     ? palette.primary.main
                     : mode === "light"
-                    ? palette.common.black
-                    : palette.common.white,
+                      ? palette.common.black
+                      : palette.common.white,
                   transition: "all 150ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
                 }}
               />

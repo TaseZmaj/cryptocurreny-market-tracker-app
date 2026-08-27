@@ -119,7 +119,7 @@ export default function CoinTable() {
   const visibleRows = useMemo(() => {
     return sortedCoins.slice(
       page * rowsPerPage,
-      page * rowsPerPage + rowsPerPage
+      page * rowsPerPage + rowsPerPage,
     );
   }, [sortedCoins, page, rowsPerPage]);
   //=========================================================================
@@ -137,7 +137,8 @@ export default function CoinTable() {
           display: "flex",
           flexDirection: "row",
           alignItems: "center",
-          justifyContent: "flex-end",
+          justifyContent: { xs: "center", sm: "flex-end" },
+          gap: { xs: 1, sm: 0 },
           mb: 1,
         }}
       >
@@ -146,9 +147,13 @@ export default function CoinTable() {
             getCsvAll24hDataAsync();
           }}
           type="exportToCsv24h"
-          sx={{ width: "40px", height: "40px", mr: "11px" }}
+          sx={{ width: "40px", height: "40px", mr: { xs: 0, sm: "11px" } }}
         ></SquareButton>
-        <SearchInput query={query} setQuery={setQuery} />
+        <SearchInput
+          query={query}
+          setQuery={setQuery}
+          sx={{ width: { xs: "min(300px, calc(100vw - 90px))", sm: "300px" } }}
+        />
       </Box>
       <Box
         sx={{
@@ -164,6 +169,15 @@ export default function CoinTable() {
         <TableContainer
           sx={{
             // overflow: coinsError ? "hidden" : "auto",
+            flex: 1,
+            minHeight: 0,
+            overflow: "auto",
+            position: "relative",
+            isolation: "isolate",
+            "&::-webkit-scrollbar": {
+              width: { xs: "10px", sm: "6px" },
+              height: { xs: "10px", sm: "6px" },
+            },
             borderBottom:
               mode === "light" ? "none" : `1px solid ${palette.grey[800]}`,
           }}
@@ -172,6 +186,9 @@ export default function CoinTable() {
             sx={{
               width: "100%",
               minWidth: 650,
+              "& th, & td": {
+                fontSize: { xs: "1.3rem", sm: "1.2rem", lg: "1.1rem" },
+              },
             }}
             aria-labelledby="tableTitle"
             size={dense ? "small" : "medium"}
@@ -313,19 +330,58 @@ export default function CoinTable() {
           page={page}
           onPageChange={handleChangePage}
           onRowsPerPageChange={handleChangeRowsPerPage}
+          SelectProps={{
+            MenuProps: {
+              MenuListProps: {
+                sx: {
+                  "& .MuiMenuItem-root": {
+                    fontSize: { xs: "1.2rem", sm: "1.1rem", lg: "0.95rem" },
+                  },
+                },
+              },
+            },
+          }}
           sx={{
             mt: "auto",
-            overflow: "hidden",
+            flexShrink: 0,
+            overflow: "visible",
             minHeight: "52px",
             color:
               mode === "light" ? palette.text.primary : palette.common.white,
-            ".MuiTablePagination-selectLabel, .MuiTablePagination-displayedRows":
+            "& .MuiTablePagination-toolbar": {
+              flexWrap: { xs: "wrap", sm: "nowrap" },
+              justifyContent: { xs: "center", sm: "flex-end" },
+              rowGap: { xs: 0 },
+              marginTop: { xs: "6px" },
+              minHeight: { xs: "68px", sm: "52px" },
+              padding: { xs: "0 4px", sm: "0 16px" },
+            },
+            "& .MuiTablePagination-spacer": {
+              display: { xs: "none", sm: "block" },
+            },
+            "& .MuiTablePagination-actions": {
+              width: { xs: "100%", sm: "auto" },
+              marginLeft: { xs: 0, sm: 0, lg: "20px" },
+              display: "flex",
+              justifyContent: { xs: "center", sm: "initial" },
+              "& .MuiIconButton-root": {
+                padding: { xs: "4px", sm: "6px", lg: "4px" },
+              },
+              "& .MuiSvgIcon-root": {
+                fontSize: { xs: "2rem", sm: "1.75rem", lg: "2rem" },
+              },
+            },
+            "& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows, & .MuiTablePagination-select":
               {
+                fontSize: { xs: "1.2rem", sm: "1.1rem", lg: "0.95rem" },
                 color:
                   mode === "light"
                     ? palette.text.primary
                     : palette.common.white,
               },
+            "& .MuiTablePagination-selectLabel": {
+              margin: { xs: "0 4px" },
+            },
             ".MuiSvgIcon-root": {
               color:
                 mode === "light" ? palette.text.primary : palette.common.white,
@@ -366,8 +422,10 @@ function EnhancedTableHead({ order, orderBy, onRequestSort }) {
           <TableCell
             sx={{
               boxSizing: "border-box",
-              height: "25px",
-              maxHeight: "25px",
+              height: { xs: "48px", sm: "42px", lg: "36px" },
+              position: "sticky",
+              top: 0,
+              zIndex: 2,
               width: headCell.width,
               backgroundColor:
                 mode === "light"
@@ -375,14 +433,15 @@ function EnhancedTableHead({ order, orderBy, onRequestSort }) {
                   : darkBackgroundColor,
               color:
                 mode === "light" ? palette.common.black : palette.common.white,
+              overflow: "hidden",
             }}
             key={headCell.id}
             align={
               headCell.id === "marketCapRank"
                 ? "left"
                 : headCell.numeric
-                ? "right"
-                : "left"
+                  ? "right"
+                  : "left"
             }
             // padding={headCell.disablePadding ? "none" : "normal"}
             sortDirection={orderBy === headCell.id ? order : false}
@@ -415,6 +474,7 @@ function EnhancedTableHead({ order, orderBy, onRequestSort }) {
               <Typography
                 sx={{
                   fontWeight: "600",
+                  fontSize: { xs: "1.2rem", sm: "1.1rem", lg: "0.95rem" },
                   color:
                     mode === "light"
                       ? palette.common.black
@@ -512,7 +572,18 @@ const CoinRow = memo(function CoinRow({ coin }) {
               style={{ borderRadius: "50%", marginRight: "10px" }}
             />
 
-            <Typography fontWeight={500}>{coin.name}</Typography>
+            <Typography
+              sx={{
+                fontWeight: "500",
+                fontSize: { xs: "1.4rem", sm: "1.3rem", lg: "1.2rem" },
+                minWidth: 0,
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                // whiteSpace: "nowrap",
+              }}
+            >
+              {coin.name}
+            </Typography>
           </Box>
         </TableCell>
 

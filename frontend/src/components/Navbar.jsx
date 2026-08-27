@@ -20,8 +20,8 @@ function Navbar({ title = "true", sx }) {
           pathname === "/"
             ? "transparent"
             : mode === "light"
-            ? palette.common.white
-            : palette.background.dark,
+              ? palette.common.white
+              : palette.background.dark,
         p: 2,
         display: "flex",
         alignItems: "center",
@@ -51,14 +51,14 @@ function Navbar({ title = "true", sx }) {
           <Box
             sx={{
               display: "flex",
-              flexDirection: "row",
-              alignItems: "flex-end",
+              minWidth: 0,
             }}
           >
             <Link to="/coins" style={{ textDecoration: "none" }}>
               <Typography
                 variant="h4"
                 sx={{
+                  fontSize: { xs: "1.5rem", sm: "1.8rem", md: "2rem" },
                   p: "0 0 0 9px",
                   color:
                     mode === "light"
@@ -67,25 +67,26 @@ function Navbar({ title = "true", sx }) {
                 }}
               >
                 Cryptocurrency Market Tracker
+                <Box
+                  component="span"
+                  sx={{
+                    color: palette.primary.main,
+                    fontSize: "1rem",
+                    marginLeft: "5px",
+                    marginRight: "5px",
+                    whiteSpace: "nowrap",
+                    verticalAlign: "baseline",
+                  }}
+                >
+                  v1.0
+                </Box>
               </Typography>
             </Link>
-
-            <Box
-              sx={{ height: "100%", display: "flex", alignItems: "flex-end" }}
-            >
-              <Typography
-                variant="body1"
-                sx={{ color: palette.primary.main, ml: "5px", mb: "1px" }}
-                color={palette.primary.main}
-              >
-                v1.0
-              </Typography>
-            </Box>
           </Box>
         </>
       ) : null}
 
-      <LightDarkModeToggle sx={{ ml: "auto", mr: "50px" }} />
+      <LightDarkModeToggle sx={{ ml: "auto", mr: { xs: "2px", lg: "30px" } }} />
     </Box>
   );
 }

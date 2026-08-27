@@ -20,6 +20,10 @@ body {
   width: 6px;
 }
 
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
 ::-webkit-scrollbar-track {
   background: transparent; /* This makes the scrollbar track transparent */
 }
