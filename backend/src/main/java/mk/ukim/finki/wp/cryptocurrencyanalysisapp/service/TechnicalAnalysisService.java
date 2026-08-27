@@ -22,10 +22,15 @@ public class TechnicalAnalysisService {
     private final RestTemplate restTemplate;
 
     // URL на Python FastAPI сервис
-    private static final String PYTHON_API_URL = "http://technical-analysis:8000/analyze";
+   private static final String TECHNICAL_ANALYSIS_MICROSERVICE_URL = "http://technical-analysis:8082/analyze";
 
-    public TechnicalAnalysisService(HistoricalDataRepository historicalDataRepository,
-                                    RestTemplate restTemplate) {
+    //For local testing of the microservice without containerization use this url instead:
+//    private static final String TECHNICAL_ANALYSIS_MICROSERVICE_URL = "http://localhost:8082/analyze";
+
+    public TechnicalAnalysisService(
+            HistoricalDataRepository historicalDataRepository,
+            RestTemplate restTemplate
+    ) {
         this.historicalDataRepository = historicalDataRepository;
         this.restTemplate = restTemplate;
     }
@@ -56,7 +61,7 @@ public class TechnicalAnalysisService {
 
         // 3) Го викаме Python API-то со POST /analyze
         AnalyzeResponseDto response = restTemplate.postForObject(
-                PYTHON_API_URL,
+                TECHNICAL_ANALYSIS_MICROSERVICE_URL,
                 requestDto,
                 AnalyzeResponseDto.class
         );

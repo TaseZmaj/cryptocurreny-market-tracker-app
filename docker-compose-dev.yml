@@ -11,7 +11,7 @@ services:
   lstm-predictor:
     build: ./microservices/ltsm-predictor-service
     ports:
-      - "8081:8000"
+      - "8081:8081"
     networks:
       - crypto-network
 
@@ -20,7 +20,7 @@ services:
     build: ./microservices/technical-analysis-service
     container_name: technical-analysis-service
     ports:
-      - "8082:8000"
+      - "8082:8082"
     networks:
       - crypto-network
 

@@ -1,6 +1,6 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="TechnicalAnalysis-Config" type="PythonConfigurationType" factoryName="Python">
-    <module name="technical-analysis-service" />
+  <configuration default="false" name="LstmPrediction-Config" type="PythonConfigurationType" factoryName="Python">
+    <module name="ltsm-predictor-service" />
     <option name="ENV_FILES" value="" />
     <option name="INTERPRETER_OPTIONS" value="" />
     <option name="PARENT_ENVS" value="true" />
@@ -8,14 +8,14 @@
       <env name="PYTHONUNBUFFERED" value="1" />
     </envs>
     <option name="SDK_HOME" value="" />
-    <option name="SDK_NAME" value="Python 3.14 (technical-analysis-service)" />
-    <option name="WORKING_DIRECTORY" value="C:\Users\stefa\VSCODE\PORTFOLIO\cryptocurrency-market-tracker\microservices\technical-analysis-service\venv" />
+    <option name="SDK_NAME" value="Python 3.14 (ltsm-predictor-service)" />
+    <option name="WORKING_DIRECTORY" value="C:\Users\stefa\VSCODE\PORTFOLIO\cryptocurrency-market-tracker\microservices\ltsm-predictor-service\.venv" />
     <option name="IS_MODULE_SDK" value="false" />
     <option name="ADD_CONTENT_ROOTS" value="true" />
     <option name="ADD_SOURCE_ROOTS" value="true" />
     <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
     <option name="SCRIPT_NAME" value="uvicorn" />
-    <option name="PARAMETERS" value="app:app --host 127.0.0.1 --port 8082" />
+    <option name="PARAMETERS" value="main:app --host 127.0.0.1 --port 8081" />
     <option name="SHOW_COMMAND_LINE" value="false" />
     <option name="EMULATE_TERMINAL" value="false" />
     <option name="MODULE_MODE" value="true" />

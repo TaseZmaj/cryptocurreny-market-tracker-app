@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List
 import pandas as pd
@@ -7,6 +8,16 @@ from technical_indicators import analyze_timeframes
 
 
 app = FastAPI(title="Crypto Technical Analysis API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8080",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 class Candle(BaseModel):
@@ -39,3 +50,9 @@ def analyze(request: AnalyzeRequest):
     return {
         "timeframes": results
     }
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=8082)

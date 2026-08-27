@@ -119,7 +119,7 @@ def analyze_timeframes(df: pd.DataFrame):
     timeframes = {
         "1d": "D",  # дневно
         "1w": "W",  # неделно
-        "1m": "M",  # месечно
+        "1m": "ME",  # месечно (month-end)
     }
 
     for label, rule in timeframes.items():

@@ -20,11 +20,11 @@ public class CoinDetailsDTO {
     private Boolean active;
 
     // --- Податоци од AssetSummary.java (24H податоци) ---
-    private BigDecimal lastPrice;
-    private BigDecimal volume24h;
-    private BigDecimal high24h;
-    private BigDecimal low24h;
-    private BigDecimal liquidity24h;
+    private BigDecimal lastPrice = null;
+    private BigDecimal volume24h = null;
+    private BigDecimal high24h = null;
+    private BigDecimal low24h = null;
+    private BigDecimal liquidity24h = null;
     private Instant summaryUpdatedAt; // Преименувано за да се избегне конфликт со Symbol
 
     // --- Coin icon

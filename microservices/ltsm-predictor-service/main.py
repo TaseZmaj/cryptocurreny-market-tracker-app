@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 # Ја вчитуваме функцијата од lstm_logic.py
 from lstm_logic import predict_for_symbol
 
@@ -7,6 +8,16 @@ app = FastAPI(
     title="LSTM Crypto Prediction Service",
     description="Microservice for forecasting cryptocurrency prices using an LSTM model.",
     version="1.0.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:8080",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 @app.get("/")
@@ -35,3 +46,9 @@ def get_prediction(symbol_id: str):
 
     print(f"[FASTAPI SUCCESS] Враќам предвидување за {symbol_id}: {prediction_result['prediction']}")
     return prediction_result
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(app, host="127.0.0.1", port=8081)
