@@ -2,6 +2,7 @@ import { Box, Button, Typography } from "@mui/material";
 import { useTheme, useColorScheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { Link } from "react-router";
+import logo from "../assets/logo_v2.png";
 
 function Home() {
   const { mode } = useColorScheme();
@@ -21,13 +22,35 @@ function Home() {
         justifyContent: "center",
         flexDirection: "column",
         textAlign: "center",
+        position: "relative",
+        overflow: "hidden",
       }}
     >
-      <Box sx={{ display: "flex", flexDirection: "row" }}>
+      <Box
+        component="img"
+        src={logo}
+        alt=""
+        aria-hidden="true"
+        sx={{
+          position: "absolute",
+          // top: 115,
+          width: {
+            xs: "min(88vw, 360px)",
+            sm: "min(70vw, 520px)",
+            lg: "620px",
+          },
+          height: "auto",
+          opacity: mode === "light" ? 0.075 : 0.09,
+          pointerEvents: "none",
+          userSelect: "none",
+        }}
+      />
+
+      <Box sx={{ display: "flex", flexDirection: "row", position: "relative" }}>
         <Typography
           variant="h2"
           sx={{
-            fontSize: "4rem",
+            fontSize: { xs: "2.6rem", md: "3.5rem", lg: "4rem" },
             color:
               mode === "light" ? palette.text.primary : palette.common.white,
           }}
@@ -48,8 +71,13 @@ function Home() {
 
       <Typography
         variant="body1"
-        color={mode === "light" ? palette.text.secondary : palette.grey[400]}
-        sx={{ mt: "4px", fontSize: "1.2rem" }}
+        color={mode === "light" ? palette.grey[600] : palette.grey[400]}
+        sx={{
+          fontWeight: 100,
+          mt: "6px",
+          fontSize: { xs: "1.12rem", md: "1.2rem", lg: "1.3rem" },
+          position: "relative",
+        }}
       >
         Discover and Analyze the Top Cryptocurrencies at a glance.
       </Typography>
@@ -58,6 +86,7 @@ function Home() {
         variant="contained"
         sx={{
           // border: `1px solid primary.${palette.primary.main}`,
+          position: "relative",
           mt: 6,
           pt: 1.3,
           pb: 1.3,
@@ -71,8 +100,8 @@ function Home() {
         <Typography
           sx={{
             fontSize: "1.3rem",
-            fontWeight: 400,
-            color: palette.common.white,
+            fontWeight: { xs: 600, lg: 500 },
+            color: "#fcfbfbf3",
           }}
         >
           Get Started

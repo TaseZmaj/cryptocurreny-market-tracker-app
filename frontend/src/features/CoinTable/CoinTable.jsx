@@ -24,7 +24,7 @@ import useCoins from "../../hooks/useCoins.js";
 import { tableQuery } from "./tableQuery.js";
 import { FormControlLabel, Switch, Tooltip } from "@mui/material";
 import MessageBox from "./MessageBox.jsx";
-import LoadingTableCell from "../../components/LoadingTableCell.jsx";
+import LoadingSkeleton from "../../components/LoadingSkeleton.jsx";
 import { formatCryptoPrice } from "../../util/stringUtils.js";
 import { blue } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
@@ -225,8 +225,12 @@ export default function CoinTable() {
                       }}
                       sx={{
                         border: "none",
-                        cursor: "pointer",
-                        height: "58px",
+                        height: {
+                          xs: "67px !important",
+                          md: "65px !important",
+                          lg: "62px !important",
+                        },
+                        boxSizing: "border-box",
                         "& td": {
                           borderBottom:
                             mode === "light"
@@ -249,7 +253,7 @@ export default function CoinTable() {
                           }}
                         >
                           {/* Loading gray box */}
-                          <LoadingTableCell />
+                          <LoadingSkeleton />
                         </TableCell>
                       ))}
                     </TableRow>
@@ -359,9 +363,13 @@ export default function CoinTable() {
             "& .MuiTablePagination-spacer": {
               display: { xs: "none", sm: "block" },
             },
-            "& .MuiTablePagination-actions": {
+            "&&& .MuiTablePagination-actions": {
               width: { xs: "100%", sm: "auto" },
-              marginLeft: { xs: 0, sm: 0, lg: "20px" },
+              marginLeft: {
+                xs: "0 !important",
+                sm: "0 !important",
+                lg: "20px !important",
+              },
               display: "flex",
               justifyContent: { xs: "center", sm: "initial" },
               "& .MuiIconButton-root": {
@@ -380,7 +388,7 @@ export default function CoinTable() {
                     : palette.common.white,
               },
             "& .MuiTablePagination-selectLabel": {
-              margin: { xs: "0 4px" },
+              margin: { xs: "0 0 0 38px", md: 0 },
             },
             ".MuiSvgIcon-root": {
               color:
@@ -527,7 +535,12 @@ const CoinRow = memo(function CoinRow({ coin }) {
         sx={{
           border: "none",
           cursor: "pointer",
-          height: "58px",
+          height: {
+            xs: "67px !important",
+            md: "65px !important",
+            lg: "62px !important",
+          },
+          boxSizing: "border-box",
           "&:hover": {
             backgroundColor: mode === "light" ? blue[50] : palette.grey[900],
           },

@@ -22,7 +22,7 @@ function RankTag({ sx }) {
       <Box
         sx={{
           minWidth: "25px",
-          height: "25px",
+          height: { xs: "35px", md: "25px" },
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -36,7 +36,15 @@ function RankTag({ sx }) {
           ...sx,
         }}
       >
-        <Typography variant="body1">#{coin.marketCapRank}</Typography>
+        <Typography
+          variant="body1"
+          sx={{
+            fontSize: { xs: "1.1rem", md: "1rem" },
+            fontWeight: { xs: "600", md: "400" },
+          }}
+        >
+          #{coin.marketCapRank}
+        </Typography>
       </Box>
     </Tooltip>
   );

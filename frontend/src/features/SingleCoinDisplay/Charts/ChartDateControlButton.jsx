@@ -13,7 +13,7 @@ function ChartDateControlButton({ datePicker, onClick, children, sx = {} }) {
       disableRipple
       onClick={() => onClick(children)}
       sx={{
-        // transition: "none",
+        transition: "none",
         width: "74px",
         height: "32px",
         borderRadius: "4px",
@@ -28,13 +28,13 @@ function ChartDateControlButton({ datePicker, onClick, children, sx = {} }) {
         backgroundColor: isSelected
           ? palette.primary.main
           : mode === "light"
-          ? palette.background.paper
-          : darkBackgroundColor,
+            ? palette.background.paper
+            : darkBackgroundColor,
         color: isSelected
           ? palette.common.white
           : mode === "light"
-          ? palette.text.primary
-          : palette.common.white,
+            ? palette.text.primary
+            : palette.common.white,
         ...sx,
       }}
     >

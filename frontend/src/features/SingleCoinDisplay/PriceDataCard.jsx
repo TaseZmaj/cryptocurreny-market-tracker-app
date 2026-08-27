@@ -2,6 +2,7 @@ import { Box, Typography, useColorScheme, useTheme } from "@mui/material";
 import useCoins from "../../hooks/useCoins";
 import { formatCryptoPrice } from "../../util/stringUtils";
 import InfoIconTooltip from "./InfoIconTooltip";
+import LoadingSkeleton from "../../components/LoadingSkeleton";
 
 //This is used for the 24h data on the left side of the screen
 //on the Single Coin Page - for these: "Last Priceℹ️", "24h High Priceℹ️",
@@ -64,6 +65,17 @@ function PriceDataCard({ type }) {
           {type === "volume24h" ? formatCryptoPrice(coin.volume24h) : null}
           {type === "liquidity" ? formatCryptoPrice(coin.liquidity24h) : null}
         </Typography>
+      ) : null}
+
+      {coinLoading && !coinError ? (
+        <Box
+          sx={{
+            width: type === "lastPrice24h" ? "166px" : "120px",
+            height: type === "lastPrice24h" ? "45px" : "35px",
+          }}
+        >
+          <LoadingSkeleton sx={{ width: "100%" }} />
+        </Box>
       ) : null}
     </Box>
   );

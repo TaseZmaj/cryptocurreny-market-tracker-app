@@ -1,3 +1,7 @@
+// ===========================================================================
+//OLD OHLC CHART -  CURRENTLY NOT IN USE
+// ===========================================================================
+
 import React, { useEffect, useRef, useState } from "react";
 import { createChart, CandlestickSeries } from "lightweight-charts";
 import { useColorScheme, useTheme } from "@mui/material";
@@ -5,19 +9,6 @@ import {
   formatCryptoPriceChart,
   formatIsoToYMD,
 } from "../../../util/stringUtils";
-
-//Individual candlestick sizes and offset
-//NOTE: Some standard ways of css resizing and centering just
-//does not work with this library, so this is the only way to
-//center it - manually
-const RESIZER = {
-  "1D": 300,
-  "1W": 180,
-  "1M": 38.95,
-  "6M": 6.93,
-  "1Y": 3.53,
-  YTD: 0.4,
-};
 
 const OFFSET = {
   "1D": 1.73,
@@ -29,12 +20,7 @@ const OFFSET = {
 };
 
 //====================== OHLCV Candlestick Chart ===========================
-function CandlestickChart({
-  datePicker,
-  formattedCoinOhlcvData,
-  width,
-  height,
-}) {
+function CandlestickChart({ datePicker, formattedCoinOhlcvData, height }) {
   //======================== CHART REFS =================================
   //Since the charting library is not a React one, these
   //Refs are used for selecting an element in the DOM and
@@ -75,9 +61,12 @@ function CandlestickChart({
   useEffect(() => {
     if (!chartContainerRef.current) return;
 
+    const container = chartContainerRef.current;
+    const chartHeight = Number(height);
+    const chartWidth = Math.max(1, container.getBoundingClientRect().width);
     const chart = createChart(chartContainerRef.current, {
-      width,
-      height,
+      width: chartWidth,
+      height: chartHeight,
       layout: {
         background: { color: "transparent" },
         textColor: "rgba(0,0,0,0.6)",
@@ -154,7 +143,7 @@ function CandlestickChart({
       if (!isDragging || !e.clientX || startX === null) return;
 
       const currentX = getRelativeX(e.clientX);
-      const rightLimit = width - Y_AXIS_WIDTH;
+      const rightLimit = container.clientWidth - Y_AXIS_WIDTH;
 
       const clampedX = Math.min(currentX, rightLimit);
       const x = Math.min(startX, clampedX);
@@ -168,7 +157,7 @@ function CandlestickChart({
       isDragging = false;
 
       const endX = getRelativeX(e.clientX);
-      const rightLimit = width - Y_AXIS_WIDTH;
+      const rightLimit = container.clientWidth - Y_AXIS_WIDTH;
       const clampedEndX = Math.min(endX, rightLimit);
 
       if (Math.abs(startX - clampedEndX) > 5) {
@@ -224,12 +213,28 @@ function CandlestickChart({
       startX = null;
     };
 
-    const container = chartContainerRef.current;
     container.addEventListener("mousedown", handleMouseDown);
     container.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
 
+    const resizeChart = () => {
+      const nextWidth = Math.floor(container.getBoundingClientRect().width);
+      if (nextWidth > 0) {
+        chart.resize(nextWidth, chartHeight);
+        if (seriesRef.current) {
+          chart.timeScale().fitContent();
+        }
+      }
+    };
+    const resizeObserver = new ResizeObserver(resizeChart);
+    window.addEventListener("resize", resizeChart);
+    resizeObserver.observe(container);
+    const initialResizeFrame = requestAnimationFrame(resizeChart);
+
     return () => {
+      cancelAnimationFrame(initialResizeFrame);
+      resizeObserver.disconnect();
+      window.removeEventListener("resize", resizeChart);
       chart.remove();
       container.removeEventListener("mousedown", handleMouseDown);
       container.removeEventListener("mousemove", handleMouseMove);
@@ -246,7 +251,6 @@ function CandlestickChart({
 
     chartInstanceRef.current.timeScale().fitContent();
     chartInstanceRef.current.timeScale().applyOptions({
-      barSpacing: RESIZER[datePicker],
       rightOffset: OFFSET[datePicker],
     });
 
@@ -289,8 +293,8 @@ function CandlestickChart({
       ref={chartContainerRef}
       style={{
         position: "relative",
-        width: { width },
-        height: "fit-content",
+        width: "100%",
+        height: `${height}px`,
         // display: "flex",
         // justifyContent: "center",
       }}

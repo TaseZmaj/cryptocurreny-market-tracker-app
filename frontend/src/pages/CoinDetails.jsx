@@ -2,13 +2,11 @@ import { Box, Grid, Typography, useColorScheme, useTheme } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import useCoins from "../hooks/useCoins";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
-import LoadingTableCell from "../components/LoadingTableCell";
-import RankTag from "../features/SingleCoinDisplay/MainTitle/RankTag.jsx";
-import { getSymbolFontSize, getTitleFontSize } from "../util/stringUtils.js";
 import CoinPropertyCard from "../features/SingleCoinDisplay/MainTitle/CoinPropertyCard.jsx";
 import { formatDate } from "../util/stringUtils.js";
 import PriceDataCard from "../features/SingleCoinDisplay/PriceDataCard.jsx";
 import CandlestickChart from "../features/SingleCoinDisplay/Charts/CandlestickChart.jsx";
+import ApexCandlestickChart from "../features/SingleCoinDisplay/Charts/ApexCandlestickChart.jsx";
 import ChartDateControlButton from "../features/SingleCoinDisplay/Charts/ChartDateControlButton.jsx";
 import useWindowWidth from "../hooks/useWindowWidth.js";
 import VolumeChart from "../features/SingleCoinDisplay/Charts/VolumeChart.jsx";
@@ -17,6 +15,8 @@ import { getCsvByIdAsync } from "../util/CoinsApi.js";
 import MicroserviceDataCard from "../features/SingleCoinDisplay/MicroservicesUi/MicroserviceDataCard.jsx";
 import CardTitle from "../features/SingleCoinDisplay/CardTitle.jsx";
 import { useSearchParams } from "react-router-dom";
+import CoinTitle from "../features/SingleCoinDisplay/MainTitle/CoinTitle.jsx";
+import LoadingSkeleton from "../components/LoadingSkeleton.jsx";
 
 // Valid ranges from the date picker
 const VALID_RANGES = ["1D", "1W", "1M", "6M", "1Y", "YTD"];
@@ -164,47 +164,62 @@ function CoinDetails() {
   return (
     <Box
       sx={{
+        // display: { xs: "flex", md: "grid" },
+        // flexDirection: { xs: "column", md: undefined },
         display: "flex",
-        flexDirection: "row",
+        flexDirection: { xs: "column", md: "row" },
         width: "100%",
         height: "100%",
+        overflowY: { xs: "auto !important", md: "hidden" },
+        minWidth: 0,
       }}
     >
-      {/* 24H DATA - left side */}
+      {/* Title and 24h data - left side */}
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          width: "413px",
-          height: "100%",
+          width: { xs: "100%", md: "413px" },
+          height: { xs: "auto", md: "100%" },
+          minHeight: { xs: "auto", md: 0 },
+          flexShrink: 0,
+          position: "relative",
+          overflowY: "hidden !important",
+          zIndex: 1,
+          backgroundColor:
+            mode === "light" ? palette.common.white : palette.background.dark,
           // maxHeight: "745px",
           p: "0 30px 20px 30px",
           boxSizing: "border-box",
           // backgroundColor: palette.grey[300],
-          borderRight: `1px solid ${
-            mode === "light" ? palette.divider : palette.grey[900]
-          }`,
+          borderRight: {
+            xs: "none",
+            md: `1px solid ${
+              mode === "light" ? palette.divider : palette.grey[900]
+            }`,
+          },
         }}
       >
-        {/* Title and rank */}
-        {/* Logo - Bitcoin BTC #1 */}
+        {/* Title + rank and Quote asset + Status */}
         <Box
           sx={{
             width: "100%",
-            height: "130px",
-            minHeight: "119px",
-            mb: "50px",
+            height: "fit-content",
+            minHeight: "1px",
+            mb: "20px",
+            flexShrink: 0,
             display: "flex",
             flexDirection: "column",
+            // rowGap: "20px",
             // backgroundColor: palette.grey[400],
           }}
         >
-          {/* <Logo> Bitcoin BTC #1 */}
           <Box
             sx={{
               width: "100%",
-              maxWidth: "352px",
+              maxWidth: { sx: undefined, md: "352px" },
               height: "fit-content",
+              // minHeight: "70px",
               display: "flex",
               flexDirection: "row",
               justifyContent: "center",
@@ -215,116 +230,45 @@ function CoinDetails() {
               }`,
             }}
           >
-            {coin && !coinLoading && !coinError ? (
-              <>
-                <img
-                  src={coin.coinIconUrl}
-                  alt={coin.name}
-                  width={56}
-                  height={56}
-                  style={{
-                    borderRadius: "50%",
-                    paddingRight: "12px",
-                  }}
-                />
-                <Box
-                  sx={{
-                    display: "flex",
-                    alignItems: wrapped ? "center" : "baseline",
-                    pt: "10px",
-                    minWidth: 0,
-                  }}
-                >
-                  <Typography
-                    ref={titleRef}
-                    variant="h3"
-                    sx={{
-                      color:
-                        mode === "light"
-                          ? palette.text.primary
-                          : palette.common.white,
-                      // whiteSpace: "nowrap",
-                      // overflow: "hidden",
-                      // textOverflow: "ellipsis",
-                      // fontSize: "clamp(0.5rem, 3vw, 3rem)",
-                      fontSize: getTitleFontSize(coin.name),
-                      lineHeight: 1,
-                      // letterSpacing: "-0.02em",
-                    }}
-                  >
-                    {coin.name}
-                  </Typography>
-                  <Typography
-                    variant="body1"
-                    // fontSize="1.5rem"
-                    fontSize={getSymbolFontSize(coin.symbol)}
-                    sx={{
-                      whiteSpace: "nowrap",
-                      color:
-                        mode === "light"
-                          ? palette.text.secondary
-                          : palette.grey[200],
-                      ml: "4px",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {coin.symbol}
-                  </Typography>
-                  <RankTag
-                    coin={coin}
-                    sx={{
-                      ml: "6px",
-                      mt: "auto",
-                      mb: wrapped ? "auto" : "0",
-                    }}
-                  />
-                </Box>
-              </>
-            ) : null}
-
-            {/* Loading state */}
-            {coinLoading && !coinError ? <LoadingTableCell /> : null}
+            <CoinTitle wrapped={wrapped} titleRef={titleRef} />
           </Box>
+          {/* Quote Asset + Status */}
           <Box
             sx={{
               width: "100%",
               display: "flex",
               minHeight: "80px",
+              boxSizing: "border-box",
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
-              flexGrow: 1,
               // backgroundColor: palette.grey[400],
               pt: "10px",
             }}
           >
-            {coin && !coinLoading && !coinError ? (
-              <>
-                <CoinPropertyCard
-                  wrapped={width < "1835px" ? true : false}
-                  type="quoteAsset"
-                  sx={{ mr: "4px" }}
-                >
-                  {coin.quoteAsset}
-                </CoinPropertyCard>
-                <CoinPropertyCard type="status" sx={{ ml: "4px" }}>
-                  {coin.active ? "Active" : "Inactive"}
-                </CoinPropertyCard>
-              </>
-            ) : null}
+            <CoinPropertyCard
+              wrapped={width < "1835px" ? true : false}
+              type="quoteAsset"
+              sx={{ mr: "4px" }}
+            >
+              {coin ? coin.quoteAsset : ""}
+            </CoinPropertyCard>
+            <CoinPropertyCard type="status" sx={{ ml: "4px" }}>
+              {coin ? (coin.active ? "Active" : "Inactive") : null}
+            </CoinPropertyCard>
           </Box>
         </Box>
 
+        {/* 24h data */}
         <Box
           sx={{
             width: "100%",
-            flexGrow: 1,
+            height: "fit-content",
+            // minHeight: "1px",
             // backgroundColor: palette.grey[500],
           }}
         >
-          {/* 24h Data:
-              13th December 2025
-          */}
+          {/* "24h data: 28 August 2026" */}
           <Box
             sx={{
               display: "flex",
@@ -332,8 +276,10 @@ function CoinDetails() {
               alignItems: "center",
               justifyContent: "center",
               width: "100%",
-              height: "70px",
-              mb: "17px",
+              height: "fit-content",
+              minHeight: "1px",
+              boxSizing: "border-box",
+              mb: "10px",
               // backgroundColor: palette.grey[600],
             }}
           >
@@ -345,9 +291,10 @@ function CoinDetails() {
               }}
             >
               <Typography
-                variant="h4"
                 sx={{
-                  mb: "6px",
+                  fontSize: "1.75rem",
+                  textAlign: "center",
+                  // mb: "6px",
                   color:
                     mode === "light"
                       ? palette.text.primary
@@ -364,7 +311,11 @@ function CoinDetails() {
                 </Typography>
               ) : null}
 
-              {coinLoading && !coinError ? null : null}
+              {coinLoading && !coinError ? (
+                <Box sx={{ width: "146px", height: "24px" }}>
+                  <LoadingSkeleton sx={{ width: "100%" }} />
+                </Box>
+              ) : null}
             </Box>
             {/* <IconButton
               size="small"
@@ -378,17 +329,16 @@ function CoinDetails() {
               <RefreshRoundedIcon sx={{ color: palette.text.primary }} />
             </IconButton> */}
           </Box>
-          {/* 24h data */}
+          {/* last price, 24h high price,... */}
           <Box
             sx={{
               display: "flex",
-              justifyContent: "space-around",
-              // flexGrow: 1,
+              justifyContent: "space-evenly",
               width: "100%",
               // maxHeight: "474px",
-              height: "calc(100vh - 475px)",
+              height: { xs: "auto", md: "calc(100vh - 475px)" },
               flexDirection: "column",
-              gap: "20px",
+              gap: "10px",
               // minHeight: 0,
               overflow: "auto",
             }}
@@ -406,9 +356,13 @@ function CoinDetails() {
       <Box
         sx={{
           display: "flex",
-          flexDirection: "column",
-          flexGrow: 1,
-          width: "", //for some reason this fixes the bug where the layout slightly changes sizes when changing the date from the Date Picker
+          flexDirection: { xs: "row", md: "column" },
+          minHeight: "1px",
+          minWidth: 0,
+          width: "100%",
+          // height: { xs: "auto", md: "100%" },
+          position: "relative",
+          zIndex: 0,
           overflowX: "hidden",
           boxSizing: "border-box",
         }}
@@ -418,7 +372,9 @@ function CoinDetails() {
             display: "flex",
             flexDirection: "column",
             p: "0px 30px 20px 30px",
-            flexGrow: 1,
+            // flex: "1 1 auto",
+            // flexGrow: 1,
+            minWidth: 0,
             boxSizing: "border-box",
             overflow: "hidden",
             // backgroundColor: palette.grey[300],
@@ -465,18 +421,37 @@ function CoinDetails() {
                 justifyContent: "center",
               }}
             >
-              <Typography
-                variant="body1"
-                sx={{
-                  pt: "5px",
-                  pr: "15px",
-                  color:
-                    mode === "light" ? palette.text.primary : palette.grey[500],
-                }}
-              >
-                OHLCV - Data last updated: &nbsp;
-                {coin ? formatDate(coin?.summaryUpdatedAt) : ""}
-              </Typography>
+              {coin && !coinLoading && !coinError ? (
+                <Typography
+                  variant="body1"
+                  sx={{
+                    pt: "5px",
+                    pr: "15px",
+                    color:
+                      mode === "light"
+                        ? palette.text.primary
+                        : palette.grey[500],
+                  }}
+                >
+                  OHLCV - Data last updated: &nbsp;
+                  {formatDate(coin?.summaryUpdatedAt)}
+                </Typography>
+              ) : null}
+
+              {coinLoading && !coinError ? (
+                <Box
+                  sx={{
+                    width: "337px",
+                    height: "29px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  <LoadingSkeleton sx={{ width: "95%" }} />
+                </Box>
+              ) : null}
+
               <SquareButton
                 onClick={() => {
                   getCsvByIdAsync(coin?.coinId);
@@ -486,19 +461,20 @@ function CoinDetails() {
             </Box>
           </Box>
 
-          {/* CHARTS */}
+          {/* CHARTS and Microservice data */}
           <Box
             sx={{
               width: "100%",
-              height: "calc(100vh - 220px)",
-              overflow: "auto",
+              minWidth: 0,
+              height: { xs: "auto", md: "calc(100vh - 220px)" },
+              overflow: { xs: "hidden", md: "auto" },
               mt: "10px",
               boxSizing: "border-box",
               // backgroundColor: palette.grey[300],
             }}
           >
             {/* OHLC Chart */}
-            <Box
+            {/* <Box
               // ref={containerRef}
               sx={{
                 display: "flex",
@@ -506,6 +482,8 @@ function CoinDetails() {
                 alignItems: "center",
                 flexDirection: "column",
                 width: "100%",
+                minWidth: 0,
+                overflow: "hidden",
                 // width: "1362px",
                 maxHeight: "375px",
                 height: "375px",
@@ -534,15 +512,83 @@ function CoinDetails() {
                   OHLC
                 </CardTitle>
               </Box>
-              {formattedCoinOhlcvData &&
-              !coinLoading &&
-              !coinError /*&&  size.width && size.height */ ? (
+              {formattedCoinOhlcvData && !coinLoading && !coinError ? (
                 <CandlestickChart
                   datePicker={dateRange}
-                  width="1297"
                   height="300"
                   formattedCoinOhlcvData={formattedCoinOhlcvData}
                 />
+              ) : null}
+
+              {coinLoading && !coinError ? (
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    mt: "10px",
+                    p: "0 10px 0 0",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <LoadingSkeleton sx={{ width: "100%" }} />
+                </Box>
+              ) : null}
+            </Box> */}
+
+            {/* Apex OHLC Chart */}
+            <Box
+              sx={{
+                mt: "8px",
+                display: "flex",
+                justifyContent: "center",
+                flexDirection: "column",
+                alignItems: "center",
+                width: "100%",
+                minWidth: 0,
+                maxHeight: "370px",
+                height: "370px",
+                flexGrow: 1,
+                overflow: "hidden",
+              }}
+            >
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "64px",
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "flex-start",
+                }}
+              >
+                <CardTitle
+                  tooltipType={"ChartOHLC"}
+                  formattedCoinData={formattedCoinOhlcvData}
+                >
+                  OHLC
+                </CardTitle>
+              </Box>
+              {formattedCoinOhlcvData.length > 0 &&
+              !coinLoading &&
+              !coinError ? (
+                <ApexCandlestickChart
+                  sx={{ pr: "49px" }}
+                  datePicker={dateRange}
+                  formattedCoinOhlcvData={formattedCoinOhlcvData}
+                />
+              ) : null}
+
+              {coinLoading && !coinError ? (
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    mt: "10px",
+                    p: "0 10px 0 0",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <LoadingSkeleton sx={{ width: "100%" }} />
+                </Box>
               ) : null}
             </Box>
 
@@ -590,6 +636,20 @@ function CoinDetails() {
                   sx={{ height: "100%", maxWidth: "100%", width: "1362px" }}
                 />
               ) : null}
+
+              {coinLoading && !coinError ? (
+                <Box
+                  sx={{
+                    width: "100%",
+                    height: "100%",
+                    mt: "10px",
+                    p: "0 10px 0 0",
+                    boxSizing: "border-box",
+                  }}
+                >
+                  <LoadingSkeleton sx={{ width: "100%" }} />
+                </Box>
+              ) : null}
             </Box>
 
             {/* Microservices data container*/}
@@ -602,22 +662,22 @@ function CoinDetails() {
               }}
             >
               {/* Trend Indicators, Bollinger Bands and Volume Analysis */}
-              <Grid container spacing={0} sx={{ height: "190px" }}>
-                <Grid size={4} item>
+              <Grid container spacing={2} sx={{ height: "190px" }}>
+                <Grid size={{ xs: 12, md: 4 }} item>
                   <MicroserviceDataCard
                     type="trendIndicators"
                     datePicker={dateRange}
                     sx={{ minHeight: "100%", pr: "10px" }}
                   />
                 </Grid>
-                <Grid size={4} item>
+                <Grid size={{ xs: 12, md: 4 }} item>
                   <MicroserviceDataCard
                     type="bollingerBands"
                     datePicker={dateRange}
                     sx={{ minHeight: "100%", pr: "10px" }}
                   />
                 </Grid>
-                <Grid size={4} item>
+                <Grid size={{ xs: 12, md: 4 }} item>
                   <MicroserviceDataCard
                     type="vma"
                     datePicker={dateRange}
@@ -629,7 +689,7 @@ function CoinDetails() {
               {/*Oscilattors section - RSI, MACD, Stochastic Oscillator, ADX, CCI */}
               <Grid
                 container
-                size={12}
+                size={{ xs: 12, md: 12 }}
                 spacing={5.1}
                 sx={{
                   mt: "45px",
@@ -637,13 +697,13 @@ function CoinDetails() {
                   // backgroundColor: palette.grey[400],
                 }}
               >
-                <Grid size={2.4} item>
+                <Grid size={{ xs: 12, sm: 6, md: 2.4 }} item>
                   <MicroserviceDataCard
                     type="rsiPanel"
                     datePicker={dateRange}
                   />
                 </Grid>
-                <Grid size={2.4} item>
+                <Grid size={{ xs: 12, sm: 6, md: 2.4 }} item>
                   <MicroserviceDataCard
                     type="macdPanel"
                     datePicker={dateRange}
@@ -653,21 +713,21 @@ function CoinDetails() {
                     }}
                   />
                 </Grid>
-                <Grid size={2.4} item>
+                <Grid size={{ xs: 12, sm: 6, md: 2.4 }} item>
                   <MicroserviceDataCard
                     type="stochasticPanel"
                     datePicker={dateRange}
                     sx={{ minHeight: "100%" }}
                   />
                 </Grid>
-                <Grid size={2.8} item>
+                <Grid size={{ xs: 12, sm: 6, md: 2.8 }} item>
                   <MicroserviceDataCard
                     type="adxPanel"
                     datePicker={dateRange}
                     sx={{ minHeight: "100%", pl: "8px" }}
                   />
                 </Grid>
-                <Grid size={2} item>
+                <Grid size={{ xs: 12, sm: 6, md: 2 }} item>
                   <MicroserviceDataCard
                     type="cciPanel"
                     datePicker={dateRange}
@@ -679,9 +739,12 @@ function CoinDetails() {
               {/* Volume Analysis and Overall Technical Signal */}
               <Grid
                 container
-                size={12}
-                spacing={0}
-                sx={{ mt: "60px", height: "190px" }}
+                size={{ xs: 12, md: 12 }}
+                spacing={2}
+                sx={{
+                  mt: { xs: "32px", md: "60px" },
+                  height: { xs: "auto", md: "190px" },
+                }}
               >
                 <Grid size={6} item>
                   <MicroserviceDataCard
@@ -690,7 +753,7 @@ function CoinDetails() {
                     sx={{ height: "100%" }}
                   />
                 </Grid>
-                <Grid size={6} item>
+                <Grid size={{ xs: 12, md: 6 }} item>
                   <MicroserviceDataCard
                     type="lstmPricePrediction"
                     datePicker={dateRange}

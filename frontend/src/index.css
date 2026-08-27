@@ -38,3 +38,26 @@ body {
   border-radius: 4px;
   border: none;
 }
+
+.apex-candlestick-chart .apexcharts-tooltip {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  padding: 0 !important;
+  text-shadow: none !important;
+}
+
+.apex-candlestick-chart .apexcharts-tooltip,
+.apex-candlestick-chart .apexcharts-tooltip * {
+  font-family: "Roboto", "Helvetica", Arial, sans-serif !important;
+  font-size: 15px !important;
+  text-shadow: none !important;
+}
+
+.apex-candlestick-chart .apexcharts-tooltip-title,
+.apex-candlestick-chart .apexcharts-tooltip-series-group {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}

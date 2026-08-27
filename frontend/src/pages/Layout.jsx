@@ -30,7 +30,7 @@ function Layout() {
             mode === "light" ? palette.common.white : palette.background.dark,
           flexGrow: 1,
           p: "20px",
-          overflow: "hidden",
+          overflow: { xs: "none", md: "hidden" },
         }}
       >
         <Outlet />

@@ -27,6 +27,7 @@ function Navbar({ title = "true", sx }) {
         alignItems: "center",
         flexDirection: "row",
         position: pathname === "/" && "fixed",
+        zIndex: pathname === "/" ? 10 : "auto",
         ...sx,
       }}
     >

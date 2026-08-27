@@ -5,6 +5,7 @@ import CardTitle from "../CardTitle.jsx";
 import { formatDatePickerSelection } from "../../../util/stringUtils.js";
 import Indicator from "./Indicator.jsx";
 import RsiProgressBar from "./RsiProgressBar.jsx";
+import LoadingSkeleton from "../../../components/LoadingSkeleton.jsx";
 
 const technicalAnalysisTypes = [
   "trendIndicators",
@@ -72,8 +73,8 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
       ? macd === macdSignal
         ? "No crossover"
         : macd > macdSignal
-        ? "Bullish crossover"
-        : "Bearish crossover"
+          ? "Bullish crossover"
+          : "Bearish crossover"
       : null;
 
   const macdStatusColorMap = macdStatus
@@ -93,10 +94,10 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
     stochK !== null && stochD !== null && stochK === stochD
       ? "Neutral"
       : stochK > stochD
-      ? "Bullish Momentum"
-      : stochK < stochD
-      ? "Bearish Momentum"
-      : null;
+        ? "Bullish Momentum"
+        : stochK < stochD
+          ? "Bearish Momentum"
+          : null;
 
   const stochStatusColorMap = stochStatus
     ? {
@@ -246,7 +247,6 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
     <Box
       sx={{
         height: "fit-content",
-        // border: "1px solid lightgray",
         boxSizing: "border-box",
         ...sx,
       }}
@@ -327,59 +327,6 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
         ) : null}
         {type === "lstmPricePrediction" ? "Lstm Price Prediction" : null}
       </CardTitle>
-
-      <Typography
-        sx={{
-          lineHeight: 1.1,
-          fontSize: "1.1rem",
-          mt: "10px",
-          color: mode === "light" ? palette.error.light : palette.error.light,
-        }}
-      >
-        {/* If there is no data or there is an error */}
-        {(technicalAnalysisTypes.includes(type) &&
-          !analysisData &&
-          analysisData?.last_candle !== null &&
-          !coinTechnicalAnalysisLoading &&
-          !coinTechnicalAnalysisError) ||
-        coinTechnicalAnalysisError ? (
-          <>
-            {technicalAnalysisTypes.includes(type) ? (
-              <>
-                {type !== "overallSignal" ? (
-                  <>
-                    {type === "trendIndicators" ? "Trend Indicators " : null}
-                    {type === "bollingerBands" ? "Bollinger Bands " : null}
-                    {type === "rsiPanel" ? "RSI " : null}
-                    {type === "macdPanel" ? "MACD " : null}
-                    {type === "stochasticPanel"
-                      ? "Stochastic Oscillator "
-                      : null}
-                    {type === "cciPanel" ? "CCI " : null}
-                    {type === "adxPanel" ? "ADX " : null}
-                    {type === "vma" ? "Volume Analysis " : null}
-                    data for {coin?.name} for <span></span>
-                    <b>{formatDatePickerSelection(datePicker)}</b>
-                    doesn't exist.
-                  </>
-                ) : (
-                  <>
-                    Overall signal data for{" "}
-                    <b>{formatDatePickerSelection(datePicker)}</b> is not
-                    available.
-                  </>
-                )}
-              </>
-            ) : null}
-          </>
-        ) : null}
-        {type === "lstmPricePrediction" &&
-        !coinLstmPrediction &&
-        !coinLstmPredictionLoading &&
-        coinLstmPredictionError
-          ? `Lstm Prediction Data for ${coin?.name} doesn't exist.`
-          : null}
-      </Typography>
 
       <Box
         sx={{
@@ -790,6 +737,89 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
               Predicted Price:
             </Indicator>
           </>
+        ) : null}
+
+        {/* Technical Analysis Loading */}
+        {technicalAnalysisTypes.includes(type) &&
+        coinTechnicalAnalysisLoading &&
+        !coinTechnicalAnalysisError ? (
+          <Box sx={{ width: "100%", height: "80px" }}>
+            <LoadingSkeleton
+              sx={{
+                width: {
+                  xs: "100%",
+                  sm: "100%",
+                  lg: type === "overallSignal" ? "350px" : "100%",
+                },
+              }}
+            />
+          </Box>
+        ) : null}
+
+        {/* LSTM Prediciton loading */}
+        {type === "lstmPricePrediction" &&
+        coinLstmPredictionLoading &&
+        !coinLstmPredictionError ? (
+          <Box
+            sx={{
+              width: { xs: "100%", sm: "100%", lg: "250px" },
+              height: "80px",
+            }}
+          >
+            <LoadingSkeleton sx={{ width: "100%", height: "100%" }} />
+          </Box>
+        ) : null}
+
+        {/* Technical Analysis Error */}
+        {technicalAnalysisTypes.includes(type) && coinTechnicalAnalysisError ? (
+          <>
+            <Typography
+              sx={{
+                lineHeight: 1.1,
+                fontSize: "1.1rem",
+                mt: "10px",
+                color:
+                  mode === "light" ? palette.error.light : palette.error.light,
+              }}
+            >
+              {type !== "overallSignal" ? (
+                <>
+                  {type === "trendIndicators" ? "Trend Indicators " : null}
+                  {type === "bollingerBands" ? "Bollinger Bands " : null}
+                  {type === "rsiPanel" ? "RSI " : null}
+                  {type === "macdPanel" ? "MACD " : null}
+                  {type === "stochasticPanel" ? "Stochastic Oscillator " : null}
+                  {type === "cciPanel" ? "CCI " : null}
+                  {type === "adxPanel" ? "ADX " : null}
+                  {type === "vma" ? "Volume Analysis " : null}
+                  data for {coin?.name} for <span></span>
+                  <b>{formatDatePickerSelection(datePicker)}</b>
+                  doesn't exist.
+                </>
+              ) : (
+                <>
+                  Overall signal data for
+                  <b>{formatDatePickerSelection(datePicker)}</b> is not
+                  available.
+                </>
+              )}
+            </Typography>
+          </>
+        ) : null}
+
+        {/* Lstm Prediction Error */}
+        {type === "lstmPricePrediction" && coinLstmPredictionError ? (
+          <Typography
+            sx={{
+              lineHeight: 1.1,
+              fontSize: "1.1rem",
+              mt: "10px",
+              color:
+                mode === "light" ? palette.error.light : palette.error.light,
+            }}
+          >
+            Lstm Prediction Data for {coin?.name} doesn't exist.
+          </Typography>
         ) : null}
       </Box>
     </Box>
