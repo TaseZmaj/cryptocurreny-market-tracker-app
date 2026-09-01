@@ -40,7 +40,7 @@ function Home() {
             lg: "620px",
           },
           height: "auto",
-          opacity: mode === "light" ? 0.075 : 0.09,
+          opacity: mode === "light" ? 0.075 : 0.065,
           pointerEvents: "none",
           userSelect: "none",
         }}
@@ -100,7 +100,7 @@ function Home() {
         <Typography
           sx={{
             fontSize: "1.3rem",
-            fontWeight: { xs: 600, lg: 500 },
+            fontWeight: 500,
             color: "#fcfbfbf3",
           }}
         >

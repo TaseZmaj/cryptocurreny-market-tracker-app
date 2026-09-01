@@ -4,7 +4,6 @@ import Footer from "../components/Footer";
 import { Box } from "@mui/material";
 import { useTheme, useColorScheme } from "@mui/material/styles";
 import { useLocation } from "react-router";
-import ErrorPage from "./ErrorPage";
 
 function Layout() {
   const { mode } = useColorScheme();
@@ -22,7 +21,7 @@ function Layout() {
         flexDirection: "column",
       }}
     >
-      <Navbar title={pathname === "/" ? "false" : "true"} />
+      <Navbar title={pathname === "/" ? false : true} />
 
       <Box
         sx={{
@@ -30,7 +29,8 @@ function Layout() {
             mode === "light" ? palette.common.white : palette.background.dark,
           flexGrow: 1,
           p: "20px",
-          overflow: { xs: "none", md: "hidden" },
+          overflowY: { xs: "auto", md: "hidden" },
+          minHeight: 0,
         }}
       >
         <Outlet />

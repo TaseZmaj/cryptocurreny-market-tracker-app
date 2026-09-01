@@ -1,4 +1,7 @@
 //Table heading cells for the main Coins table
+export const tableCellsPadding = { xs: "8px", md: "16px" };
+export const tableCellsPricePadding = { xs: "12px", md: "16px" };
+
 export const headCells = [
   {
     id: "marketCapRank",
@@ -49,8 +52,6 @@ export const headCells = [
     width: "13.666667%",
   },
 ];
-
-export const colWidths = [];
 
 //UI Variables
 export const topBarHeight = "99px";

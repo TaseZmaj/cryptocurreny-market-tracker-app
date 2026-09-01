@@ -159,19 +159,17 @@ function CoinDetails() {
   }, [rangeFromUrl, setSearchParams]);
   // ===================================================================
 
-  //TODO: Fix the reset zoom button - KOCKASTO KOPCHE napravi i stavi go najlevo maybe?
-
   return (
     <Box
       sx={{
-        // display: { xs: "flex", md: "grid" },
-        // flexDirection: { xs: "column", md: undefined },
+        boxSizing: "border-box",
         display: "flex",
         flexDirection: { xs: "column", md: "row" },
         width: "100%",
-        height: "100%",
-        overflowY: { xs: "auto !important", md: "hidden" },
+        height: { xs: "fit-content", md: "100%" },
+        overflowY: "hidden",
         minWidth: 0,
+        minHeight: "100%",
       }}
     >
       {/* Title and 24h data - left side */}
@@ -203,6 +201,7 @@ function CoinDetails() {
         {/* Title + rank and Quote asset + Status */}
         <Box
           sx={{
+            overflowY: "hidden !important",
             width: "100%",
             height: "fit-content",
             minHeight: "1px",
@@ -364,6 +363,7 @@ function CoinDetails() {
           position: "relative",
           zIndex: 0,
           overflowX: "hidden",
+
           boxSizing: "border-box",
         }}
       >

@@ -16,6 +16,8 @@ import {
   footerHeight,
   topBarHeight,
   headCells,
+  tableCellsPadding,
+  tableCellsPricePadding,
 } from "../../util/uiVars.js";
 import SearchInput from "./SearchInput.jsx";
 import { getComparator } from "../../util/MaterialUtils.js";
@@ -435,6 +437,12 @@ function EnhancedTableHead({ order, orderBy, onRequestSort }) {
               top: 0,
               zIndex: 2,
               width: headCell.width,
+              padding:
+                headCell.id == "marketCapRank" ||
+                headCell.id == "name" ||
+                headCell.id == "symbol"
+                  ? tableCellsPadding
+                  : tableCellsPricePadding,
               backgroundColor:
                 mode === "light"
                   ? palette.background.paper
@@ -556,6 +564,7 @@ const CoinRow = memo(function CoinRow({ coin }) {
         <TableCell
           scope="row"
           sx={{
+            padding: tableCellsPadding,
             color:
               mode === "light" ? palette.text.primary : palette.common.white,
           }}
@@ -566,6 +575,7 @@ const CoinRow = memo(function CoinRow({ coin }) {
         <TableCell
           align="left"
           sx={{
+            padding: tableCellsPadding,
             color:
               mode === "light" ? palette.text.primary : palette.common.white,
           }}
@@ -603,6 +613,7 @@ const CoinRow = memo(function CoinRow({ coin }) {
         <TableCell
           align="left"
           sx={{
+            padding: tableCellsPadding,
             color:
               mode === "light" ? palette.text.primary : palette.common.white,
           }}
@@ -613,6 +624,7 @@ const CoinRow = memo(function CoinRow({ coin }) {
         <TableCell
           align="right"
           sx={{
+            padding: tableCellsPricePadding,
             color:
               mode === "light" ? palette.text.primary : palette.common.white,
           }}
@@ -622,6 +634,7 @@ const CoinRow = memo(function CoinRow({ coin }) {
         <TableCell
           align="right"
           sx={{
+            padding: { xs: "12px", md: "16px" },
             color:
               mode === "light" ? palette.text.primary : palette.common.white,
           }}
@@ -631,6 +644,7 @@ const CoinRow = memo(function CoinRow({ coin }) {
         <TableCell
           align="right"
           sx={{
+            padding: tableCellsPricePadding,
             color:
               mode === "light" ? palette.text.primary : palette.common.white,
           }}
@@ -640,6 +654,7 @@ const CoinRow = memo(function CoinRow({ coin }) {
         <TableCell
           align="right"
           sx={{
+            padding: tableCellsPricePadding,
             color:
               mode === "light" ? palette.text.primary : palette.common.white,
           }}
