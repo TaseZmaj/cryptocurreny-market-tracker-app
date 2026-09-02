@@ -24,34 +24,36 @@ function CoinTitle({ wrapped, titleRef }) {
             height={56}
             style={{
               borderRadius: "50%",
-              paddingRight: "12px",
+              paddingRight: "10px",
             }}
           />
           <Box
             sx={{
               display: "flex",
+              flexDirection: { xs: "column", sm: "row", md: "row" },
               alignItems: wrapped ? "center" : "baseline",
               pt: "10px",
               minWidth: 0,
               textAlign: { xs: "center", md: "left" },
+              // containerType: "inline-size",
             }}
           >
             <Typography
               ref={titleRef}
               variant="h3"
               sx={{
+                wordBreak: "break-word",
+                whiteSpace: "normal",
+                maxWidth: "100%",
                 color:
                   mode === "light"
                     ? palette.text.primary
                     : palette.common.white,
-                // whiteSpace: "nowrap",
-                // overflow: "hidden",
-                // textOverflow: "ellipsis",
-                // fontSize: "clamp(0.5rem, 3vw, 3rem)",
-                // fontSize: { xs: "3.4rem", md: getTitleFontSize(coin.name) },
-                fontSize: `calc(${getTitleFontSize(coin.name)} * 1.5)`,
+                fontSize: wrapped
+                  ? `calc(${getTitleFontSize(coin.name)} * 1.2)`
+                  : "clamp(1rem, 9cqw, 2.5rem)",
                 lineHeight: 1,
-                // letterSpacing: "-0.02em",
+                p: { xs: "0 0 4px 0" },
               }}
             >
               {coin.name}
@@ -62,9 +64,10 @@ function CoinTitle({ wrapped, titleRef }) {
                 fontSize: { xs: "1.3rem", md: getSymbolFontSize(coin.symbol) },
                 whiteSpace: "nowrap",
                 color:
-                  mode === "light" ? palette.text.secondary : palette.grey[200],
-                ml: "4px",
+                  mode === "light" ? palette.text.secondary : palette.grey[300],
+                m: "0 4px",
                 lineHeight: 1,
+                // p: { xs: "0 0 10px 0", sm: "" },
               }}
             >
               {coin.symbol}
@@ -72,9 +75,8 @@ function CoinTitle({ wrapped, titleRef }) {
             <RankTag
               coin={coin}
               sx={{
-                ml: "6px",
-                mt: "auto",
-                mb: wrapped ? "auto" : "0",
+                margin: { sx: "20px 0 auto 4px", sm: "auto 0 auto 4px" },
+                mt: { xs: "8px", sm: "auto" },
               }}
             />
           </Box>

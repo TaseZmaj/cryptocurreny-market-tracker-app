@@ -91,6 +91,7 @@ export default function VolumeChart({
     series: [
       {
         dataKey: "volume",
+        valueFormatter: formatCryptoPriceChart,
         // label: "Total traded Volume",
       },
     ],
@@ -108,11 +109,12 @@ export default function VolumeChart({
   return (
     <Box style={{ width: "100%", ...sx }}>
       <BarChart
+        gridHorizontal={true}
         sx={{
           "& .MuiBarElement-root": {
-            transform:
-              datePicker === "1D" && "scaleX(0.2305) translateX(-140px)",
-            transformOrigin: "center",
+            // transform:
+            //   datePicker === "1D" && "scaleX(0.2305) translateX(-140px)",
+            // transformOrigin: "center",
           },
           "& .MuiChartsAxis-root line": {
             stroke: mode === "light" ? "rgba(0,0,0,0.6)" : palette.grey[300],

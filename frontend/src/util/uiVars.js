@@ -54,6 +54,8 @@ export const headCells = [
 ];
 
 //UI Variables
-export const topBarHeight = "99px";
+export const topBarHeightRaw = 92;
+export const topBarHeight = topBarHeightRaw + "px";
+
 export const footerHeight = "52px";
 export const darkBackgroundColor = "#121212";

@@ -28,7 +28,7 @@ function Layout() {
           bgcolor:
             mode === "light" ? palette.common.white : palette.background.dark,
           flexGrow: 1,
-          p: "20px",
+          p: { xs: "10px", md: "20px" },
           overflowY: { xs: "auto", md: "hidden" },
           minHeight: 0,
         }}

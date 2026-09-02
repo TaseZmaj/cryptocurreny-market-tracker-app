@@ -30,14 +30,14 @@ export default function CoinPropertyCard({
           sx={{
             display: "flex",
             alignItems: wrapped ? "center" : "baseline",
-            p: "9px 13px",
+            p: { xs: "5px 13px", md: "9px 13px" },
             color:
               mode === "light" ? palette.text.primary : palette.common.white,
             // border: "1px solid black",
             ...sx,
           }}
         >
-          <Typography sx={{ fontSize: { xs: "1.3rem", md: "1.1rem" } }}>
+          <Typography sx={{ fontSize: "1.1rem" }}>
             {type === "quoteAsset" ? "Quote Asset:" : null}
             {type === "status" ? "Status:" : null}
           </Typography>
@@ -63,7 +63,7 @@ export default function CoinPropertyCard({
                         ? palette.error.main
                         : null,
                   fontWeight: "bold",
-                  fontSize: { xs: "1.275rem", md: "1.075rem" },
+                  fontSize: "1.1rem",
                   pb: "2px",
                 }}
               >

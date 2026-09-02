@@ -21,7 +21,7 @@ function RankTag({ sx }) {
     >
       <Box
         sx={{
-          minWidth: "25px",
+          minWidth: "fit-content",
           height: { xs: "35px", md: "25px" },
           display: "flex",
           alignItems: "center",

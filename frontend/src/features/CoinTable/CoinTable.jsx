@@ -142,6 +142,7 @@ export default function CoinTable() {
           justifyContent: { xs: "center", sm: "flex-end" },
           gap: { xs: 1, sm: 0 },
           mb: 1,
+          pt: "5px",
         }}
       >
         <SquareButton
@@ -209,7 +210,7 @@ export default function CoinTable() {
             <TableBody>
               {/* All coins loading */}
               {coinsLoading && !coinsError
-                ? Array.from({ length: 10 }).map((_el, i) => (
+                ? Array.from({ length: rowsPerPage }).map((_el, i) => (
                     <TableRow
                       key={i}
                       tabIndex={-1}

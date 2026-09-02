@@ -187,7 +187,7 @@ function CoinDetails() {
           backgroundColor:
             mode === "light" ? palette.common.white : palette.background.dark,
           // maxHeight: "745px",
-          p: "0 30px 20px 30px",
+          p: { xs: "0 20px 20px 20px", md: "0 30px 20px 30px" },
           boxSizing: "border-box",
           // backgroundColor: palette.grey[300],
           borderRight: {
@@ -201,11 +201,10 @@ function CoinDetails() {
         {/* Title + rank and Quote asset + Status */}
         <Box
           sx={{
-            overflowY: "hidden !important",
+            overflow: "hidden !important",
             width: "100%",
             height: "fit-content",
             minHeight: "1px",
-            mb: "20px",
             flexShrink: 0,
             display: "flex",
             flexDirection: "column",
@@ -227,6 +226,7 @@ function CoinDetails() {
               borderBottom: `1px solid ${
                 mode === "light" ? palette.divider : palette.grey[800]
               }`,
+              overflow: "hidden",
             }}
           >
             <CoinTitle wrapped={wrapped} titleRef={titleRef} />
@@ -238,15 +238,17 @@ function CoinDetails() {
               display: "flex",
               minHeight: "80px",
               boxSizing: "border-box",
-              flexDirection: "row",
+              flexDirection: { xs: "column", md: "row" },
               alignItems: "center",
               justifyContent: "center",
               // backgroundColor: palette.grey[400],
-              pt: "10px",
+              pt: { xs: "27px", md: "10px" },
+              pb: { xs: "27px", md: "10px" },
+              overflow: "hidden",
             }}
           >
             <CoinPropertyCard
-              wrapped={width < "1835px" ? true : false}
+              wrapped={width < "1835px"}
               type="quoteAsset"
               sx={{ mr: "4px" }}
             >
@@ -262,7 +264,12 @@ function CoinDetails() {
         <Box
           sx={{
             width: "100%",
+            boxSizing: "border-box",
             height: "fit-content",
+            maxHeight: { xs: "fit-content", md: "calc(100% - 80px)" },
+            padding: "0 20px",
+            mb: { xs: "20px", md: "0" },
+            overflow: "auto",
             // minHeight: "1px",
             // backgroundColor: palette.grey[500],
           }}
@@ -278,7 +285,7 @@ function CoinDetails() {
               height: "fit-content",
               minHeight: "1px",
               boxSizing: "border-box",
-              mb: "10px",
+              mb: { xs: "10px", md: "10px" },
               // backgroundColor: palette.grey[600],
             }}
           >
@@ -334,12 +341,12 @@ function CoinDetails() {
               display: "flex",
               justifyContent: "space-evenly",
               width: "100%",
-              // maxHeight: "474px",
-              height: { xs: "auto", md: "calc(100vh - 475px)" },
+              boxSizing: "border-box",
+              // height: { xs: "auto", md: "fit-content" },
               flexDirection: "column",
-              gap: "10px",
-              // minHeight: 0,
-              overflow: "auto",
+              gap: { xs: "20px", md: "9px" },
+              overflowX: "hidden",
+              overflowY: "auto",
             }}
           >
             <PriceDataCard type="lastPrice24h" />

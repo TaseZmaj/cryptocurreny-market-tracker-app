@@ -151,9 +151,12 @@ function estimateTextWidth(text) {
   let width = 0;
 
   for (const char of text) {
-    if (char >= "A" && char <= "Z") width += 1.2; // capitals
-    else if ("MW".includes(char)) width += 1.4; // very wide
-    else if ("il".includes(char)) width += 0.5; // very narrow
+    if (char >= "A" && char <= "Z")
+      width += 1.2; // capitals
+    else if ("MW".includes(char))
+      width += 1.4; // very wide
+    else if ("il".includes(char))
+      width += 0.5; // very narrow
     else width += 1; // normal
   }
 

@@ -12,7 +12,8 @@ export default function ApexCandlestickChart({
 }) {
   const { mode } = useColorScheme();
   const { palette, typography } = useTheme();
-  const hideDateLabels = ["6M", "1Y", "YTD"].includes(datePicker);
+  const hideDateLabels = ["1M", "6M", "1Y", "YTD"].includes(datePicker);
+  const hideTicks = ["1Y", "YTD"].includes(datePicker);
 
   const series = [
     {
@@ -30,7 +31,7 @@ export default function ApexCandlestickChart({
     chart: {
       type: "candlestick",
       height: 300,
-      toolbar: { show: false },
+      toolbar: { show: true },
       animations: { enabled: true },
       zoom: { enabled: true },
       background: "transparent",
@@ -62,7 +63,7 @@ export default function ApexCandlestickChart({
       axisBorder: {
         color: mode === "light" ? "rgba(0,0,0,0.6)" : palette.grey[300],
       },
-      axisTicks: { show: true },
+      axisTicks: { show: !hideTicks },
     },
     yaxis: {
       opposite: true,

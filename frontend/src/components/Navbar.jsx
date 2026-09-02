@@ -1,7 +1,7 @@
 import { Box, Typography, useTheme, useColorScheme } from "@mui/material";
 import LightDarkModeToggle from "../features/LightDarkModeToggle.jsx";
 import { Link, useLocation } from "react-router";
-import { topBarHeight } from "../util/uiVars.js";
+import { topBarHeight, topBarHeightRaw } from "../util/uiVars.js";
 import logo from "../assets/logo_v2.png";
 import { darkBackgroundColor } from "../util/uiVars.js";
 
@@ -16,6 +16,7 @@ function Navbar({ title = true, sx }) {
         sx={{
           width: "100%",
           minHeight: topBarHeight,
+          maxHeight: topBarHeight,
           boxSizing: "border-box",
         }}
       ></Box>
@@ -24,6 +25,7 @@ function Navbar({ title = true, sx }) {
         sx={{
           width: "100%",
           minHeight: topBarHeight,
+          maxHeight: topBarHeight,
           boxSizing: "border-box",
           bgcolor:
             pathname === "/"
