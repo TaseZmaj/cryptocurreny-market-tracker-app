@@ -1,7 +1,6 @@
 import { Box, Button, Typography } from "@mui/material";
 import { useTheme, useColorScheme } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
-import { Link } from "react-router";
 import logo from "../assets/logo_v2.png";
 
 function Home() {
@@ -33,7 +32,6 @@ function Home() {
         aria-hidden="true"
         sx={{
           position: "absolute",
-          // top: 115,
           width: {
             xs: "min(88vw, 360px)",
             sm: "min(70vw, 520px)",
@@ -57,16 +55,6 @@ function Home() {
         >
           Cryptocurrency Market Tracker
         </Typography>
-        {/* This is the version "V1.0", I didn't like how it looked */}
-        {/* <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-          <Typography
-            variant="body1"
-            sx={{ color: palette.primary.main, mb: "10px", ml: "5px" }}
-            color={palette.primary.main}
-          >
-            v1.0
-          </Typography>
-        </Box> */}
       </Box>
 
       <Typography

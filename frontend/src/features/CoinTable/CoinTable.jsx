@@ -131,7 +131,6 @@ export default function CoinTable() {
   //Optional:
   // TODO: Change the icon component in the table headers to a different arrow
   // TODO: Add animations
-
   return (
     <Box>
       <Box
@@ -174,7 +173,7 @@ export default function CoinTable() {
             // overflow: coinsError ? "hidden" : "auto",
             flex: 1,
             minHeight: 0,
-            overflow: "auto",
+            overflow: !coinsError ? "auto" : "hidden",
             position: "relative",
             isolation: "isolate",
             "&::-webkit-scrollbar": {
@@ -265,43 +264,33 @@ export default function CoinTable() {
 
               {/* All coins error */}
               {!coinsLoading && coinsError ? (
-                <TableRow
-                  tabIndex={-1}
+                <Box
                   sx={{
-                    border: "none",
-                    height: "100%",
+                    position: "absolute",
+                    width: "100%",
+                    height: "calc(100% - 78px)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
                   }}
                 >
-                  <TableCell
-                    colSpan={headCells.length}
+                  <Box
                     sx={{
-                      border: "none",
-                      color:
-                        mode === "light"
-                          ? palette.text.primary
-                          : palette.common.white,
+                      width: "100%",
+                      alignItems: "center",
+                      justifyContent: "center",
                     }}
                   >
-                    <Box
-                      sx={{
-                        width: "100%",
-                        height: `calc(100vh - ${topBarHeight} - ${footerHeight} - 260px)`,
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                      }}
+                    <MessageBox
+                      type="error"
+                      title="Error!"
+                      buttonType="refresh"
+                      onClickFunc={getAllCoins}
                     >
-                      <MessageBox
-                        type="error"
-                        title="Error!"
-                        buttonType="refresh"
-                        onClickFunc={getAllCoins}
-                      >
-                        {coinsError}
-                      </MessageBox>
-                    </Box>
-                  </TableCell>
-                </TableRow>
+                      {coinsError}
+                    </MessageBox>
+                  </Box>
+                </Box>
               ) : null}
 
               {/* Coins data table display */}
