@@ -40,12 +40,13 @@ public class CoinService {
             AssetSummary coinSummary = summaryMap.get(symbol.getId());
 
             if(coinSummary == null) continue;
+            if(symbol.getMarketCapRank() == null) continue;
 
             result.add(new CoinDetailsDTO(
                     symbol.getId(),
                     symbol.getSymbol(),
                     symbol.getName(),
-                    symbol.getMarketCapRank().intValue(), // Конвертирање во int/Integer
+                    symbol.getMarketCapRank().intValue(),  // Конвертирање во int/Integer
                     symbol.getQuoteAsset(),
                     symbol.getActive(),
 

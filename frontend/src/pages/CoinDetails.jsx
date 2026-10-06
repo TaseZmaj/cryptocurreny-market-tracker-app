@@ -20,6 +20,7 @@ import LoadingSkeleton from "../components/LoadingSkeleton.jsx";
 
 // Valid ranges from the date picker
 const VALID_RANGES = ["1D", "1W", "1M", "6M", "1Y", "YTD"];
+const TECHNICAL_ANALYSIS_UNAVAILABLE_RANGES = ["6M", "1Y", "YTD"];
 
 // Default date picker state
 const DEFAULT_RANGE = "1M";
@@ -390,11 +391,14 @@ function CoinDetails() {
           {/* Chart controls */}
           <Box
             sx={{
-              width: "100%",
-              height: "32px",
               display: "flex",
+              alignItems: "center",
+              width: "100%",
+              overflowX: "auto",
+              overflowY: "hidden",
+              p: "10px 5px 5px 0",
+              boxSizing: "border-box",
               flexDirection: "row",
-              // backgroundColor: palette.grey[400],
             }}
           >
             <ChartDateControlButton
@@ -432,8 +436,16 @@ function CoinDetails() {
                 <Typography
                   variant="body1"
                   sx={{
+                    display: {
+                      xl: "block",
+                      lg: "block",
+                      md: "none",
+                      sm: "none",
+                      xs: "none",
+                    },
                     pt: "5px",
                     pr: "15px",
+                    pl: "7px",
                     color:
                       mode === "light"
                         ? palette.text.primary
@@ -460,6 +472,10 @@ function CoinDetails() {
               ) : null}
 
               <SquareButton
+                sx={{
+                  ml: { lg: "0", md: "10px", sm: "20px", xs: "20px" },
+                  height: "33px",
+                }}
                 onClick={() => {
                   getCsvByIdAsync(coin?.coinId);
                 }}
@@ -480,68 +496,6 @@ function CoinDetails() {
               // backgroundColor: palette.grey[300],
             }}
           >
-            {/* OHLC Chart */}
-            {/* <Box
-              // ref={containerRef}
-              sx={{
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                flexDirection: "column",
-                width: "100%",
-                minWidth: 0,
-                overflow: "hidden",
-                // width: "1362px",
-                maxHeight: "375px",
-                height: "375px",
-                flexGrow: 1,
-                mb: "8px",
-                // mt: "20px",
-                // boxSizing: "border-box",
-                // border: `1px solid ${palette.grey[300]}`,
-                // backgroundColor: palette.grey[300],
-              }}
-            >
-              <Box
-                sx={{
-                  width: "100%",
-                  height: "64px",
-                  display: "flex",
-                  flexDirection: "row",
-                  justifyContent: "flex-start",
-                  // backgroundColor: palette.grey[400],
-                }}
-              >
-                <CardTitle
-                  tooltipType={"ChartOHLC"}
-                  formattedCoinData={formattedCoinOhlcvData}
-                >
-                  OHLC
-                </CardTitle>
-              </Box>
-              {formattedCoinOhlcvData && !coinLoading && !coinError ? (
-                <CandlestickChart
-                  datePicker={dateRange}
-                  height="300"
-                  formattedCoinOhlcvData={formattedCoinOhlcvData}
-                />
-              ) : null}
-
-              {coinLoading && !coinError ? (
-                <Box
-                  sx={{
-                    width: "100%",
-                    height: "100%",
-                    mt: "10px",
-                    p: "0 10px 0 0",
-                    boxSizing: "border-box",
-                  }}
-                >
-                  <LoadingSkeleton sx={{ width: "100%" }} />
-                </Box>
-              ) : null}
-            </Box> */}
-
             {/* Apex OHLC Chart */}
             <Box
               sx={{
@@ -658,8 +612,6 @@ function CoinDetails() {
                 </Box>
               ) : null}
             </Box>
-
-            {/* Microservices data container*/}
             <Box
               sx={{
                 width: "100%",
@@ -668,99 +620,82 @@ function CoinDetails() {
                 boxSizing: "border-box",
               }}
             >
-              {/* Trend Indicators, Bollinger Bands and Volume Analysis */}
-              <Grid container spacing={2} sx={{ height: "190px" }}>
-                <Grid size={{ xs: 12, md: 4 }} item>
-                  <MicroserviceDataCard
-                    type="trendIndicators"
-                    datePicker={dateRange}
-                    sx={{ minHeight: "100%", pr: "10px" }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 4 }} item>
-                  <MicroserviceDataCard
-                    type="bollingerBands"
-                    datePicker={dateRange}
-                    sx={{ minHeight: "100%", pr: "10px" }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 4 }} item>
-                  <MicroserviceDataCard
-                    type="vma"
-                    datePicker={dateRange}
-                    sx={{ height: "100%", pr: "10px" }}
-                  />
-                </Grid>
-              </Grid>
+              {/* Trend Indicators, Bollinger Bands, Volume Analysis, ... */}
+              <Grid container spacing={6.7} sx={{ minHeight: "190px" }}>
+                {!TECHNICAL_ANALYSIS_UNAVAILABLE_RANGES.includes(dateRange) ? (
+                  <>
+                    <Grid size={{ xs: 12, sm: 6, md: 6 }} item>
+                      <MicroserviceDataCard
+                        type="trendIndicators"
+                        datePicker={dateRange}
+                        sx={{ minHeight: "100%", pr: "10px" }}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, md: 6 }} item>
+                      <MicroserviceDataCard
+                        type="bollingerBands"
+                        datePicker={dateRange}
+                        sx={{ minHeight: "100%", pr: "10px" }}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 12, md: 12 }} item>
+                      <MicroserviceDataCard
+                        type="vma"
+                        datePicker={dateRange}
+                        sx={{ height: "100%", pr: "10px" }}
+                      />
+                    </Grid>
 
-              {/*Oscilattors section - RSI, MACD, Stochastic Oscillator, ADX, CCI */}
-              <Grid
-                container
-                size={{ xs: 12, md: 12 }}
-                spacing={5.1}
-                sx={{
-                  mt: "45px",
-                  height: "140px",
-                  // backgroundColor: palette.grey[400],
-                }}
-              >
-                <Grid size={{ xs: 12, sm: 6, md: 2.4 }} item>
-                  <MicroserviceDataCard
-                    type="rsiPanel"
-                    datePicker={dateRange}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 2.4 }} item>
-                  <MicroserviceDataCard
-                    type="macdPanel"
-                    datePicker={dateRange}
-                    sx={{
-                      minHeight: "100%",
-                      pl: "10px",
-                    }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 2.4 }} item>
-                  <MicroserviceDataCard
-                    type="stochasticPanel"
-                    datePicker={dateRange}
-                    sx={{ minHeight: "100%" }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 2.8 }} item>
-                  <MicroserviceDataCard
-                    type="adxPanel"
-                    datePicker={dateRange}
-                    sx={{ minHeight: "100%", pl: "8px" }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, sm: 6, md: 2 }} item>
-                  <MicroserviceDataCard
-                    type="cciPanel"
-                    datePicker={dateRange}
-                    sx={{ minHeight: "100%" }}
-                  />
-                </Grid>
-              </Grid>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} item>
+                      <MicroserviceDataCard
+                        type="rsiPanel"
+                        datePicker={dateRange}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} item>
+                      <MicroserviceDataCard
+                        type="macdPanel"
+                        datePicker={dateRange}
+                        sx={{
+                          minHeight: "100%",
+                          // pl: "10px",
+                        }}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} item>
+                      <MicroserviceDataCard
+                        type="stochasticPanel"
+                        datePicker={dateRange}
+                        sx={{ minHeight: "100%" }}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6, md: 4 }} item>
+                      <MicroserviceDataCard
+                        type="adxPanel"
+                        datePicker={dateRange}
+                        sx={{
+                          minHeight: "100%",
+                        }}
+                      />
+                    </Grid>
+                    <Grid size={{ xs: 12, sm: 6.1, md: 4 }} item>
+                      <MicroserviceDataCard
+                        type="cciPanel"
+                        datePicker={dateRange}
+                        sx={{ minHeight: "100%" }}
+                      />
+                    </Grid>
 
-              {/* Volume Analysis and Overall Technical Signal */}
-              <Grid
-                container
-                size={{ xs: 12, md: 12 }}
-                spacing={2}
-                sx={{
-                  mt: { xs: "32px", md: "60px" },
-                  height: { xs: "auto", md: "190px" },
-                }}
-              >
-                <Grid size={6} item>
-                  <MicroserviceDataCard
-                    type="overallSignal"
-                    datePicker={dateRange}
-                    sx={{ height: "100%" }}
-                  />
-                </Grid>
-                <Grid size={{ xs: 12, md: 6 }} item>
+                    <Grid size={{ xs: 12, sm: 6 }} item>
+                      <MicroserviceDataCard
+                        type="overallSignal"
+                        datePicker={dateRange}
+                        sx={{ height: "100%" }}
+                      />
+                    </Grid>
+                  </>
+                ) : null}
+                <Grid size={{ xs: 12, sm: 6 }} item>
                   <MicroserviceDataCard
                     type="lstmPricePrediction"
                     datePicker={dateRange}

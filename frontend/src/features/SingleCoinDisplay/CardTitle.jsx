@@ -18,22 +18,19 @@ function CardTitle({
 
   return (
     <Box>
-      <Box sx={{ display: "flex", flexDirection: "row" }}>
-        <Typography
-          variant="h5"
-          sx={{
-            color:
-              mode === "light" ? palette.text.primary : palette.common.white,
-          }}
-        >
-          {children}
-        </Typography>
+      <Typography
+        variant="h5"
+        sx={{
+          color: mode === "light" ? palette.text.primary : palette.common.white,
+        }}
+      >
+        {children}
         <InfoIconTooltip
           placement="right"
           type={tooltipType}
-          sx={{ top: "8px", left: "2px" }}
+          sx={{ top: -1, left: "2px", verticalAlign: "middle" }}
         />
-      </Box>
+      </Typography>
 
       {includeDate &&
       formattedCoinData != undefined &&

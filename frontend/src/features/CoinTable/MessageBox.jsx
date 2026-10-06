@@ -1,5 +1,12 @@
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  useColorScheme,
+  useTheme,
+} from "@mui/material";
 import RefreshRoundedIcon from "@mui/icons-material/RefreshRounded";
+import { useEffect } from "react";
 
 //This component is used for the the messages in the error pages
 function MessageBox({
@@ -11,11 +18,22 @@ function MessageBox({
   sx,
 }) {
   const { palette } = useTheme();
-  const { mode } = useTheme();
+  const { mode } = useColorScheme();
+
+  useEffect(() => {
+    console.log("mode:", mode);
+  }, [mode]);
 
   return (
     <Box sx={{ textAlign: "center", ...sx }}>
-      <Typography variant="h1" sx={{ fontSize: "5.5rem" }} fontWeight="bold">
+      <Typography
+        variant="h1"
+        sx={{
+          fontSize: "5.5rem",
+          color: mode === "light" ? palette.text.primary : palette.common.white,
+        }}
+        fontWeight="bold"
+      >
         {title}
       </Typography>
       <Typography

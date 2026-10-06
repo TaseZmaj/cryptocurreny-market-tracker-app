@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import { Box } from "@mui/material";
 import { useTheme, useColorScheme } from "@mui/material/styles";
 import { useLocation } from "react-router";
+import { motion } from "framer-motion";
 
 function Layout() {
   const { mode } = useColorScheme();
@@ -33,7 +34,21 @@ function Layout() {
           minHeight: 0,
         }}
       >
-        <Outlet />
+        <Box
+          key={pathname}
+          component={motion.div}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: "easeOut" }}
+          sx={{
+            width: "100%",
+            height: "100%",
+            minHeight: 0,
+            flexGrow: 1,
+          }}
+        >
+          <Outlet />
+        </Box>
       </Box>
       <Footer />
     </Box>

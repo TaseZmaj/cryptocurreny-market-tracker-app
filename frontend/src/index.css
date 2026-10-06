@@ -15,6 +15,7 @@ body {
 /* Transparent background for scrollbar track */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-corner {

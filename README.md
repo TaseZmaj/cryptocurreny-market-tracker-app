@@ -1,4 +1,4 @@
-# 🚀 Fullstack Cryptocurrency Market Tracker Application
+# Fullstack Cryptocurrency Market Tracker Application
 
 A professional-grade distributed system designed to monitor cryptocurrency markets, perform automated technical analysis, and provide price trend predictions using Deep Learning (LSTM).
 

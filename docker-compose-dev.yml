@@ -4,6 +4,12 @@ services:
     build: ./backend
     ports:
       - "8080:8080"
+    develop:
+      watch:
+        - action: rebuild
+          path: ./backend/src
+        - action: rebuild
+          path: ./backend/pom.xml
     networks:
       - crypto-network
 

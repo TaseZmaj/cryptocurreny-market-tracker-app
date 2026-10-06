@@ -32,25 +32,31 @@ import { blue } from "@mui/material/colors";
 import { useNavigate } from "react-router-dom";
 import { getCsvAll24hDataAsync } from "../../util/CoinsApi.js";
 import SquareButton from "../../components/SquareButton.jsx";
+import useTableUi from "../../hooks/useTableUi.js";
+import { motion } from "framer-motion";
 
 export default function CoinTable() {
   const { coins, coinsLoading, coinsError, getAllCoins } = useCoins();
-  const [query, setQuery] = useState("");
   const [filteredCoins, setFilteredCoins] = useState([]);
   const { mode } = useColorScheme();
   const { palette } = useTheme();
+  const {
+    order,
+    setOrder,
+    orderBy,
+    setOrderBy,
+    page,
+    setPage,
+    dense,
+    setDense,
+    rowsPerPage,
+    setRowsPerPage,
+    query,
+    setQuery,
+  } = useTableUi();
 
   //Variable made for performance optimizations
   const stableCoins = useMemo(() => coins, [coins]);
-
-  //======================= MUI Table state ================================
-  const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("marketCapRank");
-  // const [selected, setSelected] = useState([]);
-  const [page, setPage] = useState(0);
-  const [dense, setDense] = useState(false);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
-  //========================================================================
 
   //============= MUI Table handler funcions and vars ======================
   const handleRequestSort = (event, property) => {
@@ -295,8 +301,14 @@ export default function CoinTable() {
 
               {/* Coins data table display */}
               {coins && !coinsLoading && !coinsError
-                ? visibleRows.map((coin) => {
-                    return <CoinRow key={coin.coinId} coin={coin} />;
+                ? visibleRows.map((coin, index) => {
+                    return (
+                      <CoinRow
+                        key={coin.coinId}
+                        coin={coin}
+                        animationIndex={index}
+                      />
+                    );
                   })
                 : null}
 
@@ -504,7 +516,7 @@ function EnhancedTableHead({ order, orderBy, onRequestSort }) {
   );
 }
 
-const CoinRow = memo(function CoinRow({ coin }) {
+const CoinRow = memo(function CoinRow({ coin, animationIndex }) {
   const { palette } = useTheme();
   const { mode } = useColorScheme();
   const navigate = useNavigate();
@@ -516,6 +528,14 @@ const CoinRow = memo(function CoinRow({ coin }) {
       placement="top"
     >
       <TableRow
+        component={motion.tr}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.6,
+          delay: animationIndex * 0.035,
+          ease: "easeOut",
+        }}
         onClick={() => navigate(`/coins/${coin.coinId}`)}
         tabIndex={-1}
         slotprops={{
@@ -542,7 +562,8 @@ const CoinRow = memo(function CoinRow({ coin }) {
           "&:hover": {
             backgroundColor: mode === "light" ? blue[50] : palette.grey[900],
           },
-          transition: "all 150ms cubic-bezier(0.4, 0, 0.2, 1) 25ms",
+          transition:
+            "background-color 150ms cubic-bezier(0.4, 0, 0.2, 1) 25ms",
           "& td": {
             borderBottom:
               mode === "light"

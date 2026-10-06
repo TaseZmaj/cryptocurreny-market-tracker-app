@@ -2,7 +2,6 @@ import { Typography, Box, useColorScheme, useTheme } from "@mui/material";
 import useCoins from "../../../hooks/useCoins.js";
 import { useEffect, useState } from "react";
 import CardTitle from "../CardTitle.jsx";
-import { formatDatePickerSelection } from "../../../util/stringUtils.js";
 import Indicator from "./Indicator.jsx";
 import RsiProgressBar from "./RsiProgressBar.jsx";
 import LoadingSkeleton from "../../../components/LoadingSkeleton.jsx";
@@ -48,6 +47,7 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
   const analysisData = technicalAnalysisTypes.includes(type)
     ? filteredTechnicalAnalysisData?.last_candle
     : null;
+  const hasTechnicalAnalysisData = Boolean(analysisData);
 
   //If the Component uses Lstm Prediction data
   const lstmData =
@@ -230,13 +230,13 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
 
   function handleFilterTechnicalAnalysisByDatePicker(datePicker) {
     const key = datePicker.toLowerCase();
-    const filteredTechnicalAnalysis = coinTechnicalAnalysis.timeframes[key];
+    const filteredTechnicalAnalysis = coinTechnicalAnalysis?.timeframes?.[key];
 
     setFilteredTechnicalAnalysisData(filteredTechnicalAnalysis);
   }
 
   useEffect(() => {
-    if (!coinTechnicalAnalysis.timeframes || !datePicker) {
+    if (!coinTechnicalAnalysis?.timeframes || !datePicker) {
       return;
     }
     handleFilterTechnicalAnalysisByDatePicker(datePicker);
@@ -772,39 +772,35 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
 
         {/* Technical Analysis Error */}
         {technicalAnalysisTypes.includes(type) && coinTechnicalAnalysisError ? (
-          <>
-            <Typography
-              sx={{
-                lineHeight: 1.1,
-                fontSize: "1.1rem",
-                mt: "10px",
-                color:
-                  mode === "light" ? palette.error.light : palette.error.light,
-              }}
-            >
-              {type !== "overallSignal" ? (
-                <>
-                  {type === "trendIndicators" ? "Trend Indicators " : null}
-                  {type === "bollingerBands" ? "Bollinger Bands " : null}
-                  {type === "rsiPanel" ? "RSI " : null}
-                  {type === "macdPanel" ? "MACD " : null}
-                  {type === "stochasticPanel" ? "Stochastic Oscillator " : null}
-                  {type === "cciPanel" ? "CCI " : null}
-                  {type === "adxPanel" ? "ADX " : null}
-                  {type === "vma" ? "Volume Analysis " : null}
-                  data for {coin?.name} for <span></span>
-                  <b>{formatDatePickerSelection(datePicker)}</b>
-                  doesn't exist.
-                </>
-              ) : (
-                <>
-                  Overall signal data for
-                  <b>{formatDatePickerSelection(datePicker)}</b> is not
-                  available.
-                </>
-              )}
-            </Typography>
-          </>
+          <Typography
+            sx={{
+              lineHeight: 1.1,
+              fontSize: "1.1rem",
+              mt: "10px",
+              color: palette.error.light,
+            }}
+          >
+            Technical-analysis data couldn&apos;t be loaded. Please try again
+            later.
+          </Typography>
+        ) : null}
+
+        {/* Technical Analysis Missing Data */}
+        {technicalAnalysisTypes.includes(type) &&
+        coin &&
+        !coinTechnicalAnalysisLoading &&
+        !coinTechnicalAnalysisError &&
+        !hasTechnicalAnalysisData ? (
+          <Typography
+            sx={{
+              lineHeight: 1.1,
+              fontSize: "1.1rem",
+              mt: "10px",
+              color: mode === "light" ? palette.grey[700] : palette.grey[400],
+            }}
+          >
+            No technical-analysis data is available for this timeframe.
+          </Typography>
         ) : null}
 
         {/* Lstm Prediction Error */}
@@ -818,7 +814,24 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
                 mode === "light" ? palette.error.light : palette.error.light,
             }}
           >
-            Lstm Prediction Data for {coin?.name} doesn't exist.
+            LSTM prediction data couldn&apos;t be loaded. Please try again later.
+          </Typography>
+        ) : null}
+
+        {type === "lstmPricePrediction" &&
+        coin &&
+        !coinLstmPredictionLoading &&
+        !coinLstmPredictionError &&
+        !lstmData ? (
+          <Typography
+            sx={{
+              lineHeight: 1.1,
+              fontSize: "1.1rem",
+              mt: "10px",
+              color: mode === "light" ? palette.grey[700] : palette.grey[400],
+            }}
+          >
+            No LSTM prediction is available for this timeframe.
           </Typography>
         ) : null}
       </Box>
