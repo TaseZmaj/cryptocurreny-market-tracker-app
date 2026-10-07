@@ -100,7 +100,7 @@ function reducer(state, action) {
 
     default:
       throw new Error(
-        `Error: Unknown action type in CoinsContext reducer ${action.type}`
+        `Error: Unknown action type in CoinsContext reducer ${action.type}`,
       );
   }
 }
@@ -155,11 +155,11 @@ export default function CoinsProvider({ children }) {
       } catch (err) {
         dispatch({
           type: "coin/failedToLoad",
-          payload: err.message,
+          payload: { message: err.message, status: err.status },
         });
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   const getCoinTechnicalAnalysisById = useCallback(
@@ -167,9 +167,8 @@ export default function CoinsProvider({ children }) {
       dispatch({ type: "coin/technicalAnalysis/loading" });
 
       try {
-        const coinTechnicalAnalysis = await fetchCoinTechnicalAnalysisByIdAsync(
-          id
-        );
+        const coinTechnicalAnalysis =
+          await fetchCoinTechnicalAnalysisByIdAsync(id);
         dispatch({
           type: "coin/technicalAnalysis/success",
           payload: coinTechnicalAnalysis,
@@ -181,7 +180,7 @@ export default function CoinsProvider({ children }) {
         });
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   const getCoinLstmPredictionById = useCallback(
@@ -201,7 +200,7 @@ export default function CoinsProvider({ children }) {
         });
       }
     },
-    [dispatch]
+    [dispatch],
   );
 
   return (

@@ -17,6 +17,8 @@ import CardTitle from "../features/SingleCoinDisplay/CardTitle.jsx";
 import { useSearchParams } from "react-router-dom";
 import CoinTitle from "../features/SingleCoinDisplay/MainTitle/CoinTitle.jsx";
 import LoadingSkeleton from "../components/LoadingSkeleton.jsx";
+import { motion } from "framer-motion";
+import SingleCoinErrorPage from "./SingleCoinErrorPage.jsx";
 
 // Valid ranges from the date picker
 const VALID_RANGES = ["1D", "1W", "1M", "6M", "1Y", "YTD"];
@@ -160,6 +162,23 @@ function CoinDetails() {
   }, [rangeFromUrl, setSearchParams]);
   // ===================================================================
 
+  if (coinError && !coinLoading) {
+    const retry = () => {
+      getCoinById(coinIdFromPathname);
+      getCoinTechnicalAnalysisById(coinIdFromPathname);
+      getCoinLstmPredictionById(coinIdFromPathname);
+    };
+
+    return (
+      <SingleCoinErrorPage
+        coin={{ coinId: coinIdFromPathname }}
+        isInitializing={coinError.status === 503}
+        isUnavailable={coinError.status !== 404}
+        onRetry={retry}
+      />
+    );
+  }
+
   return (
     <Box
       sx={{
@@ -175,6 +194,10 @@ function CoinDetails() {
     >
       {/* Title and 24h data - left side */}
       <Box
+        component={motion.div}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         sx={{
           display: "flex",
           flexDirection: "column",
@@ -460,9 +483,15 @@ function CoinDetails() {
               {coinLoading && !coinError ? (
                 <Box
                   sx={{
+                    display: {
+                      xl: "flex",
+                      lg: "flex",
+                      md: "none",
+                      sm: "none",
+                      xs: "none",
+                    },
                     width: "337px",
                     height: "29px",
-                    display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
                   }}
@@ -498,6 +527,10 @@ function CoinDetails() {
           >
             {/* Apex OHLC Chart */}
             <Box
+              component={motion.div}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
               sx={{
                 mt: "8px",
                 display: "flex",
@@ -555,6 +588,10 @@ function CoinDetails() {
 
             {/* Volume Chart */}
             <Box
+              component={motion.div}
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, ease: "easeOut" }}
               sx={{
                 mt: "8px",
                 display: "flex",
@@ -592,6 +629,7 @@ function CoinDetails() {
               !coinLoading &&
               !coinError ? (
                 <VolumeChart
+                  key={`volume-chart-${dateRange}`}
                   datePicker={dateRange}
                   formattedCoinOhlcvData={formattedCoinOhlcvData}
                   sx={{ height: "100%", maxWidth: "100%", width: "1362px" }}
@@ -612,6 +650,8 @@ function CoinDetails() {
                 </Box>
               ) : null}
             </Box>
+
+            {/* Microservice data */}
             <Box
               sx={{
                 width: "100%",
@@ -624,21 +664,57 @@ function CoinDetails() {
               <Grid container spacing={6.7} sx={{ minHeight: "190px" }}>
                 {!TECHNICAL_ANALYSIS_UNAVAILABLE_RANGES.includes(dateRange) ? (
                   <>
-                    <Grid size={{ xs: 12, sm: 6, md: 6 }} item>
+                    <Grid
+                      key={`trend-${dateRange}`}
+                      component={motion.div}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 0 * 0.035,
+                        ease: "easeOut",
+                      }}
+                      size={{ xs: 12, sm: 6, md: 6 }}
+                      item
+                    >
                       <MicroserviceDataCard
                         type="trendIndicators"
                         datePicker={dateRange}
                         sx={{ minHeight: "100%", pr: "10px" }}
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 6 }} item>
+                    <Grid
+                      key={`bollinger-${dateRange}`}
+                      component={motion.div}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 1 * 0.035,
+                        ease: "easeOut",
+                      }}
+                      size={{ xs: 12, sm: 6, md: 6 }}
+                      item
+                    >
                       <MicroserviceDataCard
                         type="bollingerBands"
                         datePicker={dateRange}
                         sx={{ minHeight: "100%", pr: "10px" }}
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 12, md: 12 }} item>
+                    <Grid
+                      key={`vma-${dateRange}`}
+                      component={motion.div}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 2 * 0.035,
+                        ease: "easeOut",
+                      }}
+                      size={{ xs: 12, sm: 12, md: 12 }}
+                      item
+                    >
                       <MicroserviceDataCard
                         type="vma"
                         datePicker={dateRange}
@@ -646,13 +722,37 @@ function CoinDetails() {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }} item>
+                    <Grid
+                      key={`rsi-${dateRange}`}
+                      component={motion.div}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 3 * 0.035,
+                        ease: "easeOut",
+                      }}
+                      size={{ xs: 12, sm: 6, md: 4 }}
+                      item
+                    >
                       <MicroserviceDataCard
                         type="rsiPanel"
                         datePicker={dateRange}
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }} item>
+                    <Grid
+                      key={`macd-${dateRange}`}
+                      component={motion.div}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 4 * 0.035,
+                        ease: "easeOut",
+                      }}
+                      size={{ xs: 12, sm: 6, md: 4 }}
+                      item
+                    >
                       <MicroserviceDataCard
                         type="macdPanel"
                         datePicker={dateRange}
@@ -662,14 +762,38 @@ function CoinDetails() {
                         }}
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }} item>
+                    <Grid
+                      key={`stochastic-${dateRange}`}
+                      component={motion.div}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 5 * 0.035,
+                        ease: "easeOut",
+                      }}
+                      size={{ xs: 12, sm: 6, md: 4 }}
+                      item
+                    >
                       <MicroserviceDataCard
                         type="stochasticPanel"
                         datePicker={dateRange}
                         sx={{ minHeight: "100%" }}
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6, md: 4 }} item>
+                    <Grid
+                      key={`adx-${dateRange}`}
+                      component={motion.div}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 6 * 0.035,
+                        ease: "easeOut",
+                      }}
+                      size={{ xs: 12, sm: 6, md: 4 }}
+                      item
+                    >
                       <MicroserviceDataCard
                         type="adxPanel"
                         datePicker={dateRange}
@@ -678,7 +802,19 @@ function CoinDetails() {
                         }}
                       />
                     </Grid>
-                    <Grid size={{ xs: 12, sm: 6.1, md: 4 }} item>
+                    <Grid
+                      key={`cci-${dateRange}`}
+                      component={motion.div}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 7 * 0.035,
+                        ease: "easeOut",
+                      }}
+                      size={{ xs: 12, sm: 6.1, md: 4 }}
+                      item
+                    >
                       <MicroserviceDataCard
                         type="cciPanel"
                         datePicker={dateRange}
@@ -686,7 +822,19 @@ function CoinDetails() {
                       />
                     </Grid>
 
-                    <Grid size={{ xs: 12, sm: 6 }} item>
+                    <Grid
+                      key={`overall-${dateRange}`}
+                      component={motion.div}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: 8 * 0.035,
+                        ease: "easeOut",
+                      }}
+                      size={{ xs: 12, sm: 6 }}
+                      item
+                    >
                       <MicroserviceDataCard
                         type="overallSignal"
                         datePicker={dateRange}
@@ -695,7 +843,24 @@ function CoinDetails() {
                     </Grid>
                   </>
                 ) : null}
-                <Grid size={{ xs: 12, sm: 6 }} item>
+                <Grid
+                  key={`lstm-${dateRange}`}
+                  component={motion.div}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{
+                    duration: 0.5,
+                    delay:
+                      dateRange === "6M" ||
+                      dateRange === "1Y" ||
+                      dateRange === "YTD"
+                        ? 0
+                        : 9 * 0.035,
+                    ease: "easeOut",
+                  }}
+                  size={{ xs: 12, sm: 6 }}
+                  item
+                >
                   <MicroserviceDataCard
                     type="lstmPricePrediction"
                     datePicker={dateRange}

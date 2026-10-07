@@ -5,6 +5,7 @@ import CardTitle from "../CardTitle.jsx";
 import Indicator from "./Indicator.jsx";
 import RsiProgressBar from "./RsiProgressBar.jsx";
 import LoadingSkeleton from "../../../components/LoadingSkeleton.jsx";
+import { motion } from "framer-motion";
 
 const technicalAnalysisTypes = [
   "trendIndicators",
@@ -245,6 +246,10 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
 
   return (
     <Box
+      component={motion.div}
+      initial={{ opacity: 0, y: 15 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
       sx={{
         height: "fit-content",
         boxSizing: "border-box",
@@ -805,24 +810,6 @@ function MicroserviceDataCard({ type, datePicker, sx }) {
 
         {/* Lstm Prediction Error */}
         {type === "lstmPricePrediction" && coinLstmPredictionError ? (
-          <Typography
-            sx={{
-              lineHeight: 1.1,
-              fontSize: "1.1rem",
-              mt: "10px",
-              color:
-                mode === "light" ? palette.error.light : palette.error.light,
-            }}
-          >
-            LSTM prediction data couldn&apos;t be loaded. Please try again later.
-          </Typography>
-        ) : null}
-
-        {type === "lstmPricePrediction" &&
-        coin &&
-        !coinLstmPredictionLoading &&
-        !coinLstmPredictionError &&
-        !lstmData ? (
           <Typography
             sx={{
               lineHeight: 1.1,

@@ -7,6 +7,9 @@ frontend/.vite/
 frontend/.env.local
 frontend/.env.*.local
 frontend/.DS_Store
+.env
+.env.*
+!.env.example
 
 
 # Java Backend (Maven / Spring Boot)

@@ -1,18 +1,45 @@
 version: "3.8"
 services:
+  # --- Local MongoDB ---
+  mongodb:
+    image: mongo:8.0
+    volumes:
+      - mongodb-data:/data/db
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'mongosh --quiet --eval ''db.adminCommand("ping").ok'' localhost:27017/test',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - crypto-network
+
   # --- Java Spring Boot Backend ---
   backend:
     build: ./backend
+    environment:
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017/crypto_db}
     ports:
       - "8080:8080"
+    depends_on:
+      mongodb:
+        condition: service_healthy
     networks:
       - crypto-network
 
   # --- Python LSTM Predictor ---
   lstm-predictor:
     build: ./microservices/ltsm-predictor-service
+    environment:
+      MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017/crypto_db}
     ports:
       - "8081:8081"
+    depends_on:
+      mongodb:
+        condition: service_healthy
     networks:
       - crypto-network
 
@@ -43,3 +70,6 @@ services:
 networks:
   crypto-network:
     driver: bridge
+
+volumes:
+  mongodb-data:

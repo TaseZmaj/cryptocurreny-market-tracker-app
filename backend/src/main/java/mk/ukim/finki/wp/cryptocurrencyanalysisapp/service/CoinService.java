@@ -3,6 +3,8 @@ package mk.ukim.finki.wp.cryptocurrencyanalysisapp.service;
 
 import lombok.RequiredArgsConstructor;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.DTOs.FrontendDTOs.CoinDetailsDTO;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.exception.CoinNotFoundException;
+import mk.ukim.finki.wp.cryptocurrencyanalysisapp.exception.PipelineNotReadyException;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.AssetSummary;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.HistoricalData;
 import mk.ukim.finki.wp.cryptocurrencyanalysisapp.model.MongoDBModels.Symbol;
@@ -66,11 +68,15 @@ public class CoinService {
 
     public CoinDetailsDTO getCoinDetails(String coinGeckoId){
 
+        if (symbolRepository.count() == 0) {
+            throw new PipelineNotReadyException();
+        }
+
         // --- ЧЕКОР 1: Најди Symbol (Користи го CoinGecko ID) ---
         // Потребно е да го промениш SymbolRepository за да најдеш по ID, или да го мапираш
         // URL параметарот (BTC) на CoinGecko ID
             Symbol symbol = symbolRepository.findById(coinGeckoId) // Наоѓање по ID (пр. "bitcoin")
-                    .orElseThrow(() -> new RuntimeException("Coin not found: " + coinGeckoId));
+                    .orElseThrow(() -> new CoinNotFoundException(coinGeckoId));
 
         // --- ЧЕКОР 2: Најди AssetSummary ---
         // AssetSummary користи CoinGecko ID како свое ID.

@@ -8,6 +8,7 @@ import {
 import { useNavigate } from "react-router";
 import logo from "../assets/logo_v2.png";
 import CloudOffIcon from "@mui/icons-material/CloudOff";
+import { motion } from "framer-motion";
 
 function ErrorPage() {
   const { mode } = useColorScheme();
@@ -27,7 +28,10 @@ function ErrorPage() {
       }}
     >
       <Box
-        component="img"
+        initial={{ opacity: 0, y: -15 }}
+        animate={{ opacity: mode === "light" ? 0.075 : 0.045, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        component={motion.img}
         src={logo}
         alt=""
         aria-hidden="true"
@@ -45,7 +49,13 @@ function ErrorPage() {
           userSelect: "none",
         }}
       />
-      <Box sx={{ textAlign: "center", width: "600px" }}>
+      <Box
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+        component={motion.div}
+        sx={{ textAlign: "center", width: "600px" }}
+      >
         <Typography
           variant="h2"
           fontWeight="bold"

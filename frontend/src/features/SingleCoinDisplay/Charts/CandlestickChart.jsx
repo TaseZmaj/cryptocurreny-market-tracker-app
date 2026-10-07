@@ -179,7 +179,7 @@ function CandlestickChart({ datePicker, formattedCoinOhlcvData, height }) {
 
         if (currentRange) {
           let startTime = null;
-          const ANIMATION_DURATION = 600; // ms
+          const ANIMATION_DURATION = 500; // ms
 
           const animateZoom = (timestamp) => {
             if (!startTime) startTime = timestamp;

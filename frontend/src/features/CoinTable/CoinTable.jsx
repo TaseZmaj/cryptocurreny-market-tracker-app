@@ -269,7 +269,7 @@ export default function CoinTable() {
                 : null}
 
               {/* All coins error */}
-              {!coinsLoading && coinsError ? (
+              {!coinsLoading && (coinsError || coins.length === 0) ? (
                 <Box
                   sx={{
                     position: "absolute",
@@ -283,17 +283,20 @@ export default function CoinTable() {
                   <Box
                     sx={{
                       width: "100%",
+                      height: "100%",
+                      display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                     }}
                   >
                     <MessageBox
-                      type="error"
-                      title="Error!"
+                      type={coinsError ? "error" : "initializing"}
+                      title={coinsError ? "Error!" : "Getting things ready"}
                       buttonType="refresh"
                       onClickFunc={getAllCoins}
                     >
-                      {coinsError}
+                      {coinsError ||
+                        "The project was just started and the data pipeline is populating the database. Please wait a little before trying again."}
                     </MessageBox>
                   </Box>
                 </Box>
@@ -304,7 +307,7 @@ export default function CoinTable() {
                 ? visibleRows.map((coin, index) => {
                     return (
                       <CoinRow
-                        key={coin.coinId}
+                        key={`${coin.coinId}-${page}-${orderBy}-${order}-${query}`}
                         coin={coin}
                         animationIndex={index}
                       />
@@ -532,7 +535,7 @@ const CoinRow = memo(function CoinRow({ coin, animationIndex }) {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{
-          duration: 0.6,
+          duration: 0.5,
           delay: animationIndex * 0.035,
           ease: "easeOut",
         }}

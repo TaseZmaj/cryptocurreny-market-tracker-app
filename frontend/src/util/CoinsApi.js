@@ -19,15 +19,19 @@ export async function fetchCoinByIdAsync(coinId) {
   ]);
 
   if (!res24h.ok) {
-    throw new Error(
-      `Failed to fetch coin with id:  ${coinId} from API - url: ${apiEndpoint24hData}`
+    const error = new Error(
+      `Failed to fetch coin with id: ${coinId} from API - url: ${apiEndpoint24hData}`,
     );
+    error.status = res24h.status;
+    throw error;
   }
 
   if (!resOHLCV.ok) {
-    throw new Error(
-      `Failed to fetch coin with id:  ${coinId} from API - url: ${apiEndpointOHLCVData}`
+    const error = new Error(
+      `Failed to fetch history for coin ${coinId} from API - url: ${apiEndpointOHLCVData}`,
     );
+    error.status = resOHLCV.status;
+    throw error;
   }
 
   let data24h;
@@ -35,7 +39,7 @@ export async function fetchCoinByIdAsync(coinId) {
     data24h = await res24h.json();
   } catch {
     throw new Error(
-      `Failed to parse JSON from 24h API response for coin ${coinId}`
+      `Failed to parse JSON from 24h API response for coin ${coinId}`,
     );
   }
 
@@ -45,7 +49,7 @@ export async function fetchCoinByIdAsync(coinId) {
       dataOHLCV = await resOHLCV.json();
     } catch {
       throw new Error(
-        `Failed to parse OHLCV JSON for coin ${coinId}, setting null`
+        `Failed to parse OHLCV JSON for coin ${coinId}, setting null`,
       );
     }
   }
@@ -113,7 +117,7 @@ export async function fetchCoinTechnicalAnalysisByIdAsync(coinId) {
   const res = await fetch(apiEndpoint);
   if (!res.ok) {
     throw new Error(
-      `Failed to get the Technical Analasys for ${coinId} from API - url: ${apiEndpoint}`
+      `Failed to get the Technical Analasys for ${coinId} from API - url: ${apiEndpoint}`,
     );
   }
 
@@ -127,7 +131,7 @@ export async function fetchCoinLSTMPredictionByIdAsync(coinId) {
   const res = await fetch(apiEndpoint);
   if (!res.ok) {
     throw new Error(
-      `Failed to get the LSTM Prediction for ${coinId} from API - url: ${apiEndpoint}`
+      `Failed to get the LSTM Prediction for ${coinId} from API - url: ${apiEndpoint}`,
     );
   }
 

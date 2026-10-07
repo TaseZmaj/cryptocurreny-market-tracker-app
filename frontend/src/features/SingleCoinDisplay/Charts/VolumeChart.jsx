@@ -1,16 +1,12 @@
 import { useMemo, useState } from "react";
 import { BarChart } from "@mui/x-charts/BarChart";
-import { Box, Typography, useColorScheme, useTheme } from "@mui/material";
+import { Box, useColorScheme, useTheme } from "@mui/material";
 import {
   formatCryptoPriceChart,
   formatIsoToYMD,
 } from "../../../util/stringUtils";
 
-export default function VolumeChart({
-  datePicker,
-  formattedCoinOhlcvData,
-  sx = {},
-}) {
+export default function VolumeChart({ formattedCoinOhlcvData, sx = {} }) {
   //==================== MUI chart state ===========================
   const [tickPlacement] = useState("extremities");
   const [tickLabelPlacement] = useState("middle");
@@ -109,6 +105,7 @@ export default function VolumeChart({
   return (
     <Box style={{ width: "100%", ...sx }}>
       <BarChart
+        skipAnimation
         gridHorizontal={true}
         sx={{
           "& .MuiBarElement-root": {

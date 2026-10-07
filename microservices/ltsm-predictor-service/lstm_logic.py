@@ -13,7 +13,7 @@ import sys
 # --------------------------------------------------------
 
 
-MONGO_URI = "mongodb+srv://kristijanjovik_db_user:Z7ElsP3JsscmHMrj@cluster0.pkcuhbd.mongodb.net/"
+MONGO_URI = os.getenv("MONGODB_URI", "mongodb://localhost:27017/crypto_db")
 DATABASE_NAME = "crypto_db"
 COLLECTION_NAME = "historical_data"
 MODEL_SAVE_PATH = 'model_weights.h5'
