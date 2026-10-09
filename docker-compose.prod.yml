@@ -4,6 +4,7 @@ services:
     # Resolved from .env.prod when Compose is started with --env-file.
     environment:
       MONGODB_URI: ${MONGODB_URI:?MONGODB_URI must be set}
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-crypto_db}
       JAVA_TOOL_OPTIONS: "-Xms64m -Xmx256m -XX:+UseG1GC"
     expose:
       - "8080"

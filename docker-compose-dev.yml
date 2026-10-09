@@ -23,6 +23,7 @@ services:
     # Resolved from .env.local when Compose is started with --env-file.
     environment:
       MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017/crypto_db}
+      MONGODB_DATABASE: ${MONGODB_DATABASE:-crypto_db}
       JAVA_TOOL_OPTIONS: "-Xms64m -Xmx256m -XX:+UseG1GC"
     ports:
       - "8080:8080"

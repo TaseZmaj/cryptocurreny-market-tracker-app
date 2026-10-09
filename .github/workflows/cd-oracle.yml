@@ -95,7 +95,7 @@ jobs:
             docker compose --env-file .env.prod -f docker-compose.prod.yml logs --tail=100 backend frontend
           }
           trap diagnostics ERR
-          printf 'IMAGE_NAMESPACE=%s\nIMAGE_TAG=%s\n' "$IMAGE_NAMESPACE" "$IMAGE_TAG" > .env.prod
+          printf 'IMAGE_NAMESPACE=%s\nIMAGE_TAG=%s\nMONGODB_DATABASE=crypto_db\n' "$IMAGE_NAMESPACE" "$IMAGE_TAG" > .env.prod
           printf 'MONGODB_URI=' >> .env.prod
           printf '%s' "$MONGODB_URI_B64" | base64 --decode >> .env.prod
           printf '\n' >> .env.prod
