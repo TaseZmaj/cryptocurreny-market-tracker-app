@@ -2,6 +2,7 @@ services:
   # --- Local MongoDB ---
   mongodb:
     image: mongo:8.0
+    command: ["mongod", "--wiredTigerCacheSizeGB", "0.25"]
     volumes:
       - mongodb-data:/data/db
     healthcheck:
@@ -19,8 +20,10 @@ services:
   # --- Java Spring Boot Backend ---
   backend:
     build: ./backend
+    # Resolved from .env.local when Compose is started with --env-file.
     environment:
       MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017/crypto_db}
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx256m -XX:+UseG1GC"
     ports:
       - "8080:8080"
     depends_on:
@@ -38,8 +41,14 @@ services:
   # --- Python LSTM Predictor ---
   lstm-predictor:
     build: ./microservices/ltsm-predictor-service
+    # Uses the same MongoDB connection as the backend.
     environment:
       MONGODB_URI: ${MONGODB_URI:-mongodb://mongodb:27017/crypto_db}
+      TF_NUM_INTRAOP_THREADS: "1"
+      TF_NUM_INTEROP_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      MALLOC_ARENA_MAX: "2"
     ports:
       - "8081:8081"
     depends_on:
@@ -52,6 +61,8 @@ services:
   technical-analysis:
     build: ./microservices/technical-analysis-service
     container_name: technical-analysis-service
+    environment:
+      MALLOC_ARENA_MAX: "2"
     ports:
       - "8082:8082"
     networks:

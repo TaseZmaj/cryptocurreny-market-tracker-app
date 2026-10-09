@@ -1,0 +1,52 @@
+services:
+  backend:
+    image: docker.io/${IMAGE_NAMESPACE}/crypto-backend:${IMAGE_TAG:-latest}
+    # Resolved from .env.prod when Compose is started with --env-file.
+    environment:
+      MONGODB_URI: ${MONGODB_URI:?MONGODB_URI must be set}
+      JAVA_TOOL_OPTIONS: "-Xms64m -Xmx256m -XX:+UseG1GC"
+    expose:
+      - "8080"
+    networks:
+      - crypto-network
+    restart: unless-stopped
+
+  lstm-predictor:
+    image: docker.io/${IMAGE_NAMESPACE}/crypto-lstm-predictor:${IMAGE_TAG:-latest}
+    # Resolved from .env.prod when Compose is started with --env-file.
+    environment:
+      MONGODB_URI: ${MONGODB_URI:?MONGODB_URI must be set}
+      TF_NUM_INTRAOP_THREADS: "1"
+      TF_NUM_INTEROP_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+      MALLOC_ARENA_MAX: "2"
+    expose:
+      - "8081"
+    networks:
+      - crypto-network
+    restart: unless-stopped
+
+  technical-analysis:
+    image: docker.io/${IMAGE_NAMESPACE}/crypto-technical-analysis:${IMAGE_TAG:-latest}
+    environment:
+      MALLOC_ARENA_MAX: "2"
+    expose:
+      - "8082"
+    networks:
+      - crypto-network
+    restart: unless-stopped
+
+  frontend:
+    image: docker.io/${IMAGE_NAMESPACE}/crypto-frontend:${IMAGE_TAG:-latest}
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - crypto-network
+    restart: unless-stopped
+
+networks:
+  crypto-network:
+    driver: bridge

@@ -1,0 +1,91 @@
+name: CD - Deploy to Oracle Cloud
+
+on:
+  workflow_run:
+    workflows:
+      - CI - Publish Docker Images
+    types:
+      - completed
+    branches:
+      - main
+      - master
+  workflow_dispatch:
+    inputs:
+      image_tag:
+        description: Docker image tag to deploy
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+env:
+  REGISTRY: docker.io
+
+jobs:
+  deploy:
+    name: Deploy production stack
+    if: |
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out deployment configuration
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+
+      - name: Configure SSH
+        env:
+          OCI_SSH_PRIVATE_KEY: ${{ secrets.OCI_SSH_PRIVATE_KEY }}
+          OCI_HOST: ${{ secrets.OCI_HOST }}
+        run: |
+          set -eu
+          test -n "$OCI_SSH_PRIVATE_KEY"
+          test -n "$OCI_HOST"
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$OCI_SSH_PRIVATE_KEY" > "$HOME/.ssh/oci_key"
+          chmod 600 "$HOME/.ssh/oci_key"
+          ssh-keyscan -H "$OCI_HOST" >> "$HOME/.ssh/known_hosts"
+
+      - name: Upload production Compose file
+        env:
+          OCI_HOST: ${{ secrets.OCI_HOST }}
+          OCI_USER: ${{ secrets.OCI_USER }}
+        run: |
+          set -eu
+          test -n "$OCI_USER"
+          ssh -i "$HOME/.ssh/oci_key" "$OCI_USER@$OCI_HOST" \
+            'mkdir -p "$HOME/crypto-market-tracker"'
+          scp -i "$HOME/.ssh/oci_key" docker-compose.prod.yml \
+            "$OCI_USER@$OCI_HOST:~/crypto-market-tracker/docker-compose.prod.yml"
+
+      - name: Pull and restart services
+        env:
+          IMAGE_NAMESPACE: ${{ secrets.DOCKERHUB_USERNAME }}
+          IMAGE_TAG: ${{ github.event_name == 'workflow_run' && format('sha-{0}', github.event.workflow_run.head_sha) || inputs.image_tag || format('sha-{0}', github.sha) }}
+          DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+          MONGODB_URI: ${{ secrets.MONGODB_URI }}
+          OCI_HOST: ${{ secrets.OCI_HOST }}
+          OCI_USER: ${{ secrets.OCI_USER }}
+        run: |
+          set -eu
+          test -n "$IMAGE_NAMESPACE"
+          test -n "$IMAGE_TAG"
+          test -n "$DOCKERHUB_TOKEN"
+          test -n "$MONGODB_URI"
+          printf '%s' "$DOCKERHUB_TOKEN" | ssh -i "$HOME/.ssh/oci_key" "$OCI_USER@$OCI_HOST" \
+            "docker login $REGISTRY --username '$IMAGE_NAMESPACE' --password-stdin"
+          mongodb_uri_b64="$(printf '%s' "$MONGODB_URI" | base64 -w 0)"
+          ssh -i "$HOME/.ssh/oci_key" "$OCI_USER@$OCI_HOST" \
+            "IMAGE_NAMESPACE='$IMAGE_NAMESPACE' IMAGE_TAG='$IMAGE_TAG' MONGODB_URI_B64='$mongodb_uri_b64' bash -s" <<'REMOTE_SCRIPT'
+          set -eu
+          cd "$HOME/crypto-market-tracker"
+          printf 'IMAGE_NAMESPACE=%s\nIMAGE_TAG=%s\n' "$IMAGE_NAMESPACE" "$IMAGE_TAG" > .env.prod
+          printf 'MONGODB_URI=' >> .env.prod
+          printf '%s' "$MONGODB_URI_B64" | base64 --decode >> .env.prod
+          printf '\n' >> .env.prod
+          docker compose --env-file .env.prod -f docker-compose.prod.yml pull
+          docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --remove-orphans
+          docker image prune -f
+          REMOTE_SCRIPT

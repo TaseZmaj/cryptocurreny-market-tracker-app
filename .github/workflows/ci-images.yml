@@ -70,6 +70,6 @@ jobs:
           cache-from: type=gha,scope=${{ matrix.name }}
           cache-to: type=gha,mode=max,scope=${{ matrix.name }}
           build-args: |
-            VITE_APP_API_URL=${{ vars.VITE_APP_API_URL }}
-            VITE_EXPORT_API_URL=${{ vars.VITE_EXPORT_API_URL }}
-            VITE_MICROSERVICES_API_URL=${{ vars.VITE_MICROSERVICES_API_URL }}
+            VITE_APP_API_URL=/api/coins
+            VITE_EXPORT_API_URL=/api/export
+            VITE_MICROSERVICES_API_URL=/api/microservices

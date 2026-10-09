@@ -2,9 +2,10 @@ import { useColorScheme, useMediaQuery, useTheme } from "@mui/material";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import { InputAdornment, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
+import useTableUi from "../../hooks/useTableUi.js";
 
 const SEARCH_DELAY = 300;
-const MIN_SEARCH_LENGTH = 4;
+const MIN_SEARCH_LENGTH = 3;
 
 //This is used for the table searching/querying
 export default function SearchInput({ query, setQuery, sx }) {
@@ -13,15 +14,18 @@ export default function SearchInput({ query, setQuery, sx }) {
   const theme = useTheme();
   const { palette } = theme;
   const { mode } = useColorScheme();
+  const { setPage } = useTableUi();
   const showLabel = useMediaQuery(theme.breakpoints.up("md"));
 
   useEffect(() => {
     const timer = setTimeout(() => {
       const trimmedQuery = inputValue.trim();
       setQuery(trimmedQuery.length >= MIN_SEARCH_LENGTH ? trimmedQuery : "");
+      setPage(0); // Reset to the first page whenever the query changes
     }, SEARCH_DELAY);
 
     return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputValue, setQuery]);
 
   return (

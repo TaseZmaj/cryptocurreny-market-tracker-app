@@ -10,12 +10,12 @@ export function tableQuery(query, coins, setFilteredCoins) {
     return (
       String(coin.marketCapRank).toLowerCase().includes(q) ||
       String(coin.name).toLowerCase().includes(q) ||
-      String(coin.symbol).toLowerCase().includes(q) ||
-      String(coin.price).toLowerCase().includes(q) ||
-      String(coin.volume24h).toLowerCase().includes(q) ||
-      String(coin.high24h).toLowerCase().includes(q) ||
-      String(coin.low24h).toLowerCase().includes(q) ||
-      String(coin.liquidity).toLowerCase().includes(q)
+      String(coin.symbol).toLowerCase().includes(q) //||
+      // String(coin.price).toLowerCase().includes(q) ||
+      // String(coin.volume24h).toLowerCase().includes(q) ||
+      // String(coin.high24h).toLowerCase().includes(q) ||
+      // String(coin.low24h).toLowerCase().includes(q) ||
+      // String(coin.liquidity).toLowerCase().includes(q)
     );
   });
 
