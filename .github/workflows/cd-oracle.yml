@@ -44,10 +44,17 @@ jobs:
           test -n "$OCI_SSH_PRIVATE_KEY"
           test -n "$OCI_HOST"
           install -m 700 -d "$HOME/.ssh"
-          key_material="$(printf '%s' "$OCI_SSH_PRIVATE_KEY" | sed 's/\\n/\n/g' | tr -d '\r')"
+          key_material="$(printf '%s' "$OCI_SSH_PRIVATE_KEY" | tr -d '\r')"
+          if printf '%s' "$key_material" | grep -q '\\n'; then
+            key_material="$(printf '%s' "$key_material" | perl -0pe 's/\\n/\n/g')"
+          fi
           printf '%s\n' "$key_material" > "$HOME/.ssh/oci_key"
           chmod 600 "$HOME/.ssh/oci_key"
-          ssh-keygen -yf "$HOME/.ssh/oci_key" > /dev/null
+          if ! ssh-keygen -yf "$HOME/.ssh/oci_key" > /dev/null; then
+            echo "OCI_SSH_PRIVATE_KEY is not a readable private SSH key." >&2
+            echo "Store the complete unencrypted private key, including BEGIN/END lines, as a multiline GitHub secret." >&2
+            exit 1
+          fi
           ssh-keyscan -H "$OCI_HOST" >> "$HOME/.ssh/known_hosts"
 
       - name: Upload production Compose file
