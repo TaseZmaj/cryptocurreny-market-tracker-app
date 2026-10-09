@@ -90,11 +90,19 @@ jobs:
             "IMAGE_NAMESPACE='$IMAGE_NAMESPACE' IMAGE_TAG='$IMAGE_TAG' MONGODB_URI_B64='$mongodb_uri_b64' bash -s" <<'REMOTE_SCRIPT'
           set -eu
           cd "$HOME/crypto-market-tracker"
+          diagnostics() {
+            docker compose --env-file .env.prod -f docker-compose.prod.yml ps
+            docker compose --env-file .env.prod -f docker-compose.prod.yml logs --tail=100 backend frontend
+          }
+          trap diagnostics ERR
           printf 'IMAGE_NAMESPACE=%s\nIMAGE_TAG=%s\n' "$IMAGE_NAMESPACE" "$IMAGE_TAG" > .env.prod
           printf 'MONGODB_URI=' >> .env.prod
           printf '%s' "$MONGODB_URI_B64" | base64 --decode >> .env.prod
           printf '\n' >> .env.prod
           docker compose --env-file .env.prod -f docker-compose.prod.yml pull
-          docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --remove-orphans
+          docker compose --env-file .env.prod -f docker-compose.prod.yml up -d --force-recreate --remove-orphans
+          curl --fail --silent --show-error --retry 12 --retry-delay 5 \
+            http://127.0.0.1/api/coins > /dev/null
+          docker compose --env-file .env.prod -f docker-compose.prod.yml ps
           docker image prune -f
           REMOTE_SCRIPT
