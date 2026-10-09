@@ -44,8 +44,10 @@ jobs:
           test -n "$OCI_SSH_PRIVATE_KEY"
           test -n "$OCI_HOST"
           install -m 700 -d "$HOME/.ssh"
-          printf '%s\n' "$OCI_SSH_PRIVATE_KEY" > "$HOME/.ssh/oci_key"
+          key_material="$(printf '%s' "$OCI_SSH_PRIVATE_KEY" | sed 's/\\n/\n/g' | tr -d '\r')"
+          printf '%s\n' "$key_material" > "$HOME/.ssh/oci_key"
           chmod 600 "$HOME/.ssh/oci_key"
+          ssh-keygen -yf "$HOME/.ssh/oci_key" > /dev/null
           ssh-keyscan -H "$OCI_HOST" >> "$HOME/.ssh/known_hosts"
 
       - name: Upload production Compose file
